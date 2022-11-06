@@ -1,6 +1,10 @@
 # Clippy Frontend
 [![Licence](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge)](./LICENSE)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=clippydsdone_clippy-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=clippydsdone_clippy-frontend)
+
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=clippydsdone_clippy-frontend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=clippydsdone_clippy-frontend)
+
 This is repository contains code for frontend of project [Clippy: smart PDF reader for better paper reading experience and knowledge mining](https://conf.researchr.org/track/icse-2023/icse-2023-score-2023#clippy:-smart-pdf-reader-for-better-paper-reading-experience-and-knowledge-mining). 
 
 ## Tools & platforms
