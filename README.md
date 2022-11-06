@@ -14,8 +14,15 @@ This is repository contains code for frontend of project [Clippy: smart PDF read
 
 There are only 2 long-standing (remote) branches:
 
-1. **dev**: This contains all the code in the current SCRUM itteration.
-2. **main**: Contains the release for the previous SCRUM itteration.
+1. **dev**: Contains all the code in the current SCRUM iteration.
+2. **main**: Contains the release for the previous SCRUM iteration.
+
+There are only 2 temporary branches:
+
+1. **feature/(IssueId)-(issue-name)**: Contains current work being developed for the Issue. Example of valid feature branch name for issue `Setup repo and wiki` with ID `22` would be `feature/22-setup-repo-and-wiki`
+2. **bugfix/(IssueId)-(issue-name)**: Contains current work being developed for the Issue of type `Bug`. Example of valid feature branch name for issue `PDF.js not rendering` with ID `42` would be `bugfix/42-pdf-js-not-rendering`
+
+When issues are closed temporary branches are **squashed and deleted**.
 
 ```mermaid
   graph LR;
