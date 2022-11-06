@@ -1,5 +1,6 @@
 # Clippy Frontend
 [![Licence](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge)](./LICENSE)
+
 This is repository contains code for frontend of project [Clippy: smart PDF reader for better paper reading experience and knowledge mining](https://conf.researchr.org/track/icse-2023/icse-2023-score-2023#clippy:-smart-pdf-reader-for-better-paper-reading-experience-and-knowledge-mining). 
 
 ## Tools & platforms
@@ -18,9 +19,9 @@ There are only 2 long-standing (remote) branches:
 
 ```mermaid
   graph LR;
-      A[feature/(ID)-(name)] --> R[dev];
-      B[feature/(ID)-(name)] --> R[dev];
-      B[bugfix/(ID)-(name)] --> R[dev];
+      A[feature/*] --> R[dev];
+      B[feature/*] --> R[dev];
+      B[bugfix/*] --> R[dev];
       R --> M[main];
 ```
 
