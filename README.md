@@ -21,7 +21,7 @@ There are only 2 long-standing (remote) branches:
   graph LR;
       A[feature/*] --> R[dev];
       B[feature/*] --> R[dev];
-      B[bugfix/*] --> R[dev];
+      C[bugfix/*] --> R[dev];
       R --> M[main];
 ```
 
