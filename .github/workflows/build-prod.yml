@@ -1,4 +1,4 @@
-name: Build
+name: [PROD] SonarCloud Code Analysis and Heroku Depolyment
 on:
   push:
     branches:
