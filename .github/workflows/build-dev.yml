@@ -1,4 +1,4 @@
-name: [DEV] SonarCloud Code Analysis and Heroku Depolyment
+name: '[DEV] SonarCloud Code Analysis and Heroku Depolyment'
 on:
   push:
     branches:
