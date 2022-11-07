@@ -1,13 +1,8 @@
-name: Build
+name: '[PROD] SonarCloud Code Analysis and Heroku Depolyment'
 on:
   push:
     branches:
       - main
-      - dev
-      - feature/*
-      - bugfix/*
-  pull_request:
-    types: [opened, synchronize, reopened]
 concurrency:
   group: ${{ github.head_ref || github.ref_name }} 
   cancel-in-progress: true
