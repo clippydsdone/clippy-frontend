@@ -13,6 +13,12 @@ This is repository contains code for frontend of project [Clippy: smart PDF read
 - [Zenhub](https://app.zenhub.com/workspaces/clippy-63600767a63c240a624ccea7/board) in addition to GitHub board for tracking work items and SCRUM organisation.
 - [SonarCloud](https://sonarcloud.io/project/overview?id=clippydsdone_clippy-frontend) for code quality check.
 
+## Libraries used
+
+- PDF.js 
+- D3.js
+- Citation.js
+
 ## Branching Strategy
 
 There are only 2 long-standing (remote) branches:
@@ -37,7 +43,3 @@ When issues are closed temporary branches are **squashed and deleted**.
 
 ## Local environment
 - To test application locally install [PHP server](https://windows.php.net/download#php-8.1) and put the installation files in your local environment so you can run the commands from the powershell. Then run `php -S localhost:8000` to test your code locally as it is in the Heroku enivornment. 
-
-## GitFlow
-
-## 
