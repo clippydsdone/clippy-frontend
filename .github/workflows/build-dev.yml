@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - dev
-      - feature/*
-      - bugfix/*
-  pull_request:
-    types: [opened, synchronize, reopened]
 concurrency:
   group: ${{ github.head_ref || github.ref_name }} 
   cancel-in-progress: true
