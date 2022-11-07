@@ -13,9 +13,9 @@ This is repository contains code for frontend of project [Clippy: smart PDF read
 
 ## Libraries used
 
-- PDF.js 
-- D3.js
-- Citation.js
+- [PDF.js](https://mozilla.github.io/pdf.js/): A general-purpose, web standards-based platform for parsing and rendering PDFs.
+- [D3.js](https://d3js.org): D3.js is a JavaScript library for manipulating documents based on data. D3 helps you bring data to life using HTML, SVG, and CSS. D3’s emphasis on web standards gives you the full capabilities of modern browsers without tying yourself to a proprietary framework, combining powerful visualization components and a data-driven approach to DOM manipulation.
+- [Citation.js](https://citation.js.org): Citation.js (GitHub, NPM) converts formats like BibTeX, BibJSON, DOI, and Wikidata to CSL-JSON to convert to styles like APA, Vancouver and to BibTeX and RIS.
 
 ## Branching Strategy
 
