@@ -35,7 +35,8 @@ When issues are closed temporary branches are **squashed and deleted**.
       R --> M[main];
 ```
 
-## CI/CD
+## Local environment
+- To test application locally install [PHP server](https://windows.php.net/download#php-8.1) and put the installation files in your local environment so you can run the commands from the powershell. Then run `php -S localhost:8000` to test your code locally as it is in the Heroku enivornment. 
 
 ## GitFlow
 
