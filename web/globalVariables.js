@@ -5,6 +5,22 @@
         value: window.PDFViewerApplication,
         writable: false
     });
+
+    // TODO: fix this terribleness
+    var setProperties = function() {
+        if (Global.app.pdfDocument === null) {
+            setTimeout(setProperties, 1);
+            return;
+        }
+
+        // Public const variable named "doc"
+        Object.defineProperty(Global, "doc", {
+            value: window.PDFViewerApplication.pdfDocument,
+            writable: false
+        });
+    }
+
+    setProperties();
 }(window.Global = window.Global || {}));
 
 // Module namespace
