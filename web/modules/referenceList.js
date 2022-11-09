@@ -11,7 +11,7 @@
     var otherTabs = null;  // List of all tabs on sidebar
     var referenceList = null;
 
-    // Initializer method
+    // Initializator method
     ReferenceList.initialize = async function () {
         // TODO: fix this terribleness
         if (Global.app === 'undefined') {
@@ -40,15 +40,17 @@
 
         // Get a list of all references in the PDF
         referenceList = await Global.doc.getDestinations();
+        console.log(referenceList)
 
         // HTML building
         // Add a two-depth tree structure
+
+        // TODO: add event listeners for select, treeItemsHidden
+
         content.classList.add("treeWithDeepNesting");
-
-        const popupCanvas = document.createElement("canvas");
-        content.appendChild(popupCanvas);   
-
         var keys = Object.keys(referenceList)
+        console.log(keys)
+        console.log(keys.length)
         for (var i = 0; i < keys.length; i++) {
             var div = document.createElement("div");
             div.classList.add('treeItem')
@@ -75,31 +77,6 @@
             div.appendChild(preview);
             content.appendChild(div);
         }
-
-    }
-
-    var loadPage = async function (refId, popupCanvas) {
-        const refDestination = await Global.app.pdfDocument.getDestination(refId);
-        const pageNumber = await Global.doc.getPageIndex(refDestination[0]);
-
-        
-        Global.app.pdfDocument.getPage(pageNumber + 1).then(async function (pdfPage) {
-            // 'Scale'' is the zoom value on top of the menu but for this new window (view-port)
-            const pageViewport = pdfPage.getViewport({ scale: Global.viewer.currentScale });
-
-            // canvas.width and canvas.height dictate the size of the document within the canvas itself
-            var outline = document.getElementById('outlineView')
-            popupCanvas.style.width = 'inherit';
-            popupCanvas.style.height = `inherit`;
-
-            pageViewport.transform[4] = -refDestination[2];
-            pageViewport.transform[5] = pageViewport.height - refDestination[3];
-
-            popupCanvas.style.border = "1px solid black"; //Draw border
-            popupCanvas.style.position = "inherit"; //static|absolute|fixed|relative|sticky|initial|inherit
-
-            await pdfPage.render({ canvasContext: popupCanvas.getContext("2d"), viewport: pageViewport });
-        });
     }
 
     var toggleVisibility = async function (evt) {
