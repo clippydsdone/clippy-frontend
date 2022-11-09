@@ -13,9 +13,15 @@
 
     // Initializator method
     ReferenceList.initialize = async function () {
-        if (Global.app !== 'undefined') {
-            console.log("Global variable loaded.");
+        // TODO: fix this terribleness
+        if (Global.app === 'undefined') {
+            setTimeout(ReferenceList.initialize, 1);
+            return;
+        } else if (typeof Global.doc === 'undefined') {
+            setTimeout(ReferenceList.initialize, 1);
+            return;
         }
+        console.log("Global variable loaded.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         button = document.getElementById('viewReferences');
@@ -27,13 +33,13 @@
     }
 
     var buildReferenceList = async function () {
-        if (Global.app.pdfDocument === null) {
+        if (Global.doc === null) {
             console.error("pdfDocument object is null. Cannot build reference list.");
             return;
         }
 
         // Get a list of all references in the PDF
-        referenceList = await Global.app.pdfDocument.getDestinations();
+        referenceList = await Global.doc.getDestinations();
         console.log(referenceList)
 
         // HTML building
