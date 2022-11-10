@@ -2757,10 +2757,7 @@
 
 				const params = (0, _ui_utils.parseQueryString)(queryString);
 
-				//file = params.get("file") ?? _app_options.AppOptions.get("defaultUrl"); //DEFAULT IMPLEMENTATION
-				file = params.get("file") ?? localStorage.getItem("lastOpenedURL"); //CLIPPY REPLACEMENT
-
-				validateFileURL(file);
+				file = localStorage.getItem("lastOpenedFile") ?? null; //CLIPPY REPLACEMENT
 				const fileInput = appConfig.openFileInput;
 
 				fileInput.value = null;
@@ -2963,7 +2960,11 @@
 					let url = URL.createObjectURL(file);
 
 					if (file.name) {
-						localStorage.setItem("lastOpenedURL", file.name); //CLIPPY ADDED
+						var reader = new FileReader();
+						reader.readAsDataURL(file); 
+						reader.onloadend = function() {
+							localStorage.setItem("lastOpenedFile", reader.result);
+						}
 						url = {
 							url,
 							originalUrl: file.name,
