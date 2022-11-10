@@ -92,7 +92,10 @@ const SidebarView = {
   THUMBS: 1,
   OUTLINE: 2,
   ATTACHMENTS: 3,
-  LAYERS: 4
+  LAYERS: 4,
+  SUMMARY: 5,
+  KNOWLEDGEGRAPH: 6,
+  REFERENCES: 7
 };
 exports.SidebarView = SidebarView;
 const RendererType = {
@@ -1382,6 +1385,9 @@ const PDFViewerApplication = {
   pdfOutlineViewer: null,
   pdfAttachmentViewer: null,
   pdfLayerViewer: null,
+  pdfSummaryViewer: null,
+  pdfKnowledgeGraphViewer: null,
+  pdfReferencesViewer: null,
   pdfCursorTools: null,
   pdfScriptingManager: null,
   store: null,
@@ -1815,6 +1821,9 @@ const PDFViewerApplication = {
     this.pdfOutlineViewer.reset();
     this.pdfAttachmentViewer.reset();
     this.pdfLayerViewer.reset();
+    this.pdfSummaryViewer.reset();
+    this.pdfKnowledgeGraphViewer.reset();
+    this.pdfReferencesViewer,reset();
     this.pdfHistory?.reset();
     this.findBar?.reset();
     this.toolbar.reset();
@@ -2878,6 +2887,15 @@ function webViewerPageMode({
       break;
     case "layers":
       view = _ui_utils.SidebarView.LAYERS;
+      break;
+    case "summary":
+      view = _ui_utils.SidebarView.SUMMARY;
+      break;
+    case "knowledgegraph":
+      view = _ui_utils.SidebarView.KNOWLEDGEGRAPH;
+      break;
+    case "references":
+      view = _ui_utils.SidebarView.REFERENCES;
       break;
     case "none":
       view = _ui_utils.SidebarView.NONE;
@@ -7191,10 +7209,16 @@ class PDFSidebar {
     this.outlineButton = elements.outlineButton;
     this.attachmentsButton = elements.attachmentsButton;
     this.layersButton = elements.layersButton;
+    this.summaryButton = elements.summaryButton;
+    this.knowledgegraphButton = elements.knowledgegraphButton;
+    this.referencesButton = elements.referencesButton;
     this.thumbnailView = elements.thumbnailView;
     this.outlineView = elements.outlineView;
     this.attachmentsView = elements.attachmentsView;
     this.layersView = elements.layersView;
+    this.summaryView = elements.summaryView;
+    this.knowledgegraphView = elements.knowledgegraphView;
+    this.referencesView = elements.referencesView;
     this._outlineOptionsContainer = elements.outlineOptionsContainer;
     this._currentOutlineItemButton = elements.currentOutlineItemButton;
     this.eventBus = eventBus;
@@ -7209,6 +7233,9 @@ class PDFSidebar {
     this.outlineButton.disabled = false;
     this.attachmentsButton.disabled = false;
     this.layersButton.disabled = false;
+    this.summaryButton.disabled = false;
+    this.knowledgegraphButton.disabled = false;
+    this.referencesButton.disabled = false;
     this._currentOutlineItemButton.disabled = true;
   }
   get visibleView() {
@@ -7257,6 +7284,21 @@ class PDFSidebar {
           return;
         }
         break;
+      case _ui_utils.SidebarView.SUMMARY:
+        if (this.summaryButton.disabled) {
+          return;
+        }
+        break;
+      case _ui_utils.SidebarView.KNOWLEDGEGRAPH:
+        if (this.knowledgegraphButton.disabled) {
+          return;
+        }
+        break;
+      case _ui_utils.SidebarView.REFERENCES:
+        if (this.referencesButton.disabled) {
+          return;
+        }
+        break;
       default:
         console.error(`PDFSidebar.switchView: "${view}" is not a valid view.`);
         return;
@@ -7265,19 +7307,31 @@ class PDFSidebar {
     const isThumbs = view === _ui_utils.SidebarView.THUMBS,
       isOutline = view === _ui_utils.SidebarView.OUTLINE,
       isAttachments = view === _ui_utils.SidebarView.ATTACHMENTS,
-      isLayers = view === _ui_utils.SidebarView.LAYERS;
+      isLayers = view === _ui_utils.SidebarView.LAYERS,
+      isSummary = view === _ui_utils.SidebarView.SUMMARY,
+      isKnowledgeGraph = view === _ui_utils.SidebarView.KNOWLEDGEGRAPH,
+      isReferences = view === _ui_utils.SidebarView.REFERENCES;
     this.thumbnailButton.classList.toggle("toggled", isThumbs);
     this.outlineButton.classList.toggle("toggled", isOutline);
     this.attachmentsButton.classList.toggle("toggled", isAttachments);
     this.layersButton.classList.toggle("toggled", isLayers);
+    this.summaryButton.classList.toggle("toggled", isSummary);
+    this.knowledgegraphButton.classList.toggle("toggled", isKnowledgeGraph);
+    this.referencesButton.classList.toggle("toggled", isReferences);
     this.thumbnailButton.setAttribute("aria-checked", isThumbs);
     this.outlineButton.setAttribute("aria-checked", isOutline);
     this.attachmentsButton.setAttribute("aria-checked", isAttachments);
     this.layersButton.setAttribute("aria-checked", isLayers);
+    this.summaryButton.setAttribute("aria-checked", isSummary);
+    this.knowledgegraphButton.setAttribute("aria-checked", isKnowledgeGraph);
+    this.referencesButton.setAttribute("aria-checked", isReferences);
     this.thumbnailView.classList.toggle("hidden", !isThumbs);
     this.outlineView.classList.toggle("hidden", !isOutline);
     this.attachmentsView.classList.toggle("hidden", !isAttachments);
     this.layersView.classList.toggle("hidden", !isLayers);
+    this.summaryView.classList.toggle("hidden", !isSummary);
+    this.knowledgegraphView.classList.toggle("hidden", !isKnowledgeGraph);
+    this.referencesView.classList.toggle("hidden", !isReferences);
     this._outlineOptionsContainer.classList.toggle("hidden", !isOutline);
     if (forceOpen && !this.isOpen) {
       this.open();
@@ -7399,6 +7453,15 @@ class PDFSidebar {
     this.layersButton.addEventListener("click", () => {
       this.switchView(_ui_utils.SidebarView.LAYERS);
     });
+    this.summaryButton.addEventListener("click", () => {
+      this.switchView(_ui_utils.SidebarView.SUMMARY);
+    });
+    this.knowledgegraphButton.addEventListener("click", () => {
+      this.switchView(_ui_utils.SidebarView.KNOWLEDGEGRAPH);
+    });
+    this.referencesButton.addEventListener("click", () => {
+      this.switchView(_ui_utils.SidebarView.REFERENCES);
+    });
     this.layersButton.addEventListener("dblclick", () => {
       this.eventBus.dispatch("resetlayers", {
         source: this
@@ -7431,6 +7494,15 @@ class PDFSidebar {
     });
     this.eventBus._on("layersloaded", evt => {
       onTreeLoaded(evt.layersCount, this.layersButton, _ui_utils.SidebarView.LAYERS);
+    });
+    this.eventBus._on("summaryloaded", evt => {
+      onTreeLoaded(evt.summaryCount, this.summaryButton, _ui_utils.SidebarView.SUMMARY);
+    });
+    this.eventBus._on("knowledgegraphloaded", evt => {
+      onTreeLoaded(evt.knowledgegraphCount, this.knowledgegraphButton, _ui_utils.SidebarView.KNOWLEDGEGRAPH);
+    });
+    this.eventBus._on("referencesloaded", evt => {
+      onTreeLoaded(evt.refecesCount, this.referencesButton, _ui_utils.SidebarView.REFERENCES);
     });
     this.eventBus._on("presentationmodechanged", evt => {
       if (evt.state === _ui_utils.PresentationModeState.NORMAL && this.visibleView === _ui_utils.SidebarView.THUMBS) {
@@ -13457,10 +13529,16 @@ function getViewerConfiguration() {
       outlineButton: document.getElementById("viewOutline"),
       attachmentsButton: document.getElementById("viewAttachments"),
       layersButton: document.getElementById("viewLayers"),
+      summaryButton: document.getElementById("viewSummary"),
+      knowledgegraphButton: document.getElementById("viewKnowledgeGraph"),
+      referencesButton: document.getElementById("viewReferences"),
       thumbnailView: document.getElementById("thumbnailView"),
       outlineView: document.getElementById("outlineView"),
       attachmentsView: document.getElementById("attachmentsView"),
       layersView: document.getElementById("layersView"),
+      summaryView: document.getElementById("summaryView"),
+      knowledgegraphView: document.getElementById("knowledgegraphView"),
+      referencesView: document.getElementById("referencesView"),
       outlineOptionsContainer: document.getElementById("outlineOptionsContainer"),
       currentOutlineItemButton: document.getElementById("currentOutlineItem")
     },
