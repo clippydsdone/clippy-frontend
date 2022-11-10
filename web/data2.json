@@ -1,0 +1,15 @@
+{
+    "nodes": [
+      {"id": "sun", "group": 1},
+      {"id": "water", "group": 2},
+      {"id": "fire", "group": 2},
+      {"id": "earth", "group": 2},
+      {"id": "air", "group": 2}
+    ],
+    "links": [
+      {"source": "sun", "target": "water", "value": 2, "distance": 30},
+      {"source": "sun", "target": "fire", "value": 2, "distance": 30},
+      {"source": "sun", "target": "earth", "value": 2, "distance": 30},
+      {"source": "sun", "target": "air", "value": 2, "distance": 30}
+    ]
+  }
