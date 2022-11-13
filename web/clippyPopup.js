@@ -33,7 +33,7 @@ function previewOff() {
  **/
 async function previewFunc(event) {
 	//Make sure something is being mouseovered before we try to manipulate it.
-	if (event.target.hash == undefined) {
+	if (event.type != "mouseover" || event.target.hash == undefined) {
 		return;
 	}
 
@@ -54,39 +54,48 @@ async function previewFunc(event) {
 	 * @param ref[4] = {double}
 	 * @param ref[5] = {double}
 	 **/
-	const ref = await app.pdfDocument.getDestination(referenceID);
-	//console.log(referenceID + " = " + JSON.stringify(ref));
+
+	//Get the destination(where the reference is pointing to).
+	const refDestination = await app.pdfDocument.getDestination(referenceID);
 
 	//Get page number of where the reference is pointing.
-	const pageNum = app.pdfLinkService._cachedPageNumber(ref[0]);
+	const pageNum = app.pdfLinkService._cachedPageNumber(refDestination[0]);
 
 	app.pdfDocument.getPage(pageNum).then(function (pdfPage) {
 		/* TODO Figure out how all of this comes together:
-		 * Viewports, Cavas, Canvas.style, Contexts, and the ref doubles
-		 * or some alternative way of grabbing a resource and injecting it to the popup canvas
+		 * Viewports, Cavas, Canvas.style, Contexts, and the ref doubles.
+		 * Can we just grab some offsets and put the resource in frame
+		 * or do we need to parse the document and extract the images and inject them?
 		 */
 
-		const viewprt = pdfPage.getViewport({ scale: 1.0 });
-		popupCanvas.width = viewprt.width;
-		popupCanvas.height = viewprt.height;
+		const pageViewport = pdfPage.getViewport({ scale: 1.0 });
+		popupCanvas.width = pageViewport.width;
+		popupCanvas.height = pageViewport.height;
+
+		/**
+		 * @param {double} app.pdfViewer.currentScale the Zoom amount inside of the viewer
+		 **/
+		//Set canvas style, since it changes dynamically I don't think CSS will work.
+		//Multiply with app.pdfViewer.currentScale to keep popup size relative to the document size.
+		popupCanvas.style.width = `${pageViewport.width * app.pdfViewer.currentScale}px`;
+		popupCanvas.style.height = `${pageViewport.height * app.pdfViewer.currentScale}px`;
 
 		/**
 		 * Mouse Coordinates
 		 * @param {double} event.clientX
 		 * @param {double} event.clientY
 		 **/
-
-		//Set canvas style, since it changes dynamically I don't think CSS will work.
-		popupCanvas.style.width = `${(ref[4] - ref[2]) * app.pdfViewer.currentScale}px`;
-		popupCanvas.style.height = `${viewprt.height * app.pdfViewer.currentScale}px`;
+		//Where should the popup be displayed / popup position
 		popupCanvas.style.top = `${event.clientY + 2}px`;
-		popupCanvas.style.left = `${event.clientX - viewprt.width / 2}px`;
-		popupCanvas.style.border = "1px solid black";
-		popupCanvas.style.position = "fixed";
-		popupCanvas.style.zIndex = "99";
+		popupCanvas.style.left = `${event.clientX - pageViewport.width / 2}px`;
+
+		//Other popup attributes
+		popupCanvas.style.border = "1px solid black"; //Draw border
+		popupCanvas.style.position = "fixed"; //static|absolute|fixed|relative|sticky|initial|inherit
+		popupCanvas.style.zIndex = "99"; //z-depth / layer, higher value = more infront
 
 		//Render popup.
-		pdfPage.render({ canvasContext: popupCanvas.getContext("2d"), viewport: viewprt });
+		pdfPage.render({ canvasContext: popupCanvas.getContext("2d"), viewport: pageViewport });
 	});
 
 	//Add popupCanvas to the viewer html
