@@ -11,7 +11,7 @@
     var otherTabs = null;  // List of all tabs on sidebar
     var referenceList = null;
 
-    // Initializator method
+    // Initializer method
     ReferenceList.initialize = async function () {
         // TODO: fix this terribleness
         if (Global.app === 'undefined') {
@@ -40,17 +40,15 @@
 
         // Get a list of all references in the PDF
         referenceList = await Global.doc.getDestinations();
-        console.log(referenceList)
 
         // HTML building
         // Add a two-depth tree structure
-
-        // TODO: add event listeners for select, treeItemsHidden
-
         content.classList.add("treeWithDeepNesting");
+
+        const popupCanvas = document.createElement("canvas");
+        content.appendChild(popupCanvas);   
+
         var keys = Object.keys(referenceList)
-        console.log(keys)
-        console.log(keys.length)
         for (var i = 0; i < keys.length; i++) {
             var div = document.createElement("div");
             div.classList.add('treeItem')
@@ -77,6 +75,18 @@
             div.appendChild(preview);
             content.appendChild(div);
         }
+
+    }
+
+    var loadPage = async function (refId, popupCanvas) {
+        const refDestination = await Global.app.pdfDocument.getDestination(refId);
+        const pageNumber = await Global.doc.getPageIndex(refDestination[0]);
+
+
+        Global.app.pdfDocument.getPage(pageNumber).then(function (pdfPage) {
+            const pageViewport = pdfPage.getViewport({ scale: 1.0 });
+            pdfPage.render({ canvasContext: popupCanvas.getContext("2d"), viewport: pageViewport });
+        });
     }
 
     var toggleVisibility = async function (evt) {
