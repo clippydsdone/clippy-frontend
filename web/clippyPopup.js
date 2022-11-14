@@ -62,10 +62,8 @@ async function previewFunc(event) {
 	const pageNum = app.pdfLinkService._cachedPageNumber(refDestination[0]);
 
 	app.pdfDocument.getPage(pageNum).then(function (pdfPage) {
-		/* TODO Figure out how all of this comes together:
-		 * Viewports, Cavas, Canvas.style, Contexts, and the ref doubles.
-		 * Can we just grab some offsets and put the resource in frame
-		 * or do we need to parse the document and extract the images and inject them?
+		/* TODO: Figure out how to get correct information
+		 * into/displayed by, the popup Canvas
 		 */
 
 		const pageViewport = pdfPage.getViewport({ scale: 1.0 });
