@@ -82,10 +82,23 @@
         const refDestination = await Global.app.pdfDocument.getDestination(refId);
         const pageNumber = await Global.doc.getPageIndex(refDestination[0]);
 
+        
+        Global.app.pdfDocument.getPage(pageNumber + 1).then(async function (pdfPage) {
+            // 'Scale'' is the zoom value on top of the menu but for this new window (view-port)
+            const pageViewport = pdfPage.getViewport({ scale: Global.viewer.currentScale });
 
-        Global.app.pdfDocument.getPage(pageNumber).then(function (pdfPage) {
-            const pageViewport = pdfPage.getViewport({ scale: 1.0 });
-            pdfPage.render({ canvasContext: popupCanvas.getContext("2d"), viewport: pageViewport });
+            // canvas.width and canvas.height dictate the size of the document within the canvas itself
+            var outline = document.getElementById('outlineView')
+            popupCanvas.style.width = 'inherit';
+            popupCanvas.style.height = `inherit`;
+
+            pageViewport.transform[4] = -refDestination[2];
+            pageViewport.transform[5] = pageViewport.height - refDestination[3];
+
+            popupCanvas.style.border = "1px solid black"; //Draw border
+            popupCanvas.style.position = "inherit"; //static|absolute|fixed|relative|sticky|initial|inherit
+
+            await pdfPage.render({ canvasContext: popupCanvas.getContext("2d"), viewport: pageViewport });
         });
     }
 

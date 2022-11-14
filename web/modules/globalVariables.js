@@ -18,6 +18,12 @@
             value: window.PDFViewerApplication.pdfDocument,
             writable: false
         });
+
+        // Public const variable named "viewer"
+        Object.defineProperty(Global, "viewer", {
+            value: window.PDFViewerApplication.pdfViewer,
+            writable: false
+        });
     }
 
     setProperties();
