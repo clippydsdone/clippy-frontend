@@ -35,6 +35,12 @@ We currently have 3 modules:
 To create your own module, create  ``./web/modules/MODULENAME.js`` and copy-paste the following:
 ```js
 (function (ModuleName) { // Replace 'ModuleName' with your module name
+    // Official name of the module
+    Object.defineProperty(ReferenceList, "name", {
+        value: "ModuleName", // Replace 'ModuleName' with your module name
+        writable: false
+    });
+    
     // Private Property
     var priv_var = true;
  
