@@ -1,23 +1,24 @@
 # Clippy PDF.js handbook
-This handbook is written as a guide for all team members of Clippy 
-team that wish code something that is realted to the PDF.js library.
-This handbook acts as the collective accumulation of experience with
-the library and includes templates, explaination, and guides on how
+This handbook is written as a guide for all team members of the Clippy 
+team that wish to code something related to the PDF.js library.
+This handbook acts as the collective accumulation of experience working with
+the PDF.js library and includes templates, explaination, and guides on how
 to modify certain aspects of the PDF.js library.
 
 ## Structure
 The PDF.js library consists of three parts:
 1. Core - layer where PDF in binary format is parsed and interpreted. It is the foundation for the library and it inaccessible to us because we are using the prebuilt version.
 2. Display - It is effecitvely the API layer for the core. It contains API calls that are easier to use than their equivalent in the Core layer. It is accessible, but not intended to be modified.
-3. Viewer - It is the Viewer object (**GUI**) that displays the PDF to the user. We can and will directly modify it to change the user interface in order to adapt it to the expanded functionalities.
+3. Viewer - It is the Viewer object (**GUI**) that displays the PDF to the user. It contains both HTML and Javascript code to modify the HTML. It can be directly modified to change the user interface in order to adapt it to the expanded functionalities.
 
-Therefore, only relevant layer here is the Viewer which can be accesed at ``./web/viewer.js``.
+The only relevant layer for us is the Viewer layer and it can be accesed at ``./web/viewer.js`` (code) and ``./web/viewer.html`` (interface).
 
 ## Viewer Objects
-There are multiple important objects to take note while working with PDF.js. The developers deemed it best to put the entire Viewer in the ``window`` variable of the browser to ensure its global scope. The following is a list of the most relevant viewer objects:
+There are multiple important objects to take note while working with PDF.js. The developers deemed it best to put the entire Viewer in the innate variable ``window`` of the browser to ensure its global scope. The following is a list of the most relevant viewer objects:
 - PDFViewerApplication - It is the main object representing the Viewer application. It has many classes with important methods, some of which we will cover here. Accessed by ``window.PDFViewerApplication``.
 - PdfDocument - It is an object of PDFViewerApplication. Its methods pertain to document information and parsing, including the getting of document references with ``getDestinations``. Accessed by ``window.PDFViewerApplication.pdfDocument``.
 - PdfSidebar - It is an object of PDFViewerApplication. Its methods pertain to sidebar view manipulation, including opening and closing of any tab. Accessed by ``window.PDFViewerApplication.pdfSidebar``.
+- PdfLinkService - It is an object of PDFViewerApplication. Its methods pertain to link (reference) manipulation, including moving the view in the Viewer to the clicked reference. Accessed by ``window.PDFViewerApplication.pdfLinkService``.
 
 ## Useful Web Documentation
 The documentation for PDF.js is incomplete but the following websites are recommended for analyzing the library and its API:
@@ -33,8 +34,8 @@ We currently have 3 modules:
 ## Templates
 To create your own module, create  ``./web/modules/MODULENAME.js`` and copy-paste the following:
 ```js
-(function (ModuleName) {
-    // Private Property 
+(function (ModuleName) { // Replace 'ModuleName' with your module name
+    // Private Property
     var priv_var = true;
  
     // Public Property
@@ -59,14 +60,14 @@ To create your own module, create  ``./web/modules/MODULENAME.js`` and copy-past
         }
     }
 
-    // Initializer method
+    // Initializer method; Choose any name you want
     ModuleName.initialize = function () {
         console.log("Properly initialized!");
     }
     
     // Execute initialize method after the entire document (its DOM elements) loads
     Clippy.addOnLoadEvent(ReferenceList.name, ReferenceList.initialize);
-}(window.Clippy.ModuleName = window.Clippy.ModuleName || {}));
+}(window.Clippy.ModuleName = window.Clippy.ModuleName || {})); // Replace 'ModuleName' with your module name
 ```
 Replace ``ModuleName`` with the desired name of your module and remove any elements that you deem unnecessary.
 
