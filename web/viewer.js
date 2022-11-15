@@ -3003,12 +3003,17 @@
           const file = evt.fileInput.files[0];
           let url = URL.createObjectURL(file);
           if (file.name) {
-            url = {
-              url,
-              originalUrl: file.name
-            };
-          }
-          PDFViewerApplication.open(url);
+						var reader = new FileReader();
+						reader.readAsDataURL(file); 
+						reader.onloadend = function() {
+							localStorage.setItem("lastOpenedFile", reader.result);
+						}
+						url = {
+							url,
+							originalUrl: file.name,
+						};
+					}
+					PDFViewerApplication.open(url);
         };
         var webViewerOpenFile = function (evt) {
           const fileInput = PDFViewerApplication.appConfig.openFileInput;
