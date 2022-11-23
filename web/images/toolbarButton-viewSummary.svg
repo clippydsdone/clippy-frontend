@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   fill="none"
+   version="1.1"
+   id="svg685"
+   sodipodi:docname="toolbarButton-viewSummary.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs689" />
+  <sodipodi:namedview
+     id="namedview687"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     showguides="true"
+     inkscape:zoom="50.160387"
+     inkscape:cx="9.519464"
+     inkscape:cy="8.2136527"
+     inkscape:window-width="1277"
+     inkscape:window-height="1415"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg685">
+    <sodipodi:guide
+       position="15.011846,12.252023"
+       orientation="1,0"
+       id="guide739"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="15.998758,16.508291"
+       orientation="1,0"
+       id="guide741"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="0,16.478465"
+       orientation="1,0"
+       id="guide743"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="1.0111315,18.018914"
+       orientation="1,0"
+       id="guide745"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <path
+     d="M 1.026331,1.25 15,1.25 v 1.5 l -13.973669,0 z M 15,5.25 1.026331,5.25 v 1.5 L 15,6.75 Z m -13.9719971,4.0302382 13.9736691,0 v 1.4999998 l -13.9736691,0 z m 13.9736691,3.9999998 -13.9736691,0 v 1.5 l 13.9736691,0 z"
+     fill="#000000"
+     id="path683"
+     sodipodi:nodetypes="cccccccccccccccccccc" />
+</svg>
