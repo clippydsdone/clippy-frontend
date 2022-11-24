@@ -39,6 +39,12 @@
         } else if (Global.app.pdfViewer === null) {
             console.error("PDFViewer object is null. Cannot create reference preview.");
             return;
+        } else if (container === null) {
+            console.error("HTML div with id 'referencesContainer' is null. Cannot create reference preview.");
+            return;
+        } else if (viewer === null) {
+            console.error("HTML div with id 'referencesViewer' is null. Cannot create reference preview.");
+            return;
         }
 
         // Get constructors for required objects for PDFViewer
@@ -182,10 +188,8 @@
             }
         }
 
-        console.log(referenceList)
-
         // HTML building
-        // Add a two-depth tree structure
+        // We will create a tree structure of depth 2
         content.classList.add("treeWithDeepNesting");
 
         for (let i = 0; i < referenceList.length; i++) {
@@ -199,9 +203,9 @@
 
             // Link to go to the page when clicking the reference
             let link = document.createElement('a');
-            link.href = "#" + referenceList[i].key;
             let linkText = document.createTextNode(referenceList[i].fullName);
             link.appendChild(linkText);
+            link.href = "#" + referenceList[i].key;
 
             div.appendChild(toggler);
             div.appendChild(link);
