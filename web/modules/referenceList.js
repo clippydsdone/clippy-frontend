@@ -1,15 +1,15 @@
 (function (ReferenceList) {
     // ReferenceList module start
-    // Public const variable named "name"
+    // Public const letiable named "name"
     Object.defineProperty(ReferenceList, "name", {
         value: "ReferenceList",
         writable: false
     });
 
-    var button = null;     // Button in sidebar
-    var content = null;    // Parent div of content to be displayed in sidebar
-    var otherTabs = null;  // List of all tabs on sidebar
-    var referenceList = null;
+    let button = null;     // Button in sidebar
+    let content = null;    // Parent div of content to be displayed in sidebar
+    let otherTabs = null;  // List of all tabs on sidebar
+    let referenceList = null;
 
     // Initializer method
     ReferenceList.initialize = async function () {
@@ -21,22 +21,93 @@
             setTimeout(ReferenceList.initialize, 1);
             return;
         }
-        console.log("Global variable loaded.");
+        console.log("Global letiable loaded.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         button = document.getElementById('viewReferences');
         content = document.getElementById('referencesView');
         otherTabs = document.getElementById('sidebarContent').children;
 
-        button.addEventListener("click", toggleVisibility);
-        buildReferenceList();
+        createReferencePreview();
+        //buildReferenceList();
     }
 
-    var buildReferenceList = async function () {
+    let createReferencePreview = function () {
+        if (Global.app === null) {
+            console.error("PDFViewerApplication object is null. Cannot create reference preview.");
+            return;
+        } else if (Global.app.pdfViewer === null) {
+            console.error("PDFViewer object is null. Cannot create reference preview.");
+            return;
+        }
+
+        // Get constructors for required objects for PDFViewer
+        let eventBusConstructor = Global.app.eventBus.constructor
+        let linkServiceConstructor = Global.app.pdfLinkService.constructor
+        let findControllerConstructor = Global.app.pdfViewer.findController.constructor
+        let scriptingManagerConstructor = Global.app.pdfViewer._scriptingManager.constructor
+        let scriptingSrc = "../" + Global.app.pdfViewer._scriptingManager._sandboxBundleSrc
+        let viewerConstructor = Global.app.pdfViewer.constructor
+
+        // Select the container that will contain the reference preview
+        let container = document.getElementById('referencesContainer');
+
+        // Create event bus for reference preview
+        const eventBus = new eventBusConstructor();
+
+        // Enable hyperlinks within PDF files
+        const pdfLinkService = new linkServiceConstructor({
+            eventBus
+        });
+
+        // (Optionally) enable find controller. (NOTE: no idea what this is nor do we need it)
+        const pdfFindController = new findControllerConstructor({
+            eventBus,
+            linkService: pdfLinkService
+        });
+
+        // (Optionally) enable scripting support (NOTE: no idea what this is nor do we need it)
+        const pdfScriptingManager = new scriptingManagerConstructor({
+            eventBus,
+            sandboxBundleSrc: scriptingSrc
+        });
+
+        // Construct PDFViewer for reference preview
+        const pdfViewer = new viewerConstructor({
+            container,
+            eventBus,
+            linkService: pdfLinkService,
+            findController: pdfFindController,
+            scriptingManager: pdfScriptingManager,
+            //removePageBorders: false
+        });
+        pdfLinkService.setViewer(pdfViewer);
+        pdfScriptingManager.setViewer(pdfViewer);
+
+        eventBus.on("pagesinit", function () {
+            // We can use pdfViewer now, e.g. let's change default scale.
+            console.log(pdfViewer)
+            pdfViewer.currentScaleValue = "page-width";
+
+
+        });
+
+        // Deep copy the active PDF document from the viewer
+        let documentClone = Object.assign(Object.create(Object.getPrototypeOf(Global.viewer.pdfDocument)), Global.viewer.pdfDocument)
+        pdfViewer.setDocument(documentClone);
+        pdfLinkService.setDocument(documentClone, null);
+
+        return;
+    }
+
+    let buildReferenceList = async function () {
         if (Global.doc === null) {
             console.error("pdfDocument object is null. Cannot build reference list.");
             return;
         }
+
+        
+
 
         // Get a list of all references in the PDF
         referenceList = await Global.doc.getDestinations();
@@ -48,81 +119,26 @@
         const popupCanvas = document.createElement("canvas");
         content.appendChild(popupCanvas);   
 
-        var keys = Object.keys(referenceList)
-        for (var i = 0; i < keys.length; i++) {
-            var div = document.createElement("div");
+        let keys = Object.keys(referenceList)
+        for (let i = 0; i < keys.length; i++) {
+            let div = document.createElement("div");
             div.classList.add('treeItem')
 
             // Toggler to enable/disable the display of canvas
-            var toggler = document.createElement('div');
+            let toggler = document.createElement('div');
             toggler.classList.add('treeItemToggler')
             toggler.classList.add('treeItemsHidden')
 
             // Link to go to the page when clicking the reference
-            var link = document.createElement('a');
+            let link = document.createElement('a');
             link.href = "#" + keys[i];
-            var linkText = document.createTextNode("placeholder"); // TODO: Get actual name of reference instead of "placeholder"
+            let linkText = document.createTextNode("placeholder"); // TODO: Get actual name of reference instead of "placeholder"
             link.appendChild(linkText);
-
-            // Preview of reference
-            var preview = document.createElement('canvas'); // TODO: insert page preview here
-            //preview.style.display = 'none';  // TODO: This one or the one below?
-            preview.classList.add('hidden');
 
 
             div.appendChild(toggler);
             div.appendChild(link);
-            div.appendChild(preview);
             content.appendChild(div);
-        }
-
-    }
-
-    var loadPage = async function (refId, popupCanvas) {
-        const refDestination = await Global.app.pdfDocument.getDestination(refId);
-        const pageNumber = await Global.doc.getPageIndex(refDestination[0]);
-
-        
-        Global.app.pdfDocument.getPage(pageNumber + 1).then(async function (pdfPage) {
-            // 'Scale'' is the zoom value on top of the menu but for this new window (view-port)
-            const pageViewport = pdfPage.getViewport({ scale: Global.viewer.currentScale });
-
-            // canvas.width and canvas.height dictate the size of the document within the canvas itself
-            var outline = document.getElementById('outlineView')
-            popupCanvas.style.width = 'inherit';
-            popupCanvas.style.height = `inherit`;
-
-            pageViewport.transform[4] = -refDestination[2];
-            pageViewport.transform[5] = pageViewport.height - refDestination[3];
-
-            popupCanvas.style.border = "1px solid black"; //Draw border
-            popupCanvas.style.position = "inherit"; //static|absolute|fixed|relative|sticky|initial|inherit
-
-            await pdfPage.render({ canvasContext: popupCanvas.getContext("2d"), viewport: pageViewport });
-        });
-    }
-
-    var toggleVisibility = async function (evt) {
-        if (evt !== 'undefined') {
-            console.log(evt)
-        }
-        if (referenceList === null) {
-            buildReferenceList();
-        }
-
-        var openTab = null;
-
-        for (var i = 0; i < otherTabs.length; i++) {
-            if (!otherTabs[i].classList.contains('hidden')) {
-                openTab = otherTabs[i]
-                break;
-            }
-        }
-
-        if (openTab.id === 'referencesView') { // Close if open
-            content.classList.add("hidden")
-        } else {
-            content.classList.remove("hidden")
         }
     }
 
