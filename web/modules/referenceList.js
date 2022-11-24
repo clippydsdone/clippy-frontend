@@ -11,6 +11,9 @@
     let viewer = null;    // Div of the viewer
     let referenceList = [];
 
+    let referenceViewer = null;
+    let referenceLinkService = null;
+
     // Initializer method
     ReferenceList.initialize = async function () {
         // TODO: fix this terribleness
@@ -34,10 +37,10 @@
 
     let createReferencePreview = function () {
         if (Global.app === null) {
-            console.error("PDFViewerApplication object is null. Cannot create reference preview.");
+            console.error("referenceViewerApplication object is null. Cannot create reference preview.");
             return;
-        } else if (Global.app.pdfViewer === null) {
-            console.error("PDFViewer object is null. Cannot create reference preview.");
+        } else if (Global.app.referenceViewer === null) {
+            console.error("referenceViewer object is null. Cannot create reference preview.");
             return;
         } else if (container === null) {
             console.error("HTML div with id 'referencesContainer' is null. Cannot create reference preview.");
@@ -47,7 +50,7 @@
             return;
         }
 
-        // Get constructors for required objects for PDFViewer
+        // Get constructors for required objects for referenceViewer
         let eventBusConstructor = Global.app.eventBus.constructor
         let linkServiceConstructor = Global.app.pdfLinkService.constructor
         let findControllerConstructor = Global.app.pdfViewer.findController.constructor
@@ -59,14 +62,14 @@
         const eventBus = new eventBusConstructor();
 
         // Enable hyperlinks within PDF files
-        const pdfLinkService = new linkServiceConstructor({
+        referenceLinkService = new linkServiceConstructor({
             eventBus
         });
 
         // (Optionally) enable find controller. (NOTE: no idea what this is nor do we need it)
         const pdfFindController = new findControllerConstructor({
             eventBus,
-            linkService: pdfLinkService
+            linkService: referenceLinkService
         });
 
         // (Optionally) enable scripting support (NOTE: no idea what this is nor do we need it)
@@ -75,29 +78,33 @@
             sandboxBundleSrc: scriptingSrc
         });
 
-        // Construct PDFViewer for reference preview
-        const pdfViewer = new viewerConstructor({
+        // Construct referenceViewer for reference preview
+        referenceViewer = new viewerConstructor({
             container,
             eventBus,
-            linkService: pdfLinkService,
+            linkService: referenceLinkService,
             findController: pdfFindController,
             scriptingManager: pdfScriptingManager,
             removePageBorders: true
         });
-        pdfLinkService.setViewer(pdfViewer);
-        pdfScriptingManager.setViewer(pdfViewer);
+        referenceLinkService.setViewer(referenceViewer);
+        pdfScriptingManager.setViewer(referenceViewer);
 
         eventBus.on("pagesinit", function () {
-            // We can use pdfViewer now, e.g. let's change default scale.
-            pdfViewer.currentScaleValue = "page-width";
+            // We can use referenceViewer now, e.g. let's change default scale.
+            referenceViewer.currentScaleValue = "page-width";
         });
 
         // Deep copy the active PDF document from the viewer
         let documentClone = Object.assign(Object.create(Object.getPrototypeOf(Global.viewer.pdfDocument)), Global.viewer.pdfDocument)
-        pdfViewer.setDocument(documentClone);
-        pdfLinkService.setDocument(documentClone, null);
+        referenceViewer.setDocument(documentClone);
+        referenceLinkService.setDocument(documentClone, null);
 
+        // TODO: these are only temporary CSS adjustments; a better and more pernament solution is required
         container.style.position = 'relative';
+        container.style.height = '150px';
+        container.style.width = '240px';
+        container.style.overflow = 'auto';
 
         return;
     }
@@ -206,6 +213,11 @@
             let linkText = document.createTextNode(referenceList[i].fullName);
             link.appendChild(linkText);
             link.href = "#" + referenceList[i].key;
+            link.addEventListener("click", function (evt) {
+                if (evt.target !== null) { // TODO: implement this better
+                    referenceLinkService.goToDestination(evt.target.hash.substring(1))
+                }
+            });
 
             div.appendChild(toggler);
             div.appendChild(link);
