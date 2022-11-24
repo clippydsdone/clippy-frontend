@@ -6,10 +6,10 @@
         writable: false
     });
 
-    let button = null;     // Button in sidebar
     let content = null;    // Parent div of content to be displayed in sidebar
-    let otherTabs = null;  // List of all tabs on sidebar
-    let referenceList = null;
+    let container = null;    // Container for the viewer
+    let viewer = null;    // Div of the viewer
+    let referenceList = [];
 
     // Initializer method
     ReferenceList.initialize = async function () {
@@ -24,12 +24,12 @@
         console.log("Global letiable loaded.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
-        button = document.getElementById('viewReferences');
         content = document.getElementById('referencesView');
-        otherTabs = document.getElementById('sidebarContent').children;
+        container = document.getElementById('referencesContainer');
+        viewer = document.getElementById('referencesViewer');
 
         createReferencePreview();
-        //buildReferenceList();
+        buildReferenceList();
     }
 
     let createReferencePreview = function () {
@@ -48,9 +48,6 @@
         let scriptingManagerConstructor = Global.app.pdfViewer._scriptingManager.constructor
         let scriptingSrc = "../" + Global.app.pdfViewer._scriptingManager._sandboxBundleSrc
         let viewerConstructor = Global.app.pdfViewer.constructor
-
-        // Select the container that will contain the reference preview
-        let container = document.getElementById('referencesContainer');
 
         // Create event bus for reference preview
         const eventBus = new eventBusConstructor();
@@ -79,23 +76,22 @@
             linkService: pdfLinkService,
             findController: pdfFindController,
             scriptingManager: pdfScriptingManager,
-            //removePageBorders: false
+            removePageBorders: true
         });
         pdfLinkService.setViewer(pdfViewer);
         pdfScriptingManager.setViewer(pdfViewer);
 
         eventBus.on("pagesinit", function () {
             // We can use pdfViewer now, e.g. let's change default scale.
-            console.log(pdfViewer)
             pdfViewer.currentScaleValue = "page-width";
-
-
         });
 
         // Deep copy the active PDF document from the viewer
         let documentClone = Object.assign(Object.create(Object.getPrototypeOf(Global.viewer.pdfDocument)), Global.viewer.pdfDocument)
         pdfViewer.setDocument(documentClone);
         pdfLinkService.setDocument(documentClone, null);
+
+        container.style.position = 'relative';
 
         return;
     }
@@ -106,21 +102,93 @@
             return;
         }
 
-        
-
-
         // Get a list of all references in the PDF
-        referenceList = await Global.doc.getDestinations();
+        destinations = await Global.doc.getDestinations();
+        let keys = Object.keys(destinations);
+        for (let i = 0; i < keys.length; i++) {
+            let reference = {};
+            let key = keys[i]; 
+            if (!key.startsWith('mk')) { // If key does not start with 'mk'
+                let tag = key.split(/[0-9]/)[0];
+                let numeric = key.substring(tag.length);
+
+                reference.key = key;
+                reference.tag = tag;
+                reference.num = numeric;
+                switch (reference.tag) {
+                    case "aff":
+                        reference.tagName = "AFF";
+                        break;
+                    case "bib":
+                        reference.tagName = "Bibliography";
+                        break;
+                    case "cor":
+                        reference.tagName = "Corresponding Author";
+                        break;
+                    case "crf":
+                        reference.tagName = "CRF";
+                        break;
+                    case "eqn":
+                        reference.tagName = "Equation";
+                        break;
+                    case "fig":
+                        reference.tagName = "Figure";
+                        break;
+                    case "para":
+                        reference.tagName = "Paragraph";
+                        break;
+                    case "sec":
+                        reference.tagName = "Section";
+                        break;
+                    case "tbl":
+                        reference.tagName = "Table";
+                        break;
+                    case "ueqn":
+                        reference.tagName = "Inequation";
+                        break;
+                    default:
+                        reference.tagName = reference.tag.toUpperCase()
+                };
+                reference.fullName = reference.tagName + " " + Number(reference.num);
+                referenceList.push(reference);
+            } else {
+                // mk:H3_5
+                let strSplit = (key.split(':')[1]).split('_');
+                let type = strSplit[0]; // H3
+                let numeric = strSplit[1]; // 5
+
+                reference.key = key; // mk:H3_5
+                reference.tag = key.split('_')[0]; // mk:H3
+                reference.num = (typeof (numeric) === 'undefined' ? null : numeric); // 5
+
+                reference.fullName = "";
+                let name = type;
+                if (name.startsWith("H")) {
+                    for (let j = 0; j < type.length; j++) {
+                        if (name[0] === 'H') {
+                            reference.fullName += "Header ";
+                            name = name.substring(1);
+                        } else {
+                            reference.fullName += ("Size " + name + " Number ");
+                        }
+                    }
+                    reference.fullName += Number(reference.num);
+                } else {
+                    if (name === "title") {
+                        reference.fullName = "Title";
+                    }
+                }
+                referenceList.push(reference);
+            }
+        }
+
+        console.log(referenceList)
 
         // HTML building
         // Add a two-depth tree structure
         content.classList.add("treeWithDeepNesting");
 
-        const popupCanvas = document.createElement("canvas");
-        content.appendChild(popupCanvas);   
-
-        let keys = Object.keys(referenceList)
-        for (let i = 0; i < keys.length; i++) {
+        for (let i = 0; i < referenceList.length; i++) {
             let div = document.createElement("div");
             div.classList.add('treeItem')
 
@@ -131,15 +199,16 @@
 
             // Link to go to the page when clicking the reference
             let link = document.createElement('a');
-            link.href = "#" + keys[i];
-            let linkText = document.createTextNode("placeholder"); // TODO: Get actual name of reference instead of "placeholder"
+            link.href = "#" + referenceList[i].key;
+            let linkText = document.createTextNode(referenceList[i].fullName);
             link.appendChild(linkText);
-
 
             div.appendChild(toggler);
             div.appendChild(link);
             content.appendChild(div);
         }
+
+        return;
     }
 
     // Execute initialize method after the document loads
