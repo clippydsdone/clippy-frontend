@@ -34,11 +34,12 @@ See https://github.com/adobe-type-tools/cmap-resources
 <script src="../build/pdf.js"></script>
 
 <script src="viewer.js"></script>
-<script src="clippyPopup.js"></script>
+<script src="./modules/globalVariables.js"></script>
+<script src="./modules/clippyPopup.js"></script>
 
   </head>
 
-  <body tabindex="1" onload="clippyPopupOnLoad()">
+  <body tabindex="1">
     <div id="outerContainer">
 
       <div id="sidebarContainer">
@@ -430,5 +431,13 @@ See https://github.com/adobe-type-tools/cmap-resources
     <div id="printContainer"></div>
 
     <input type="file" id="fileInput" class="hidden">
+
+    <!-- Clippy Popup container -->
+    <div id="popupDiv">
+      <div id="popupContainer" style="position: absolute">
+          <div id="popupViewer" class="pdfViewer"></div>
+      </div>
+  </div>
+
   </body>
 </html>
