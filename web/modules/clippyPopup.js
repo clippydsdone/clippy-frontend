@@ -7,7 +7,6 @@
 	});
 
 	let isPreviewing = false;
-	const app = window.PDFViewerApplication; // API.
 	let popupPdfViewer;
 	let popupLinkService;
 	let popupDiv = null; // Parent div of content to be displayed in popup, this can be moved
@@ -29,14 +28,14 @@
 
 	let previewOn = function () {
 		console.log("Popup preview is ON");
-		app.__previewFunc = previewFunc;
-		viewerDiv.addEventListener("mouseover", app.__previewFunc);
+		Global.app.__previewFunc = previewFunc;
+		viewerDiv.addEventListener("mouseover", Global.app.__previewFunc);
 	};
 
 	let previewOff = function () {
 		console.log("Popup preview is OFF");
-		viewerDiv.removeEventListener("mouseover", app.__previewFunc);
-		delete app.__previewFunc;
+		viewerDiv.removeEventListener("mouseover", Global.app.__previewFunc);
+		delete Global.app.__previewFunc;
 	};
 
 	/**
@@ -65,7 +64,7 @@
 		 **/
 
 		//Get the destination(where the reference is pointing to).
-		const refDestination = await app.pdfDocument.getDestination(referenceID);
+		const refDestination = await Global.app.pdfDocument.getDestination(referenceID);
 
 		//Clears out errors caused by non reference hyperlinks.
 		if (refDestination == null) {
@@ -77,10 +76,10 @@
 		popupLinkService.goToDestination(refDestination);
 
 		//Figure out the size of popup windows based on the viewport of the internal popupViewer viewport
-		const pageNum = app.pdfLinkService._cachedPageNumber(refDestination[0]);
+		const pageNum = Global.app.pdfLinkService._cachedPageNumber(refDestination[0]);
 		popupPdfViewer.pdfDocument.getPage(pageNum).then(function (pdfPage) {
 			/**
-			 * @param {double} app.pdfViewer.currentScale 	the Zoom amount inside of the viewer
+			 * @param {double} Global.app.pdfViewer.currentScale 	the Zoom amount inside of the viewer
 			 * @param {double} event.clientX	Mouse coordinate X
 			 * @param {double} event.clientY	Mouse coordinate Y
 			 **/
@@ -134,26 +133,26 @@
 
 	let createPopupPreview = function () {
 		if (Global.app === null) {
-			console.error("referenceViewerApplication object is null. Cannot create reference popup  preview.");
+			console.error("PDFViewerApplication object is null. Cannot create reference popup  preview.");
 			return;
-		} else if (Global.app.referenceViewer === null) {
-			console.error("referenceViewer object is null. Cannot create reference popup preview.");
+		} else if (Global.app.pdfViewer === null) {
+			console.error("PDFViewer object is null. Cannot create reference popup preview.");
 			return;
 		} else if (viewerDiv === null) {
-			console.error("HTML div with id 'viewerDiv' is null. Cannot create reference popup  preview.");
+			console.error("HTML div with id 'viewerDiv' is null. Cannot create reference popup preview.");
 			return;
 		} else if (popupDiv === null) {
-			console.error("HTML div with id 'popupDiv' is null. Cannot create reference popup  preview.");
+			console.error("HTML div with id 'popupDiv' is null. Cannot create reference popup preview.");
 			return;
 		} else if (popupContainer === null) {
 			console.error("HTML div with id 'popupContainer' is null. Cannot create reference popup  preview.");
 			return;
 		} else if (popupViewer === null) {
-			console.error("HTML div with id 'popupViewer' is null. Cannot create reference popup  preview.");
+			console.error("HTML div with id 'popupViewer' is null. Cannot create reference popup preview.");
 			return;
 		}
 
-		// Get constructors for required objects for referenceViewer
+		// Get constructors for required objects for PDFViewer
 		let eventBusConstructor = Global.app.eventBus.constructor;
 		let linkServiceConstructor = Global.app.pdfLinkService.constructor;
 		//let findControllerConstructor = Global.app.pdfViewer.findController.constructor;

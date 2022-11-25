@@ -37,10 +37,10 @@
 
     let createReferencePreview = function () {
         if (Global.app === null) {
-            console.error("referenceViewerApplication object is null. Cannot create reference preview.");
+            console.error("PDFViewerApplication object is null. Cannot create reference preview.");
             return;
-        } else if (Global.app.referenceViewer === null) {
-            console.error("referenceViewer object is null. Cannot create reference preview.");
+        } else if (Global.app.pdfViewer === null) {
+            console.error("PDFViewer object is null. Cannot create reference preview.");
             return;
         } else if (container === null) {
             console.error("HTML div with id 'referencesContainer' is null. Cannot create reference preview.");
@@ -50,7 +50,7 @@
             return;
         }
 
-        // Get constructors for required objects for referenceViewer
+        // Get constructors for required objects for PDFViewer
         let eventBusConstructor = Global.app.eventBus.constructor
         let linkServiceConstructor = Global.app.pdfLinkService.constructor
         let findControllerConstructor = Global.app.pdfViewer.findController.constructor
@@ -78,7 +78,7 @@
             sandboxBundleSrc: scriptingSrc
         });
 
-        // Construct referenceViewer for reference preview
+        // Construct PDFViewer for reference preview
         referenceViewer = new viewerConstructor({
             container,
             eventBus,
