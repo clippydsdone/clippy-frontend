@@ -1,6 +1,6 @@
 (function (ReferenceList) {
     // ReferenceList module start
-    // Public const letiable named "name"
+    // Public const variable named "name"
     Object.defineProperty(ReferenceList, "name", {
         value: "ReferenceList",
         writable: false
@@ -24,7 +24,7 @@
             setTimeout(ReferenceList.initialize, 1);
             return;
         }
-        console.log("Global letiable loaded.");
+        console.log("Global variable loaded.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         content = document.getElementById('referencesView');

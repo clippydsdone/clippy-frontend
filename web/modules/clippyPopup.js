@@ -1,6 +1,6 @@
 (function (ClippyPopup) {
 	// clippyPopup module start
-	// Public const letiable named "name"
+	// Public const variable named "name"
 	Object.defineProperty(ClippyPopup, "name", {
 		value: "ClippyPopup",
 		writable: false,
@@ -134,16 +134,22 @@
 
 	let createPopupPreview = function () {
 		if (Global.app === null) {
-			console.error("referenceViewerApplication object is null. Cannot create reference preview.");
+			console.error("referenceViewerApplication object is null. Cannot create reference popup  preview.");
 			return;
 		} else if (Global.app.referenceViewer === null) {
-			console.error("referenceViewer object is null. Cannot create reference preview.");
+			console.error("referenceViewer object is null. Cannot create reference popup preview.");
+			return;
+		} else if (viewerDiv === null) {
+			console.error("HTML div with id 'viewerDiv' is null. Cannot create reference popup  preview.");
+			return;
+		} else if (popupDiv === null) {
+			console.error("HTML div with id 'popupDiv' is null. Cannot create reference popup  preview.");
 			return;
 		} else if (popupContainer === null) {
-			console.error("HTML div with id 'referencesContainer' is null. Cannot create reference preview.");
+			console.error("HTML div with id 'popupContainer' is null. Cannot create reference popup  preview.");
 			return;
 		} else if (popupViewer === null) {
-			console.error("HTML div with id 'referencesViewer' is null. Cannot create reference preview.");
+			console.error("HTML div with id 'popupViewer' is null. Cannot create reference popup  preview.");
 			return;
 		}
 
@@ -207,4 +213,4 @@
 	};
 
 	Clippy.addOnLoadEvent(ClippyPopup.name, ClippyPopup.initialize);
-})((window.Clippy.ReferenceList = window.Clippy.ReferenceList || {}));
+})((window.Clippy.ClippyPopup = window.Clippy.ClippyPopup || {}));
