@@ -34,6 +34,8 @@ See https://github.com/adobe-type-tools/cmap-resources
 <script src="../build/pdf.js"></script>
 
   <script src="viewer.js"></script>
+  <script src="./modules/globalVariables.js"></script>
+  <script src="./modules/referenceList.js"></script>
 
   </head>
 
@@ -91,7 +93,10 @@ See https://github.com/adobe-type-tools/cmap-resources
           </div>
           <div id="knowledgegraphView" class="hidden">
           </div>
-          <div id="referencesView" class="hidden">
+          <div id="referencesView" class="hidden" tabindex="1">
+              <div id="referencesContainer" style="position: absolute">
+                  <div id="referencesViewer" class="pdfViewer"></div>
+              </div>
           </div>
         </div>
         <div id="sidebarResizer"></div>
@@ -443,6 +448,6 @@ See https://github.com/adobe-type-tools/cmap-resources
     </div> <!-- outerContainer -->
     <div id="printContainer"></div>
 
-    <input type="file" id="fileInput" class="hidden">
+    <input type="file" id="fileInput" class="hidden" accept="application/pdf">
   </body>
 </html>
