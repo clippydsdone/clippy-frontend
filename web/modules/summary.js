@@ -64,5 +64,5 @@
     }
 
     // Execute initialize method after the document loads
-    //Clippy.addOnLoadEvent(Summary.name, Summary.initialize);
+    Clippy.addOnLoadEvent(Summary.name, Summary.initialize);
 }(window.Clippy.Summary = window.Clippy.Summary || {}));

@@ -1,6 +1,6 @@
 (function (ReferenceList) {
     // ReferenceList module start
-    // Public const letiable named "name"
+    // Public const variable named "name"
     Object.defineProperty(ReferenceList, "name", {
         value: "ReferenceList",
         writable: false
@@ -24,7 +24,7 @@
             setTimeout(ReferenceList.initialize, 1);
             return;
         }
-        console.log("References global letiable loaded.");
+        console.log("Global variable loaded.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         content = document.getElementById('referencesView');
@@ -35,12 +35,12 @@
         buildReferenceList();
     }
 
-    let createReferencePreview = async function () {
+    let createReferencePreview = function () {
         if (Global.app === null) {
-            console.error("referenceViewerApplication object is null. Cannot create reference preview.");
+            console.error("PDFViewerApplication object is null. Cannot create reference preview.");
             return;
-        } else if (Global.app.referenceViewer === null) {
-            console.error("referenceViewer object is null. Cannot create reference preview.");
+        } else if (Global.app.pdfViewer === null) {
+            console.error("PDFViewer object is null. Cannot create reference preview.");
             return;
         } else if (container === null) {
             console.error("HTML div with id 'referencesContainer' is null. Cannot create reference preview.");
@@ -50,7 +50,7 @@
             return;
         }
 
-        // Get constructors for required objects for referenceViewer
+        // Get constructors for required objects for PDFViewer
         let eventBusConstructor = Global.app.eventBus.constructor
         let linkServiceConstructor = Global.app.pdfLinkService.constructor
         let findControllerConstructor = Global.app.pdfViewer.findController.constructor
@@ -78,7 +78,7 @@
             sandboxBundleSrc: scriptingSrc
         });
 
-        // Construct referenceViewer for reference preview
+        // Construct PDFViewer for reference preview
         referenceViewer = new viewerConstructor({
             container,
             eventBus,
@@ -120,7 +120,7 @@
         let keys = Object.keys(destinations);
         for (let i = 0; i < keys.length; i++) {
             let reference = {};
-            let key = keys[i]; 
+            let key = keys[i];
             if (!key.startsWith('mk')) { // If key does not start with 'mk'
                 let tag = key.split(/[0-9]/)[0];
                 let numeric = key.substring(tag.length);
