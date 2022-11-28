@@ -6,7 +6,6 @@
     .node text {
         fill: rgb(0, 0, 0);
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 4px;
     }
 
     .link {
@@ -15,15 +14,11 @@
         stroke-opacity: 2;
     }
 
-    .link.level0 {
-        stroke: #f00;
-    }
-
-    .link.level1 {
+    .link.group1 {
         stroke: #fcd43f;
     }
 
-    .link.level2 {
+    .link.group2 {
         stroke: #57a7d1;
     }
 
@@ -34,14 +29,15 @@
         stroke-width: 1.5px;
     }
 
-    .node.level0 circle {
-        fill: #59c169;
+    .node.group1 circle {
+        fill: rgb(141, 74, 74);
     }
 </style>
 
 <body>
     <div id="mainWindow" style="width: 1000px; height: 800px; background-color: rgb(138, 229, 241);">
         <script src="https://d3js.org/d3.v4.min.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/d3plus-text@1"></script> -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script>
             (async function () {
@@ -66,116 +62,114 @@
                 window.onwheel = function () { return false; }
 
                 var simulation = d3.forceSimulation()
-                    .force("link", d3.forceLink().id(function (d) { return d.id; }).distance(60))
+                    .force("link", d3.forceLink().id(function (d) { return d.id; }).distance(500))
                     .force("charge", d3.forceManyBody())
-                    // sets a radius to reduce node overlap
-                    .force("collision", d3.forceCollide(50))
+                    .force("collision", d3.forceCollide(100))
                     .force("center", d3.forceCenter(width / 2, height / 2));
 
                 var result = {};
                 await axios({
                     method: 'POST',
-                    url: 'http://localhost:5000/semantic/paper/search',
+                    url: 'http://clippydev.herokuapp.com/semantic/paper/search',
                     data: {
                         query: "Attention is all you need."
                     },
                     headers: { 'Content-Type': 'application/json' },
                 })
-                .then((response) => result.data = response.data)
-                .catch((err) => {
-                    result.status = err.response.status;
-                    result.data = err.message;
-                });
+                    .then((response) => result = response.data)
+                    .catch((err) => {
+                        console.log(err);
+                        result.status = err.response.status;
+                        result.data = err.message;
+                    });
 
-                const graph = result.data.references; // get references
+                const graph = result.references;
                 console.log(graph);
-                
-                {
-                    //if (error) throw error;
+                var link = svg.append("g")
+                    .attr("class", "links")
+                    .call(d3.zoomTransform)
+                    .selectAll("line")
+                    .data(graph.links)
+                    .enter().append("line")
+                    .classed("link", true)
+                    .each(function (d) {
+                        var group = d.group;
+                        d3.select(this).classed("group" + group, true);
+                    });
 
-                    var link = svg.append("g")
-                        .attr("class", "links")
-                        .call(d3.zoomTransform)
-                        .selectAll("line")
-                        .data(graph.links)
-                        .enter().append("line")
-                        .classed("link", true)
-                        .each(function (d) {
-                            var level = d.level;
-                            d3.select(this)
-                                .classed("level" + level, true);
-                        });
+                var node = svg.append("g")
+                    .attr("class", "nodes")
+                    .selectAll("circle")
+                    .data(graph.nodes)
+                    .enter().append("g").attr("class", "node")
+                    .each(function (d) {
+                        var group = d.group;
+                        d3.select(this).classed("group" + group, true);
+                    })
+                    .on('mousedown', function () { d3.event.stopPropagation(); })
+                    .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended));
 
-                    var node = svg.append("g")
-                        .attr("class", "nodes")
-                        .selectAll("circle")
-                        .data(graph.nodes)
-                        .enter().append("g").attr("class", "node")
-                        .each(function (d) {
-                            var level = d.level;
-                            d3.select(this)
-                                .classed("level" + level, true);
-                        })
-                        .on('mousedown', function () { d3.event.stopPropagation(); })
-                        .call(d3.drag()
-                            .on("start", dragstarted)
-                            .on("drag", dragged)
-                            .on("end", dragended));
+                var circle = node.append("circle")
+                    .attr("r", function(d) { d.r = 100; return d.r; });
 
-                    var circle = node.append("circle")
-                        .attr("r", 20);
+                node.append("text")
+                    .attr("dy", ".3em")
+                    .style("text-anchor", "middle")
+                    .style("font-size", function(d) {
+                        var len = d.title.substring(0, d.r / 3).length;
+                        var size = d.r/3;
+                        size *= 10 / len;
+                        size += 1;
+                        return Math.round(size)+'px';
+                    })
+                    .text(function(d) {
+                        var text = d.title.substring(0, d.r / 3);
+     
+                        return text;
+                    });
 
-                    node.append("text")
-                        .attr("dx", -10)
-                        .attr("dy", ".0em")
-                        .text(function (d) { return d.title });
+                simulation
+                    .nodes(graph.nodes)
+                    .on("tick", ticked)
 
-                    node.append("text")
-                        .attr("dx", -10)
-                        .attr("dy", "1em")
-                        .text(function (d) { return d.names });
+                simulation.force("link")
+                    .links(graph.links);
 
+                function ticked() {
+                    link
+                        .attr("x1", function (d) { return d.source.x; })
+                        .attr("y1", function (d) { return d.source.y; })
+                        .attr("x2", function (d) { return d.target.x; })
+                        .attr("y2", function (d) { return d.target.y; });
 
-                    simulation
-                        .nodes(graph.nodes)
-                        .on("tick", ticked)
+                    node.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-                    simulation.force("link")
-                        .links(graph.links);
-
-                    function ticked() {
-                        link
-                            .attr("x1", function (d) { return d.source.x; })
-                            .attr("y1", function (d) { return d.source.y; })
-                            .attr("x2", function (d) { return d.target.x; })
-                            .attr("y2", function (d) { return d.target.y; });
-
-                        node.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-                        if (simulation.alpha() < 0.015) {
-                            simulation.stop();
-                            simulation.force("fixed", setFixed(node));
-                        }
+                    if (simulation.alpha() < 0.015) {
+                        simulation.stop();
+                        simulation.force("fixed", setFixed(node));
                     }
+                }
 
-                    function dragstarted(d) {
-                        d3.event.sourceEvent.stopPropagation();
-                        d3.select(this).classed("dragging", true);
-                        d.fixed = false;
-                        d.classed("fixed", false);
-                    }
+                function dragstarted(d) {
+                    d3.event.sourceEvent.stopPropagation();
+                    d3.select(this).classed("dragging", true);
+                    d.fixed = false;
+                    //d.classed("fixed", false);
+                }
 
-                    function dragged(d) {
-                        d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
-                        ticked();
-                    }
+                function dragged(d) {
+                    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+                    ticked();
+                }
 
-                    function dragended(d) {
-                        d3.select(this).classed("dragging", false);
-                        d.fixed = true;
-                        d.classed("fixed", true);
-                    }
-                };
+                function dragended(d) {
+                    d3.select(this).classed("dragging", false);
+                    d.fixed = true;
+                    //d.classed("fixed", true);
+                }
 
                 function setFixed(node) {
                     node.classed('fixed', true);
