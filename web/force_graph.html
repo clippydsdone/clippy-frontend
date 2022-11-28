@@ -73,8 +73,22 @@
                     .force("collision", d3.forceCollide(50))
                     .force("center", d3.forceCenter(width / 2, height / 2));
 
-                d3.json("data_3.json", function(error, graph) {
-                    if (error) throw error;
+                    
+                const response = await fetch('http://clippyapidev.herokuapp.com/semantic/paper/search', 
+                {
+                    method: 'POST',
+                    body:  { "query" : "Attention is all you need"} , // string or object
+                    headers: 
+                    {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                const myJson = await response.json(); //extract JSON from the http response
+                const graph = myJson.references; // get references
+
+                //d3.json("data_3.json", function(error, graph) 
+                {
+                    //if (error) throw error;
 
                     var link = svg.append("g")
                         .attr("class", "links")
@@ -83,30 +97,32 @@
                         .data(graph.links)
                         .enter().append("line")
                         .classed("link", true)
-                        .each(function (d) {
+                        .each(function (d) 
+                        {
                             var level = d.level;
                             d3.select(this)
                             .classed("level"+level, true);
                         });
 
-                var node = svg.append("g")
-                    .attr("class", "nodes")
-                    .selectAll("circle")
-                    .data(graph.nodes)
-                    .enter().append("g").attr("class", "node")
-                    .each(function (d) {
-                        var level = d.level;
-                        d3.select(this)
-                        .classed("level"+level, true);
-                    })
-                    .on('mousedown', function() { d3.event.stopPropagation(); })
-                    .call(d3.drag()
-                        .on("start", dragstarted)
-                        .on("drag", dragged)
-                        .on("end", dragended));
-                    
-                var circle = node.append("circle")
-                    .attr("r", 20);
+                    var node = svg.append("g")
+                        .attr("class", "nodes")
+                        .selectAll("circle")
+                        .data(graph.nodes)
+                        .enter().append("g").attr("class", "node")
+                        .each(function (d) 
+                        {
+                            var level = d.level;
+                            d3.select(this)
+                            .classed("level"+level, true);
+                        })
+                        .on('mousedown', function() { d3.event.stopPropagation(); })
+                        .call(d3.drag()
+                            .on("start", dragstarted)
+                            .on("drag", dragged)
+                            .on("end", dragended));
+                        
+                    var circle = node.append("circle")
+                        .attr("r", 20);
 
                     node.append("text")
                         .attr("dx", -10)
@@ -151,17 +167,19 @@
                         d.classed("fixed", false);
                     }
 
-                    function dragged(d) {
+                    function dragged(d) 
+                    {
                         d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
                         ticked();
                     }
 
-                    function dragended(d) {
+                    function dragended(d) 
+                    {
                         d3.select(this).classed("dragging", false);
                         d.fixed = true;
                         d.classed("fixed", true);
                     }
-                });
+                };
 
                 function setFixed(node)
                 {
