@@ -23,12 +23,9 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
-/* 0 */,
+/* 0 */ null,
 /* 1 */
 /***/ ((__unused_webpack_module, exports) => {
-
-
-
       Object.defineProperty(exports, "__esModule", ({
         value: true
       }));
@@ -1824,9 +1821,9 @@
           this.pdfOutlineViewer.reset();
           this.pdfAttachmentViewer.reset();
           this.pdfLayerViewer.reset();
-          this.pdfSummaryViewer.reset();
-          this.pdfKnowledgeGraphViewer.reset();
-          this.pdfReferencesViewer, reset();
+          this.pdfSummaryViewer?.reset();
+          this.pdfKnowledgeGraphViewer?.reset();
+          this.pdfReferencesViewer?.reset();
           this.pdfHistory?.reset();
           this.findBar?.reset();
           this.toolbar.reset();
@@ -3003,14 +3000,14 @@
           const file = evt.fileInput.files[0];
           let url = URL.createObjectURL(file);
           if (file.name) {
-						var reader = new FileReader();
+						const reader = new FileReader()
 						reader.readAsDataURL(file); 
 						reader.onloadend = function() {
 							localStorage.setItem("lastOpenedFile", reader.result);
 						}
 						url = {
 							url,
-							originalUrl: file.name,
+							originalUrl: file.name
 						};
 					}
 					PDFViewerApplication.open(url);

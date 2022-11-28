@@ -1129,6 +1129,11 @@
   --toolbarButton-viewOutline-icon: url(images/toolbarButton-viewOutline.svg);
   --toolbarButton-viewAttachments-icon: url(images/toolbarButton-viewAttachments.svg);
   --toolbarButton-viewLayers-icon: url(images/toolbarButton-viewLayers.svg);
+
+  --toolbarButton-viewSummary-icon: url(images/toolbarButton-viewSummary.svg);
+  --toolbarButton-viewKnowledgeGraph-icon: url(images/toolbarButton-viewKnowledgeGraph.svg);
+  --toolbarButton-viewReferences-icon: url(images/toolbarButton-viewReferences.svg);
+
   --toolbarButton-currentOutlineItem-icon: url(images/toolbarButton-currentOutlineItem.svg);
   --toolbarButton-search-icon: url(images/toolbarButton-search.svg);
   --findbarButton-previous-icon: url(images/findbarButton-previous.svg);
@@ -2335,6 +2340,21 @@ a.secondaryToolbarButton[href="#"] {
 #viewLayers::before {
   -webkit-mask-image: var(--toolbarButton-viewLayers-icon);
           mask-image: var(--toolbarButton-viewLayers-icon);
+}
+
+#viewSummary::before {
+  -webkit-mask-image: var(--toolbarButton-viewSummary-icon);
+          mask-image: var(--toolbarButton-viewSummary-icon);
+}
+
+#viewKnowledgeGraph::before {
+  -webkit-mask-image: var(--toolbarButton-viewKnowledgeGraph-icon);
+          mask-image: var(--toolbarButton-viewKnowledgeGraph-icon);
+}
+
+#viewReferences::before {
+  -webkit-mask-image: var(--toolbarButton-viewReferences-icon);
+          mask-image: var(--toolbarButton-viewReferences-icon);
 }
 
 #currentOutlineItem::before {
