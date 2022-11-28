@@ -1,5 +1,5 @@
 function setSize(){
-    $("#knowledgegraph").height(window.innerHeight - ($("#toolbarContainer").height() + $("#toolbarSidebar").height() + 10));
+    $("#knowledgegraph").height($("#sidebarContent").innerHeight() - 10);
     $("#knowledgegraph").width($("#sidebarContent").innerWidth() - 5);
 }
 
