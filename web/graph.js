@@ -5,7 +5,7 @@ function setSize(){
 
 function addGraph(){
     var graph = document.createElement("iframe");
-    graph.setAttribute("src", "k_g.html");
+    graph.setAttribute("src", "graph.html");
     graph.setAttribute("id", "knowledgegraph");
     $(document).ready(function() {
         $("#knowledgegraphView").append(graph);
