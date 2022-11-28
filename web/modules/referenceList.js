@@ -24,7 +24,7 @@
             setTimeout(ReferenceList.initialize, 1);
             return;
         }
-        console.log("Global letiable loaded.");
+        console.log("References global letiable loaded.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         content = document.getElementById('referencesView');
@@ -35,7 +35,7 @@
         buildReferenceList();
     }
 
-    let createReferencePreview = function () {
+    let createReferencePreview = async function () {
         if (Global.app === null) {
             console.error("referenceViewerApplication object is null. Cannot create reference preview.");
             return;

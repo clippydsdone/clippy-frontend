@@ -33,9 +33,11 @@ See https://github.com/adobe-type-tools/cmap-resources
     <script src="../build/pdf.js"></script>
     <script src="viewer.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="graph.js"></script>
     <script src="./modules/globalVariables.js"></script>
     <script src="./modules/referenceList.js"></script>
+    <script src="./modules/summary.js"></script>
   </head>
 
   <body tabindex="1">
@@ -89,6 +91,9 @@ See https://github.com/adobe-type-tools/cmap-resources
           <div id="layersView" class="hidden">
           </div>
           <div id="summaryView" class="hidden">
+            <div id="summaryContainer" style="position: absolute">
+              <div id="summaryViewer" class="pdfViewer"></div>
+          </div>
           </div>
           <div id="knowledgegraphView" class="hidden">
           </div>
