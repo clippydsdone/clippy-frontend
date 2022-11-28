@@ -29,15 +29,16 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     <link rel="stylesheet" href="viewer.css">
 
-<!-- This snippet is used in production (included from viewer.html) -->
-<link rel="resource" type="application/l10n" href="locale/locale.properties">
-<script src="../build/pdf.js"></script>
-
-  <script src="viewer.js"></script>
-  <script src="./modules/globalVariables.js"></script>
-  <script src="./modules/referenceList.js"></script>
-  <script src="./modules/clippyPopup.js"></script>
-
+    <link rel="resource" type="application/l10n" href="locale/locale.properties">
+    <script src="../build/pdf.js"></script>
+    <script src="viewer.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="graph.js"></script>
+    <script src="./modules/globalVariables.js"></script>
+    <script src="./modules/referenceList.js"></script>
+    <script src="./modules/summary.js"></script>
+    <script src="./modules/clippyPopup.js"></script>
   </head>
 
   <body tabindex="1">
@@ -75,11 +76,39 @@ See https://github.com/adobe-type-tools/cmap-resources
                       <div id="outlineOptionsContainer" class="hidden">
                           <div class="verticalToolbarSeparator"></div>
 
+<<<<<<< HEAD
                           <button id="currentOutlineItem" class="toolbarButton" disabled="disabled" title="Find Current Outline Item" tabindex="6" data-l10n-id="current_outline_item">
                               <span data-l10n-id="current_outline_item_label">Current Outline Item</span>
                           </button>
                       </div>
                   </div>
+=======
+              <button id="currentOutlineItem" class="toolbarButton" disabled="disabled" title="Find Current Outline Item" tabindex="6" data-l10n-id="current_outline_item">
+                <span data-l10n-id="current_outline_item_label">Current Outline Item</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="sidebarContent">
+          <div id="thumbnailView">
+          </div>
+          <div id="outlineView" class="hidden">
+          </div>
+          <div id="attachmentsView" class="hidden">
+          </div>
+          <div id="layersView" class="hidden">
+          </div>
+          <div id="summaryView" class="hidden">
+            <div id="summaryContainer" style="position: absolute">
+              <div id="summaryViewer" class="pdfViewer"></div>
+          </div>
+          </div>
+          <div id="knowledgegraphView" class="hidden">
+          </div>
+          <div id="referencesView" class="hidden" tabindex="1">
+              <div id="referencesContainer" style="position: absolute">
+                  <div id="referencesViewer" class="pdfViewer"></div>
+>>>>>>> dev
               </div>
               <div id="sidebarContent">
                   <div id="thumbnailView">

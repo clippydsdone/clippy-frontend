@@ -3000,7 +3000,7 @@
           const file = evt.fileInput.files[0];
           let url = URL.createObjectURL(file);
           if (file.name) {
-						const reader = new FileReader();
+						const reader = new FileReader()
 						reader.readAsDataURL(file); 
 						reader.onloadend = function() {
 							localStorage.setItem("lastOpenedFile", reader.result);
