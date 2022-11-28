@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<title>Force graph , sticky, zoom, title, author names + expandable for multiple levels of connections</title>
+<style>
+    .node text {
+        fill: rgb(0, 0, 0);
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .link {
+        stroke-width: 3px;
+        stroke: rgb(64, 139, 224);
+        stroke-opacity: 2;
+    }
+
+    .link.group1 {
+        stroke: #fcd43f;
+    }
+
+    .link.group2 {
+        stroke: #57a7d1;
+    }
+
+    .node circle {
+        cursor: move;
+        fill: rgb(23, 207, 177);
+        stroke: rgb(119, 170, 190);
+        stroke-width: 1.5px;
+    }
+
+    .node.group1 circle {
+        fill: rgb(141, 74, 74);
+    }
+</style>
+
+<body>
+    <div id="mainWindow" style="width: 1000px; height: 800px; background-color: rgb(138, 229, 241);">
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/d3plus-text@1"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+            (async function () {
+                var height = 800;
+                var width = 1000;
+
+                var zoom = d3.zoom()
+                    .scaleExtent([0.1, 8])
+                    .on("zoom", zoomed);
+
+                var svg = d3.select("#mainWindow").append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .call(zoom)
+                    .append("g")
+                    .attr("id", "allZ");
+
+                // initial zoom level and call zoom manually
+                zoom.scaleTo(d3.select("svg"), 0.35);
+
+                // If zoom hits limit the mousewheel events revert to scrolling the page.
+                window.onwheel = function () { return false; }
+
+                var simulation = d3.forceSimulation()
+                    .force("link", d3.forceLink().id(function (d) { return d.id; }).distance(500))
+                    .force("charge", d3.forceManyBody())
+                    .force("collision", d3.forceCollide(100))
+                    .force("center", d3.forceCenter(width / 2, height / 2));
+
+                var result = {};
+                await axios({
+                    method: 'POST',
+                    url: 'https://clippyapidev.herokuapp.com/semantic/paper/search',
+                    data: {
+                        query: "Attention is all you need."
+                    },
+                    headers: { 'Content-Type': 'application/json' },
+                })
+                .then((response) => result = response.data)
+                .catch((err) => {
+                    console.log(err);
+                    result.status = err.response.status;
+                    result.data = err.message;
+                });
+
+                const graph = result.references;
+                console.log(graph);
+                var link = svg.append("g")
+                    .attr("class", "links")
+                    .call(d3.zoomTransform)
+                    .selectAll("line")
+                    .data(graph.links)
+                    .enter().append("line")
+                    .classed("link", true)
+                    .each(function (d) {
+                        var group = d.group;
+                        d3.select(this).classed("group" + group, true);
+                    });
+
+                var node = svg.append("g")
+                    .attr("class", "nodes")
+                    .selectAll("circle")
+                    .data(graph.nodes)
+                    .enter().append("g").attr("class", "node")
+                    .each(function (d) {
+                        var group = d.group;
+                        d3.select(this).classed("group" + group, true);
+                    })
+                    .on('mousedown', function () { d3.event.stopPropagation(); })
+                    .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended));
+
+                var circle = node.append("circle")
+                    .attr("r", function(d) { d.r = 100; return d.r; });
+
+                node.append("text")
+                    .attr("dy", ".3em")
+                    .style("text-anchor", "middle")
+                    .style("font-size", function(d) {
+                        var len = d.title.substring(0, d.r / 3).length;
+                        var size = d.r/3;
+                        size *= 10 / len;
+                        size += 1;
+                        return Math.round(size)+'px';
+                    })
+                    .text(function(d) {
+                        var text = d.title.substring(0, d.r / 3);
+     
+                        return text;
+                    });
+
+                simulation
+                    .nodes(graph.nodes)
+                    .on("tick", ticked)
+
+                simulation.force("link")
+                    .links(graph.links);
+
+                function ticked() {
+                    link
+                        .attr("x1", function (d) { return d.source.x; })
+                        .attr("y1", function (d) { return d.source.y; })
+                        .attr("x2", function (d) { return d.target.x; })
+                        .attr("y2", function (d) { return d.target.y; });
+
+                    node.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+                    if (simulation.alpha() < 0.015) {
+                        simulation.stop();
+                        simulation.force("fixed", setFixed(node));
+                    }
+                }
+
+                function dragstarted(d) {
+                    d3.event.sourceEvent.stopPropagation();
+                    d3.select(this).classed("dragging", true);
+                    d.fixed = false;
+                    //d.classed("fixed", false);
+                }
+
+                function dragged(d) {
+                    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+                    ticked();
+                }
+
+                function dragended(d) {
+                    d3.select(this).classed("dragging", false);
+                    d.fixed = true;
+                    //d.classed("fixed", true);
+                }
+
+                function setFixed(node) {
+                    node.classed('fixed', true);
+                    node.each(function (d) {
+                        d.fixed = true;
+                    });
+                }
+
+                function zoomed() {
+                    var allZ = d3.select("#allZ");
+                    allZ.attr("transform", "translate(" + d3.event.transform.x + "," + d3.event.transform.y + ")scale(" + d3.event.transform.k + ")");
+                }
+            })()
+        </script>
+    </div>
+</body>
+
+</html>

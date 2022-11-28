@@ -1,0 +1,163 @@
+{"nodes":[
+    {"id": "Cloud computing adoption framework: A security framework for business clouds", 
+        "title":"Cloud computing adoption framework: A security framework for business clouds", 
+        "names": "Chang, V., Kuo, YH. , Ramachandran, M. ",  "level": 1},
+
+    {"id": "Toward a usage-based security framework forcollaborative computing systems",
+        "title": "Toward a usage-based security framework forcollaborative computing systems", 
+        "names": "X., Zhang, M., Nakae, M. J., Covington & R., Sandhu", "level": 2},
+
+    {"id": "Securecloud: Towards a comprehensive security framework for cloud computing environments", 
+        "title": "Securecloud: Towards a comprehensive security framework for cloud computing environments",
+        "names":"H., Takabi, J. B., Joshi, & G. J., Ahn", "level": 2},
+
+    {"id": "A security framework for wireless sensor networks",
+        "title": "A security framework for wireless sensor networks", 
+        "names": "T., Zia, & A., Zomaya.",  "level": 2},
+
+    {"id": "Cloud security and privacy: an enterprise perspective on risks and compliance",
+        "title":"Cloud security and privacy: an enterprise perspective on risks and compliance", 
+        "names": " T., Mather, S., Kumaraswamy, & S., Latif.", "level": 2},
+
+    {"id": "Cloud computing—The business perspective. Decision Support Systems",
+        "title":"Cloud computing—The business perspective. Decision Support Systems", 
+        "names": " S., Marston, Z., Li, S., Bandyopadhyay, J., Zhang, & A., Ghalsasi. ", "level": 2},
+
+    {"id": "Cloud Storage and Bioinformatics in a private cloud deployment: Lessons for Data Intensive research",
+        "title":"Cloud Storage and Bioinformatics in a private cloud deployment: Lessons for Data Intensive research", 
+        "names": " V., Chang, R. J., Walters, & G., Wills. ", "level": 2},
+
+    {"id": "Cloud Security proposed and demonstrated by Cloud Computing Adoption Framework",
+        "title":"Cloud Security proposed and demonstrated by Cloud Computing Adoption Framework", 
+        "names": " M. Ramachandran, & V., Chang. ", "level": 2},
+
+    {"id": "A new trusted and collaborative agent based approach for ensuring cloud security",
+        "title":"A new trusted and collaborative agent based approach for ensuring cloud security", 
+        "names": "  S., Pal, S., Khatua, N., Chaki, & S., Sanyal. ", "level": 2},
+
+    {"id": "Framework for Improving Critical Infrastructure Cybersecurity",
+        "title":"Framework for Improving Critical Infrastructure Cybersecurity", 
+        "names": " NIST ", "level": 2},
+
+    {"id": "A Survey on Security Issues in Service Delivery Models of Cloud Computing",
+        "title":"A Survey on Security Issues in Service Delivery Models of Cloud Computing", 
+        "names": " S. Subashini and V. Kavitha.", "level": 2},
+
+    {"id": "MarketScope for Enterprise File Synchronization and Sharing",
+        "title":"MarketScope for Enterprise File Synchronization and Sharing", 
+        "names": " M., Basso and J. Mann. ", "level": 2},
+
+    {"id": "A Hybrid Cloud Storage Architecture for Service Operational High Availability",
+        "title":"A Hybrid Cloud Storage Architecture for Service Operational High Availability", 
+        "names": " Y.H., Kuo, Y.L., Jeng, and J.N., Chen. ", "level": 2},
+
+    {"id": "Dropbox and Box Leak Files in Security Through Obscurity Nightmare",
+        "title":"Dropbox and Box Leak Files in Security Through Obscurity Nightmare", 
+        "names": " J., Sanders ", "level": 2},
+
+    {"id": "Open Source Cloud Technologies",
+        "title":"Open Source Cloud Technologies", 
+        "names": " S.A., Baset ", "level": 2},
+
+    {"id": "Scalable SQL and NoSQL Data Stores",
+        "title":"Scalable SQL and NoSQL Data Stores", 
+        "names": " R., Cattell ", "level": 2},
+
+    {"id": "Survey on NoSQL database",
+        "title":"Survey on NoSQL database", 
+        "names": " J., Han, E., Haihong, G., Le, and J., Du ", "level": 2},
+
+    {"id": "Apparatus, Method, and Non-transitory Computer Readable Storage Medium Thereof for Controlling Access of a Resource",
+        "title":"Apparatus, Method, and Non-transitory Computer Readable Storage Medium Thereof for Controlling Access of a Resource", 
+        "names": " Y.H., Kuo and Y.L., Jeng ", "level": 2},
+
+    {"id": "Cloud Storage Server and Management Method Thereof",
+        "title":"Cloud Storage Server and Management Method Thereof", 
+        "names": " Y.H., Kuo and Y.L., Jeng ", "level": 2},
+
+    {"id": "On the Security of Public Key Protocols",
+        "title":"On the Security of Public Key Protocols", 
+        "names": " D., Dolev and A.C., Yao ", "level": 2},
+
+    {"id": "Stronger Key Derivation via Sequential Memory-hard Functions",
+        "title":"Stronger Key Derivation via Sequential Memory-hard Functions", 
+        "names": " C., Percival ", "level": 2},
+
+    {"id": "Secure Synchronization Apparatus, Method, and Non-Transitory Computer Readable Storage Medium Thereof",
+        "title":"Secure Synchronization Apparatus, Method, and Non-Transitory Computer Readable Storage Medium Thereof", 
+        "names": " Y.H. Kuo and Y.L. Jeng ", "level": 2},
+
+    {"id": "Towards Data Security with the Cloud Computing Adoption Framework",
+        "title":"Towards Data Security with the Cloud Computing Adoption Framework", 
+        "names": " V., Chang, & M. Ramachandran ", "level": 2}
+],
+
+"links": [
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Toward a usage-based security framework forcollaborative computing systems", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Securecloud: Towards a comprehensive security framework for cloud computing environments", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "A security framework for wireless sensor networks", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Cloud security and privacy: an enterprise perspective on risks and compliance", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Cloud computing—The business perspective. Decision Support Systems", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Cloud Storage and Bioinformatics in a private cloud deployment: Lessons for Data Intensive research", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Cloud Security proposed and demonstrated by Cloud Computing Adoption Framework", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "A new trusted and collaborative agent based approach for ensuring cloud security", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Framework for Improving Critical Infrastructure Cybersecurity", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "A Survey on Security Issues in Service Delivery Models of Cloud Computing", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "MarketScope for Enterprise File Synchronization and Sharing", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "A Hybrid Cloud Storage Architecture for Service Operational High Availability", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Dropbox and Box Leak Files in Security Through Obscurity Nightmare", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Open Source Cloud Technologies", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Scalable SQL and NoSQL Data Stores", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Survey on NoSQL database", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Apparatus, Method, and Non-transitory Computer Readable Storage Medium Thereof for Controlling Access of a Resource", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Cloud Storage Server and Management Method Thereof", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "On the Security of Public Key Protocols", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Stronger Key Derivation via Sequential Memory-hard Functions", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Secure Synchronization Apparatus, Method, and Non-Transitory Computer Readable Storage Medium Thereof", "level": 2},
+
+    {"source": "Cloud computing adoption framework: A security framework for business clouds", 
+        "target": "Towards Data Security with the Cloud Computing Adoption Framework", "level": 2}
+
+  ]
+}
