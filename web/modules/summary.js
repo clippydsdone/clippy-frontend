@@ -1,7 +1,7 @@
 (function (Summary) {
     // Summary module start
-    // Public const letiable named "name"
-    Object.defineProperty(Summary, "summaryName", {
+    // Public const variable named "name"
+    Object.defineProperty(Summary, "name", {
         value: "Summary",
         writable: false
     });
@@ -20,7 +20,7 @@
             setTimeout(Summary.initialize, 1);
             return;
         }
-        console.log("Sumamry global letiable loaded.");
+        console.log("Summary global variable loaded.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         content = document.getElementById('summaryView');
@@ -65,4 +65,4 @@
 
     // Execute initialize method after the document loads
     //Clippy.addOnLoadEvent(Summary.name, Summary.initialize);
-}(window.Clippy.ReferenceList = window.Clippy.ReferenceList || {}));
+}(window.Clippy.Summary = window.Clippy.Summary || {}));
