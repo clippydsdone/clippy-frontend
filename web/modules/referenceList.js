@@ -24,7 +24,7 @@
             setTimeout(ReferenceList.initialize, 1);
             return;
         }
-        console.log("References global letiable loaded.");
+        console.log("Global variable loaded.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         content = document.getElementById('referencesView');
@@ -35,7 +35,7 @@
         buildReferenceList();
     }
 
-    let createReferencePreview = async function () {
+    let createReferencePreview = function () {
         if (Global.app === null) {
             console.error("PDFViewerApplication object is null. Cannot create reference preview.");
             return;
@@ -120,7 +120,7 @@
         let keys = Object.keys(destinations);
         for (let i = 0; i < keys.length; i++) {
             let reference = {};
-            let key = keys[i]; 
+            let key = keys[i];
             if (!key.startsWith('mk')) { // If key does not start with 'mk'
                 let tag = key.split(/[0-9]/)[0];
                 let numeric = key.substring(tag.length);
