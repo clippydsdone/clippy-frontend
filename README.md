@@ -83,11 +83,11 @@ Replace ``ModuleName`` (best with ``CTRL + H``) with the desired name of your mo
 
 And also modify ``./web/viewer.html`` and put your script here:
 ```html
-        <script src="viewer.js"></script>
-        <script src="modules/globalVariables.js"></script>
-        <script src="modules/clippyPopup.js"></script>
-        <script src="modules/referenceList.js"></script>
-        <script src="modules/ModuleName.js"></script>
+        <script src="./modules/globalVariables.js"></script>
+        <script src="./modules/summary.js"></script>
+        <script src="./modules/referenceList.js"></script>
+        <script src="./modules/popupPreview.js"></script>
+        <script src="./modules/ModuleName.js"></script>
 ```
 ### Instantiate a PDF.js class
 If you wish to instantiate an object belonging to any PDF.js class (this example uses PdfDocument class), your best way is the following:
