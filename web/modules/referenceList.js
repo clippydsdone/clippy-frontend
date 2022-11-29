@@ -1,14 +1,14 @@
 (function (ReferenceList) {
     // ReferenceList module start
-    // Public const variable named "name"
+    // Define module name as constant
     Object.defineProperty(ReferenceList, "name", {
         value: "ReferenceList",
         writable: false
     });
 
-    let content = null;    // Parent div of content to be displayed in sidebar
-    let container = null;    // Container for the viewer
-    let viewer = null;    // Div of the viewer
+    let content = null;     // Parent div of content to be displayed in sidebar
+    let container = null;   // Container for the viewer
+    let viewer = null;      // Div of the viewer
     let referenceList = [];
 
     let referenceViewer = null;
@@ -17,14 +17,14 @@
     // Initializer method
     ReferenceList.initialize = async function () {
         // TODO: fix this terribleness
-        if (Global.app === 'undefined') {
-            setTimeout(ReferenceList.initialize, 1);
+        if (Global.isNull(Global.app)) {
+            setTimeout(ReferenceList.initialize, 100);
             return;
-        } else if (typeof Global.doc === 'undefined') {
-            setTimeout(ReferenceList.initialize, 1);
+        } else if (Global.isNull(Global.doc)) {
+            setTimeout(ReferenceList.initialize, 100);
             return;
         }
-        console.log("Global variable loaded.");
+        console.log("Initializing ReferenceList.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         content = document.getElementById('referencesView');
@@ -36,16 +36,16 @@
     }
 
     let createReferencePreview = function () {
-        if (Global.app === null) {
+        if (Global.isNull(Global.app)) {
             console.error("PDFViewerApplication object is null. Cannot create reference preview.");
             return;
-        } else if (Global.app.pdfViewer === null) {
+        } else if (Global.isNull(Global.app.pdfViewer)) {
             console.error("PDFViewer object is null. Cannot create reference preview.");
             return;
-        } else if (container === null) {
+        } else if (Global.isNull(container)) {
             console.error("HTML div with id 'referencesContainer' is null. Cannot create reference preview.");
             return;
-        } else if (viewer === null) {
+        } else if (Global.isNull(viewer)) {
             console.error("HTML div with id 'referencesViewer' is null. Cannot create reference preview.");
             return;
         }

@@ -1,22 +1,38 @@
-(function (ClippyPopup) {
-	// clippyPopup module start
-	// Public const variable named "name"
-	Object.defineProperty(ClippyPopup, "name", {
-		value: "ClippyPopup",
-		writable: false,
+(function (PopupPreview) {
+	// PopupPreview module start
+	// Define module name as constant
+	Object.defineProperty(PopupPreview, "name", {
+		value: "PopupPreview",
+		writable: false
 	});
 
 	let isPreviewing = false;
-	let popupPdfViewer;
-	let popupLinkService;
-	let popupDiv = null; // Parent div of content to be displayed in popup, this can be moved
-	let popupContainer = null; // Container for the viewer div, this cannot be moved, needs to be {position = "absolute"}
-	let popupViewer = null; // Div of the popup viewer
+	let popupPdfViewer = null;
+	let popupLinkService = null;
+	let popupDiv = null;		// Parent div of content to be displayed in popup, this can be moved
+	let popupContainer = null;  // Container for the viewer div, this cannot be moved, needs to be {position = "absolute"}
+	let popupViewer = null;		// Div of the popup viewer
+	let viewerDiv = null;		// main app viewer div.
 
-	var viewerDiv; // main app viewer div.
+	// Initializer method
+	PopupPreview.initialize = async function () {
+		if (Global.isNull(Global.doc)) {
+			setTimeout(PopupPreview.initialize, 100);
+		} else {
+			console.log("Initializing PopupPreview.");
+
+			viewerDiv = document.getElementById("viewer"); // Main non-popup viewer
+			popupDiv = document.getElementById("popupView");
+			popupContainer = document.getElementById("popupContainer");
+			popupViewer = document.getElementById("popupViewer");
+
+			createPopupPreview();
+			PopupPreview.togglePreview();
+		}
+	};
 
 	//Incase we want the option to turn previewing off.
-	ClippyPopup.togglePreview = function () {
+	PopupPreview.togglePreview = function () {
 		if (isPreviewing) {
 			previewOff();
 			isPreviewing = true;
@@ -27,13 +43,13 @@
 	};
 
 	let previewOn = function () {
-		console.log("Popup preview is ON");
+		//console.log("Popup preview is enabled");
 		Global.app.__previewFunc = previewFunc;
 		viewerDiv.addEventListener("mouseover", Global.app.__previewFunc);
 	};
 
 	let previewOff = function () {
-		console.log("Popup preview is OFF");
+		//console.log("Popup preview is disabled");
 		viewerDiv.removeEventListener("mouseover", Global.app.__previewFunc);
 		delete Global.app.__previewFunc;
 	};
@@ -64,7 +80,7 @@
 		 **/
 
 		//Get the destination(where the reference is pointing to).
-		const refDestination = await Global.app.pdfDocument.getDestination(referenceID);
+		const refDestination = await Global.doc.getDestination(referenceID);
 
 		//Clears out errors caused by non reference hyperlinks.
 		if (refDestination == null) {
@@ -76,10 +92,10 @@
 		popupLinkService.goToDestination(refDestination);
 
 		//Figure out the size of popup windows based on the viewport of the internal popupViewer viewport
-		const pageNum = Global.app.pdfLinkService._cachedPageNumber(refDestination[0]);
+		const pageNum = Global.linker._cachedPageNumber(refDestination[0]);
 		popupPdfViewer.pdfDocument.getPage(pageNum).then(function (pdfPage) {
 			/**
-			 * @param {double} Global.app.pdfViewer.currentScale 	the Zoom amount inside of the viewer
+			 * @param {double} Global.viewer.currentScale 	the Zoom amount inside of the viewer
 			 * @param {double} event.clientX	Mouse coordinate X
 			 * @param {double} event.clientY	Mouse coordinate Y
 			 **/
@@ -116,38 +132,23 @@
 		);
 	};
 
-	// Initializer method
-	ClippyPopup.initialize = async function () {
-		if (!Global.app || typeof Global.doc === "undefined") {
-			setTimeout(ClippyPopup.initialize, 100);
-		} else {
-			viewerDiv = document.getElementById("viewer"); // Main non-popup viewer
-			popupDiv = document.getElementById("popupDiv");
-			popupContainer = document.getElementById("popupContainer");
-			popupViewer = document.getElementById("popupViewer");
-
-			createPopupPreview();
-			ClippyPopup.togglePreview();
-		}
-	};
-
-	let createPopupPreview = function () {
-		if (Global.app === null) {
-			console.error("PDFViewerApplication object is null. Cannot create reference popup  preview.");
+	let createPopupPreview = async function () {
+		if (Global.isNull(Global.app)) {
+			console.error("PDFViewerApplication object is null. Cannot create reference popup preview.");
 			return;
-		} else if (Global.app.pdfViewer === null) {
+		} else if (Global.isNull(Global.app.pdfViewer)) {
 			console.error("PDFViewer object is null. Cannot create reference popup preview.");
 			return;
-		} else if (viewerDiv === null) {
+		} else if (Global.isNull(viewerDiv)) {
 			console.error("HTML div with id 'viewerDiv' is null. Cannot create reference popup preview.");
 			return;
-		} else if (popupDiv === null) {
+		} else if (Global.isNull(popupDiv)) {
 			console.error("HTML div with id 'popupDiv' is null. Cannot create reference popup preview.");
 			return;
-		} else if (popupContainer === null) {
-			console.error("HTML div with id 'popupContainer' is null. Cannot create reference popup  preview.");
+		} else if (Global.isNull(popupContainer)) {
+			console.error("HTML div with id 'popupContainer' is null. Cannot create reference popup preview.");
 			return;
-		} else if (popupViewer === null) {
+		} else if (Global.isNull(popupViewer)) {
 			console.error("HTML div with id 'popupViewer' is null. Cannot create reference popup preview.");
 			return;
 		}
@@ -211,5 +212,5 @@
 		return;
 	};
 
-	Clippy.addOnLoadEvent(ClippyPopup.name, ClippyPopup.initialize);
-})((window.Clippy.ClippyPopup = window.Clippy.ClippyPopup || {}));
+	Clippy.addOnLoadEvent(PopupPreview.name, PopupPreview.initialize);
+})((window.Clippy.PopupPreview = window.Clippy.PopupPreview || {}));
