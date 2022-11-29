@@ -33,7 +33,7 @@ We currently have 3 modules:
 
 These and all futures modules should be located at ``./web/modules/``.
 ## Templates
-When writing javascript code, please use keyword ``let`` instead of ``var``, and use the semicolon (``;``) at the end of each line.
+When writing javascript code, please use keyword ``let`` instead of ``var``, and use the semicolon (``;``) at the end of each line. ``Global.isNull(variable)`` is a good shortcut for checking whether the variable is ``null`` **or** ``undefined``.
 ### Create a module
 To create your own module, create  ``./web/modules/ModuleName.js`` and copy-paste the following:
 ```js
