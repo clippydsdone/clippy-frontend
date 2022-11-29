@@ -39,7 +39,7 @@ To create your own module, create  ``./web/modules/ModuleName.js`` and copy-past
 ```js
 (function (ModuleName) { // Replace 'ModuleName' with your module name
     // Official name of the module
-    Object.defineProperty(ReferenceList, "name", {
+    Object.defineProperty(ModuleName, "name", {
         value: "ModuleName", // Replace 'ModuleName' with your module name
         writable: false
     });
