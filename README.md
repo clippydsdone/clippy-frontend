@@ -48,7 +48,7 @@ To create your own module, create  ``./web/modules/ModuleName.js`` and copy-past
     let priv_var = true;
  
     // Public Property
-    ModuleName.pub_var = 'Bacon Strips';
+    ModuleName.pub_var = 'Public String';
  
     // Public const Property
     Object.defineProperty(ModuleName, "const_pub_var", {
