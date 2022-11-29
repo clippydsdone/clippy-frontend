@@ -40,6 +40,10 @@
 		return variable === null || typeof variable === 'undefined';
 	} 
 
+	Global.deepCopy = function(variable) {
+		return Object.assign(Object.create(Object.getPrototypeOf(variable)), variable)
+	}
+
 	setProperties();
 })((window.Global = window.Global || {}));
 

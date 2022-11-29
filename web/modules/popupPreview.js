@@ -200,7 +200,7 @@
 		});
 
 		// Deep copy the active PDF document from the viewer
-		let documentClone = Object.assign(Object.create(Object.getPrototypeOf(Global.viewer.pdfDocument)), Global.viewer.pdfDocument);
+		let documentClone = Global.deepCopy(Global.viewer.pdfDocument);
 		popupPdfViewer.setDocument(documentClone);
 		popupLinkService.setDocument(documentClone, null);
 
