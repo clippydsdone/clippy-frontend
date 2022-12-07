@@ -7550,7 +7550,7 @@
       exports.PDFSidebarResizer = void 0;
       var _ui_utils = __webpack_require__(1);
       const SIDEBAR_WIDTH_VAR = "--sidebar-width";
-      const SIDEBAR_MIN_WIDTH = 200;
+      const SIDEBAR_MIN_WIDTH = 255;
       const SIDEBAR_RESIZING_CLASS = "sidebarResizing";
       class PDFSidebarResizer {
         constructor(options, eventBus, l10n) {
