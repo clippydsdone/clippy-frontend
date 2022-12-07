@@ -6,13 +6,31 @@
         writable: false
     });
 
+    // HTML elements
     let content = null;     // Parent div of content to be displayed in sidebar
     let container = null;   // Container for the viewer
     let viewer = null;      // Div of the viewer
-    let referenceList = [];
     let zoomInButton = [];
     let zoomOutButton = [];
 
+    // Reference List elements
+    let referenceList = [];
+    let validReferences = {
+        /*
+        "aff": "AFF"
+        "para": "Paragraph",
+        "sec": "Section",
+        "crf": "CRF",
+        */
+        "bib": "Bibliography",
+        "cor": "Corresponding Author",        
+        "eqn": "Equation",
+        "fig": "Figure",
+        "tbl": "Table",
+        "ueqn": "Inequation"
+    };
+
+    // Preview (PDFViewer) elements
     let referenceViewer = null;
     let referenceLinkService = null;
 
@@ -116,7 +134,7 @@
 
         eventBus.on("pagesinit", function () {
             // We can use referenceViewer now, e.g. let's change default scale.
-            referenceViewer.currentScaleValue = "actual-size";
+            referenceViewer.currentScaleValue = "page-actual";
 
             zoomInButton.addEventListener("click", function () {
                 if (referenceViewer.currentScale <= 9.8) {
@@ -156,80 +174,19 @@
         destinations = await Global.doc.getDestinations();
         let keys = Object.keys(destinations);
         for (let i = 0; i < keys.length; i++) {
+            let key = keys[i]; // fig0001
+            let tag = key.split(/[0-9]/)[0]; // fig
+            if (Global.isNull(validReferences[tag])) // Check if it is a valid reference
+                continue;
+
+            // Build reference if it is a valid reference
             let reference = {};
-            let key = keys[i];
-            if (!key.startsWith('mk')) { // If key does not start with 'mk'
-                let tag = key.split(/[0-9]/)[0];
-                let numeric = key.substring(tag.length);
-
-                reference.key = key;
-                reference.tag = tag;
-                reference.num = numeric;
-                switch (reference.tag) {
-                    case "aff":
-                        reference.tagName = "AFF";
-                        break;
-                    case "bib":
-                        reference.tagName = "Bibliography";
-                        break;
-                    case "cor":
-                        reference.tagName = "Corresponding Author";
-                        break;
-                    case "crf":
-                        reference.tagName = "CRF";
-                        break;
-                    case "eqn":
-                        reference.tagName = "Equation";
-                        break;
-                    case "fig":
-                        reference.tagName = "Figure";
-                        break;
-                    case "para":
-                        reference.tagName = "Paragraph";
-                        break;
-                    case "sec":
-                        reference.tagName = "Section";
-                        break;
-                    case "tbl":
-                        reference.tagName = "Table";
-                        break;
-                    case "ueqn":
-                        reference.tagName = "Inequation";
-                        break;
-                    default:
-                        reference.tagName = reference.tag.toUpperCase()
-                };
-                reference.fullName = reference.tagName + " " + Number(reference.num);
-                referenceList.push(reference);
-            } else {
-                // mk:H3_5
-                let strSplit = (key.split(':')[1]).split('_');
-                let type = strSplit[0]; // H3
-                let numeric = strSplit[1]; // 5
-
-                reference.key = key; // mk:H3_5
-                reference.tag = key.split('_')[0]; // mk:H3
-                reference.num = (typeof (numeric) === 'undefined' ? null : numeric); // 5
-
-                reference.fullName = "";
-                let name = type;
-                if (name.startsWith("H")) {
-                    for (let j = 0; j < type.length; j++) {
-                        if (name[0] === 'H') {
-                            reference.fullName += "Header ";
-                            name = name.substring(1);
-                        } else {
-                            reference.fullName += ("Size " + name + " Number ");
-                        }
-                    }
-                    reference.fullName += Number(reference.num);
-                } else {
-                    if (name === "title") {
-                        reference.fullName = "Title";
-                    }
-                }
-                referenceList.push(reference);
-            }
+            reference.key = key;                        // fig0001
+            reference.tag = tag;                        // fig
+            reference.num = key.substring(tag.length);  // 0001
+            reference.tagName = validReferences[tag];   // Figure
+            reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
+            referenceList.push(reference);
         }
 
         // HTML building
@@ -237,10 +194,12 @@
         content.classList.add("treeWithDeepNesting");
 
         for (let i = 0; i < referenceList.length; i++) {
+            // Top level div of reference
             let div = document.createElement("div");
             div.classList.add('treeItem')
+            div.classList.add(referenceList[i].tag)
 
-            // Toggler to enable/disable the display of canvas
+            // Toggler div is used to enable/disable the display of canvas
             let toggler = document.createElement('div');
             toggler.classList.add('treeItemToggler')
             toggler.classList.add('treeItemsHidden')
