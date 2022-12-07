@@ -2989,7 +2989,10 @@
         if (!PDFViewerApplication.isInitialViewSet) {
           PDFViewerApplication.initialBookmark = hash;
         } else if (!PDFViewerApplication.pdfHistory?.popStateInProgress) {
-          PDFViewerApplication.pdfLinkService.setHash(hash);
+          if(typeof Global === 'undefined'  || !Global.preventMainViewerLinkerFlag) // Clippy Addition
+              PDFViewerApplication.pdfLinkService.setHash(hash);
+          else // Clippy Addition
+              Global.preventMainViewerLinkerFlag = false; // Clippy Addition
         }
       }
       {

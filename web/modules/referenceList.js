@@ -262,8 +262,12 @@
             link.appendChild(linkText);
             link.href = "#" + referenceList[i].key;
             link.addEventListener("click", function (evt) {
-                if (evt.target !== null) { // TODO: implement this better
+                Global.preventMainViewerLinkerFlag = true;  // TODO: find a better solution
+                if (evt.target !== null) { 
                     referenceLinkService.goToDestination(evt.target.hash.substring(1))
+
+                    // Scroll up to Preview when reference is clicked
+                    $(document.getElementById('sidebarContent')).scrollTop(0);
                 }
             });
 
