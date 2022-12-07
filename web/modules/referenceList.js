@@ -119,11 +119,16 @@
             referenceViewer.currentScaleValue = "actual-size";
 
             zoomInButton.addEventListener("click", function () {
-                referenceViewer.currentScale += 0.2;
+                if (referenceViewer.currentScale <= 9.8) {
+                    referenceViewer.currentScale += 0.2;
+                }
+                
             });
 
             zoomOutButton.addEventListener("click", function () {
-                referenceViewer.currentScale -= 0.2;
+                if (referenceViewer.currentScale >= 0.3) {
+                    referenceViewer.currentScale -= 0.2;
+                }
             });
         });
 
