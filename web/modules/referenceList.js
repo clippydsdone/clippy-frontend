@@ -267,8 +267,31 @@
                 }
             });
 
+            let renameButton = document.createElement('button');
+            let input = document.createElement("input");
+            renameButton.addEventListener("click", function () {
+                if (link.hidden) {
+                    link.innerText = input.value;
+                    link.hidden = false;
+                    input.hidden = true;
+                } else {
+                    link.hidden = true;
+                    input.hidden = false;
+                }
+            });
+            renameButton.classList.add('toolbarButton')
+            renameButton.classList.add('renameButton')
+
+            input.type = "text";
+            input.classList.add('toolbarField');
+            input.value = link.innerText;
+            input.hidden = true;
+
             div.appendChild(toggler);
             div.appendChild(link);
+            div.appendChild(input)
+            div.appendChild(renameButton);
+
             referenceListContainer.appendChild(div);
         }
 
