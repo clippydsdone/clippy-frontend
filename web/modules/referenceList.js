@@ -10,8 +10,10 @@
     let content = null;     // Parent div of content to be displayed in sidebar
     let container = null;   // Container for the viewer
     let viewer = null;      // Div of the viewer
-    let zoomInButton = [];
-    let zoomOutButton = [];
+    let zoomInButton = null;
+    let zoomOutButton = null;
+    let referenceFilter = null;
+    let referenceListContainer = null;
 
     // Reference List elements
     let referenceList = [];
@@ -52,6 +54,8 @@
         viewer = document.getElementById('referencesViewer');
         zoomInButton = document.getElementById('zoomInPreview');
         zoomOutButton = document.getElementById('zoomOutPreview');
+        referenceFilter = document.getElementById('referenceFilterContainer');
+        referenceListContainer = document.getElementById('referenceListContainer');
 
         $(window).on("resize", function () {
             setSize();
@@ -83,12 +87,6 @@
             return;
         } else if (Global.isNull(viewer)) {
             console.error("HTML div with id 'referencesViewer' is null. Cannot create reference preview.");
-            return;
-        } else if (Global.isNull(zoomInButton)) {
-            console.error("HTML div with id 'zoomInPreview' is null. Cannot create reference preview.");
-            return;
-        } else if (Global.isNull(zoomOutButton)) {
-            console.error("HTML div with id 'zoomOutPreview' is null. Cannot create reference preview.");
             return;
         }
 
@@ -168,11 +166,65 @@
         if (Global.doc === null) {
             console.error("pdfDocument object is null. Cannot build reference list.");
             return;
+        } else if (Global.isNull(zoomInButton)) {
+            console.error("HTML div with id 'zoomInPreview' is null. Cannot create reference preview.");
+            return;
+        } else if (Global.isNull(zoomOutButton)) {
+            console.error("HTML div with id 'zoomOutPreview' is null. Cannot create reference preview.");
+            return;
+        } else if (Global.isNull(referenceFilter)) {
+            console.error("HTML div with id 'referenceFilterContainer' is null. Cannot create reference preview.");
+            return;
+        } else if (Global.isNull(referenceListContainer)) {
+            console.error("HTML div with id 'referenceListContainer' is null. Cannot create reference preview.");
+            return;
+        }
+
+        /*
+        <input type="checkbox" id="findHighlightAll" class="toolbarField" tabindex="94">
+        <label for="findHighlightAll" class="toolbarLabel" data-l10n-id="find_highlight">Highlight All</label>
+                    
+        */
+
+        let keys = Object.keys(validReferences);
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let referenceName = validReferences[key];
+            let id = key + "Filter";
+
+            let input = document.createElement("input");
+            input.id = id
+            input.type = "checkbox";
+            input.classList.add('toolbarField');
+            input.checked = true;
+            input.addEventListener("click", function () {
+                // Check is already toggled by the time this event fires
+                if (input.checked) {
+                    let checkboxes = referenceListContainer.getElementsByClassName(key);
+                    for (let i = 0; i < checkboxes.length; i++) {
+                        checkboxes[i].hidden = false;
+                    }
+                } else {
+                    let checkboxes = referenceListContainer.getElementsByClassName(key);
+                    for (let i = 0; i < checkboxes.length; i++) {
+                        checkboxes[i].hidden = true;
+                    }
+                }
+            });
+
+            let label = document.createElement("label");
+            label.htmlFor = id;
+            label.classList.add('toolbarLabel')
+            let labelTextNode = document.createTextNode(referenceName + "s");
+            label.appendChild(labelTextNode);
+
+            referenceFilter.appendChild(input);
+            referenceFilter.appendChild(label);
         }
 
         // Get a list of all references in the PDF
         destinations = await Global.doc.getDestinations();
-        let keys = Object.keys(destinations);
+        keys = Object.keys(destinations);
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i]; // fig0001
             let tag = key.split(/[0-9]/)[0]; // fig
@@ -191,7 +243,7 @@
 
         // HTML building
         // We will create a tree structure of depth 2
-        content.classList.add("treeWithDeepNesting");
+        referenceListContainer.classList.add("treeWithDeepNesting");
 
         for (let i = 0; i < referenceList.length; i++) {
             // Top level div of reference
@@ -217,7 +269,7 @@
 
             div.appendChild(toggler);
             div.appendChild(link);
-            content.appendChild(div);
+            referenceListContainer.appendChild(div);
         }
 
         return;
