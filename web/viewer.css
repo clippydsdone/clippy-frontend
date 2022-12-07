@@ -1135,6 +1135,7 @@
   --toolbarButton-viewReferences-icon: url(images/toolbarButton-viewReferences.svg);
   --toolbarButton-zoomOutPreview-icon: url(images/toolbarButton-zoomOutPreview.svg);
   --toolbarButton-zoomInPreview-icon: url(images/toolbarButton-zoomInPreview.svg);
+  --toolbarButton-renameReference-icon: url(images/toolbarButton-renameReference.svg);
 
   --toolbarButton-currentOutlineItem-icon: url(images/toolbarButton-currentOutlineItem.svg);
   --toolbarButton-search-icon: url(images/toolbarButton-search.svg);
@@ -2298,6 +2299,12 @@ body {
 #editorInk::before {
   -webkit-mask-image: var(--toolbarButton-editorInk-icon);
           mask-image: var(--toolbarButton-editorInk-icon);
+}
+
+.renameButton {
+    -webkit-mask-image: var(--toolbarButton-renameReference-icon);
+            mask-image: var(--toolbarButton-renameReference-icon);
+    position: absolute;
 }
 
 #print::before,
