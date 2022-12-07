@@ -230,3 +230,22 @@
     // Execute initialize method after the document loads
     Clippy.addOnLoadEvent(ReferenceList.name, ReferenceList.initialize);
 }(window.Clippy.ReferenceList = window.Clippy.ReferenceList || {}));
+
+function setSize(){
+    $("#referencesContainer").height($("#sidebarContent").innerHeight() * 0.4);
+    $("#referencesContainer").width($("#sidebarContent").innerWidth() - 50);
+}
+
+$(window).on("resize", function(){
+    setSize();
+})
+
+$("#sidebarResizer").mousedown( function() {
+    $(document).mousemove(function() {
+        setSize();
+    });
+    
+    $(document).mouseup(function() {
+        $(this).unbind();
+    });
+});
