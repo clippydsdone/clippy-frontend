@@ -1133,6 +1133,8 @@
   --toolbarButton-viewSummary-icon: url(images/toolbarButton-viewSummary.svg);
   --toolbarButton-viewKnowledgeGraph-icon: url(images/toolbarButton-viewKnowledgeGraph.svg);
   --toolbarButton-viewReferences-icon: url(images/toolbarButton-viewReferences.svg);
+  --toolbarButton-zoomOutPreview-icon: url(images/toolbarButton-zoomOutPreview.svg);
+  --toolbarButton-zoomInPreview-icon: url(images/toolbarButton-zoomInPreview.svg);
 
   --toolbarButton-currentOutlineItem-icon: url(images/toolbarButton-currentOutlineItem.svg);
   --toolbarButton-search-icon: url(images/toolbarButton-search.svg);
@@ -2269,8 +2271,18 @@ body {
 }
 
 #zoomIn::before {
-  -webkit-mask-image: var(--toolbarButton-zoomIn-icon);
-          mask-image: var(--toolbarButton-zoomIn-icon);
+    -webkit-mask-image: var(--toolbarButton-zoomIn-icon);
+            mask-image: var(--toolbarButton-zoomIn-icon);
+}
+
+#zoomInPreview::before {
+    -webkit-mask-image: var(--toolbarButton-zoomInPreview-icon);
+            mask-image: var(--toolbarButton-zoomInPreview-icon);
+}
+
+#zoomOutPreview::before {
+    -webkit-mask-image: var(--toolbarButton-zoomOutPreview-icon);
+            mask-image: var(--toolbarButton-zoomOutPreview-icon);
 }
 
 #presentationMode::before {

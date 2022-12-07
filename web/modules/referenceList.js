@@ -10,6 +10,8 @@
     let container = null;   // Container for the viewer
     let viewer = null;      // Div of the viewer
     let referenceList = [];
+    let zoomInButton = [];
+    let zoomOutButton = [];
 
     let referenceViewer = null;
     let referenceLinkService = null;
@@ -30,6 +32,22 @@
         content = document.getElementById('referencesView');
         container = document.getElementById('referencesContainer');
         viewer = document.getElementById('referencesViewer');
+        zoomInButton = document.getElementById('zoomInPreview');
+        zoomOutButton = document.getElementById('zoomOutPreview');
+
+        $(window).on("resize", function () {
+            setSize();
+        })
+
+        $("#sidebarResizer").mousedown(function () {
+            $(document).mousemove(function () {
+                setSize();
+            });
+
+            $(document).mouseup(function () {
+                $(this).unbind();
+            });
+        });
 
         createReferencePreview();
         buildReferenceList();
@@ -47,6 +65,12 @@
             return;
         } else if (Global.isNull(viewer)) {
             console.error("HTML div with id 'referencesViewer' is null. Cannot create reference preview.");
+            return;
+        } else if (Global.isNull(zoomInButton)) {
+            console.error("HTML div with id 'zoomInPreview' is null. Cannot create reference preview.");
+            return;
+        } else if (Global.isNull(zoomOutButton)) {
+            console.error("HTML div with id 'zoomOutPreview' is null. Cannot create reference preview.");
             return;
         }
 
@@ -92,7 +116,15 @@
 
         eventBus.on("pagesinit", function () {
             // We can use referenceViewer now, e.g. let's change default scale.
-            referenceViewer.currentScaleValue = "page-width";
+            referenceViewer.currentScaleValue = "actual-size";
+
+            zoomInButton.addEventListener("click", function () {
+                referenceViewer.currentScale += 0.2;
+            });
+
+            zoomOutButton.addEventListener("click", function () {
+                referenceViewer.currentScale -= 0.2;
+            });
         });
 
         // Deep copy the active PDF document from the viewer
@@ -100,7 +132,7 @@
         referenceViewer.setDocument(documentClone);
         referenceLinkService.setDocument(documentClone, null);
 
-        // TODO: these are only temporary CSS adjustments; a better and more pernament solution is required
+        // TODO: these are only temporary CSS adjustments; a better and more permanent solution is required
         container.style.position = 'relative';
         container.style.height = '150px';
         container.style.width = '240px';
@@ -227,25 +259,11 @@
         return;
     }
 
+    let setSize = function() {
+        $("#referencesContainer").height($("#sidebarContent").innerHeight() * 0.4);
+        $("#referencesContainer").width($("#sidebarContent").innerWidth() - 50);
+    }
+
     // Execute initialize method after the document loads
     Clippy.addOnLoadEvent(ReferenceList.name, ReferenceList.initialize);
 }(window.Clippy.ReferenceList = window.Clippy.ReferenceList || {}));
-
-function setSize(){
-    $("#referencesContainer").height($("#sidebarContent").innerHeight() * 0.4);
-    $("#referencesContainer").width($("#sidebarContent").innerWidth() - 50);
-}
-
-$(window).on("resize", function(){
-    setSize();
-})
-
-$("#sidebarResizer").mousedown( function() {
-    $(document).mousemove(function() {
-        setSize();
-    });
-    
-    $(document).mouseup(function() {
-        $(this).unbind();
-    });
-});
