@@ -2305,6 +2305,9 @@ body {
     -webkit-mask-image: var(--toolbarButton-renameReference-icon);
             mask-image: var(--toolbarButton-renameReference-icon);
     position: absolute;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    right: 10px;
 }
 
 #print::before,
