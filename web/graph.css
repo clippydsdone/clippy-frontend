@@ -1,0 +1,35 @@
+.node text {
+    fill: rgb(0, 0, 0);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.link {
+    stroke-width: 3px;
+    stroke: rgb(64, 139, 224);
+    stroke-opacity: 2;
+}
+
+.link.group1 {
+    stroke: #fcd43f;
+}
+
+.link.group2 {
+    stroke: #57a7d1;
+}
+
+.node circle {
+    cursor: move;
+    fill: rgb(158, 224, 213);
+    stroke: rgb(119, 170, 190);
+    stroke-width: 1.5px;
+}
+
+.node.group1 circle {
+    fill: rgb(176, 139, 139);
+}
+
+#d3container {
+    width: 1000px; 
+    height: 800px; 
+    background-color: rgba(132, 124, 124, 0.498);
+}

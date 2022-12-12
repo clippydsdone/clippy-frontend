@@ -1,4 +1,4 @@
-(function (Summary) {
+(function async (Summary) {
     // Summary module start
     // Define module name as constant
     Object.defineProperty(Summary, "name", {
@@ -27,7 +27,7 @@
         container = document.getElementById('summaryContainer');
         viewer = document.getElementById('summaryViewer');
 
-        getPaperInfo();
+        await getPaperInfo();
     }
 
     let getPaperInfo = async function () {
@@ -35,6 +35,9 @@
             console.error("PdfDocument object is null. Cannot get pdf data.");
             return;
         }
+
+        const loadingBar = document.getElementById("summaryLoadingGif");
+        const summaryText = document.getElementById("summaryContainerText");
 
         let paperTitle = Global.app._title.split(' - ')[0];
         let result = {};
@@ -46,25 +49,25 @@
             },
             headers: { 'Content-Type': 'application/json' },
         })
-        .then((response) => result = response.data)
+        .then((response) => { 
+            result = response.data
+            loadingBar.hidden = true;
+            if (result && result.tldr && result.tldr.text) {
+                summaryText.innerHTML = result.tldr.text;
+            } else {
+                summaryText.innerHTML = "No summary found.";
+            }
+        })
         .catch((err) => {
             console.log(err);
             result.status = err.response.status;
             result.data = err.message;
         });
 
-        // HTML building
-        const newContent = document.createElement("p");
-        if (result && result.tldr && result.tldr.text) {
-            newContent.appendChild(document.createTextNode(result.tldr.text));
-        } else {
-            newContent.appendChild(document.createTextNode("No summary found."));
-        }
-        newContent.style.color = "white";
-        content.appendChild(newContent);
         return;
     }
 
     // Execute initialize method after the document loads
+    Clippy.addOnLoadEvent(Summary.name, Summary.initialize);
     Clippy.addOnLoadEvent(Summary.name, Summary.initialize);
 }(window.Clippy.Summary = window.Clippy.Summary || {}));
