@@ -101,10 +101,13 @@
 				window["pdfViewer_" + viewerIndex].currentScaleValue = "page-width";
 			});
 
-			//thrown from then end of pdfViewer.setDocument() and linkService.setDocument() in viewer.js
+			//thrown from then end of pdfViewer.setDocument() in viewer.js on line 8439 by
+			//this.eventBus.dispatch("pdfViewerReady", { source: this });
 			eventBus.on("pdfViewerReady", function () {
 				window[`pdfViewer${viewerIndex}Ready`] = true;
 			});
+			//thrown from then end of PDFLinkService.setDocument() in viewer.js on line 898 by
+			//this.eventBus.dispatch("pdfViewerReady", { source: this });
 			eventBus.on("linkServiceReady", function () {
 				window[`linkService${viewerIndex}Ready`] = true;
 			});
