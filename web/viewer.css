@@ -2310,6 +2310,10 @@ body {
     right: 10px;
 }
 
+#referenceFilterContainer {
+  display: grid;
+}
+
 #print::before,
 #secondaryPrint::before {
   -webkit-mask-image: var(--toolbarButton-print-icon);
