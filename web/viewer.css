@@ -1136,6 +1136,7 @@
   --toolbarButton-zoomOutPreview-icon: url(images/toolbarButton-zoomOutPreview.svg);
   --toolbarButton-zoomInPreview-icon: url(images/toolbarButton-zoomInPreview.svg);
   --toolbarButton-renameReference-icon: url(images/toolbarButton-renameReference.svg);
+  --toolbarButton-referenceFilters-icon: url(images/toolbarButton-currentOutlineItem.svg);
 
   --toolbarButton-currentOutlineItem-icon: url(images/toolbarButton-currentOutlineItem.svg);
   --toolbarButton-search-icon: url(images/toolbarButton-search.svg);
@@ -2001,8 +2002,7 @@ body {
 }
 [dir="ltr"] .splitToolbarButton > .toolbarButton {
   float: left;
-}
-[dir="rtl"] .splitToolbarButton > .toolbarButton {
+}[dir="rtl"] .splitToolbarButton > .toolbarButton {
   float: right;
 }
 .splitToolbarButton > .toolbarButton {
@@ -2377,6 +2377,12 @@ a.secondaryToolbarButton[href="#"] {
 #viewReferences::before {
   -webkit-mask-image: var(--toolbarButton-viewReferences-icon);
           mask-image: var(--toolbarButton-viewReferences-icon);
+}
+
+#referenceFilters::before {
+  -webkit-mask-image: var(--toolbarButton-referenceFilters-icon);
+          mask-image: var(--toolbarButton-referenceFilters-icon);
+  transform: scalex(var(--dir-factor));
 }
 
 #currentOutlineItem::before {
