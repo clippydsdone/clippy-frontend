@@ -13,11 +13,13 @@ jobs:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - uses: cinotify/github-action@main
+      - uses: licenseware/send-email-notification@v1
         with:
-          to: 'dino.grgic@fer.hr'
-          subject: 'building main'
-          body: 'This is a notification from GitHub actions.'
+          from-email: 'info@clippy.com'
+          to-email: 'dino.grgic@fer.hr'
+          api-key:  ${{secrets.SENDGRID_API_TOKEN}}
+          subject: 'test'
+          markdown-body: 'test'
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
