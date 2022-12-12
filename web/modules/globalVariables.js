@@ -1,17 +1,22 @@
 (function (Global) {
 	// Global variables start
-	// Public const variable named "app"
-	Object.defineProperty(Global, "app", {
-		value: window.PDFViewerApplication,
-		writable: false,
-	});
+	Global.preventMainViewerLinkerFlag = false;
 
-	// TODO: fix this terribleness
-	var setProperties = function () {
-		if (Global.app.pdfDocument === null) {
+	let setProperties = function () {
+		// TODO: fix this terribleness
+		if (Global.isNull(window.PDFViewerApplication)
+			|| Global.isNull(window.PDFViewerApplication.pdfDocument)
+			|| Global.isNull(window.PDFViewerApplication.pdfViewer)
+			|| Global.isNull(window.PDFViewerApplication.pdfLinkService)) {
 			setTimeout(setProperties, 1);
 			return;
 		}
+
+		// Public const variable named "app"
+		Object.defineProperty(Global, "app", {
+			value: window.PDFViewerApplication,
+			writable: false,
+		});
 
 		// Public const variable named "doc"
 		Object.defineProperty(Global, "doc", {
@@ -24,7 +29,21 @@
 			value: window.PDFViewerApplication.pdfViewer,
 			writable: false,
 		});
+
+		// Public const variable named "viewer"
+		Object.defineProperty(Global, "linker", {
+			value: window.PDFViewerApplication.pdfLinkService,
+			writable: false,
+		});
 	};
+
+	Global.isNull = function (variable) {
+		return variable === null || typeof variable === 'undefined';
+	} 
+
+	Global.deepCopy = function(variable) {
+		return Object.assign(Object.create(Object.getPrototypeOf(variable)), variable)
+	}
 
 	setProperties();
 })((window.Global = window.Global || {}));
@@ -32,14 +51,14 @@
 // Module namespace
 (function (Clippy) {
 	// Clippy modules namespace start
-	OnLoadEvents = {};
+	let OnLoadEvents = {};
 
 	// Public method for listing active modules
 	Clippy.listActiveModules = function () {
-		var keys = Object.keys(this);
-		var modules = {};
+		let keys = Object.keys(this);
+		let modules = {};
 
-		for (var i = 0; i < keys.length; i++) {
+		for (let i = 0; i < keys.length; i++) {
 			if (typeof this[keys[i]] === "object") {
 				modules[keys[i]] = this[keys[i]];
 			}

@@ -1,40 +1,43 @@
-(function (Summary) {
+(function async (Summary) {
     // Summary module start
-    // Public const variable named "name"
+    // Define module name as constant
     Object.defineProperty(Summary, "name", {
         value: "Summary",
         writable: false
     });
 
-    let content = null;    // Parent div of content to be displayed in sidebar
-    let container = null;    // Container for the viewer
-    let viewer = null;    // Div of the viewer
+    let content = null;     // Parent div of content to be displayed in sidebar
+    let container = null;   // Container for the viewer
+    let viewer = null;      // Div of the viewer
 
     // Initializer method
     Summary.initialize = async function () {
         // TODO: fix this terribleness
-        if (Global.app === 'undefined') {
-            setTimeout(Summary.initialize, 1);
+        if (Global.isNull(Global.app)) {
+            setTimeout(Summary.initialize, 100);
             return;
-        } else if (typeof Global.doc === 'undefined') {
-            setTimeout(Summary.initialize, 1);
+        } else if (Global.isNull(Global.doc)) {
+            setTimeout(Summary.initialize, 100);
             return;
         }
-        console.log("Summary global variable loaded.");
+        console.log("Initializing Summary.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
         content = document.getElementById('summaryView');
         container = document.getElementById('summaryContainer');
         viewer = document.getElementById('summaryViewer');
 
-        getPaperInfo();
+        await getPaperInfo();
     }
 
     let getPaperInfo = async function () {
-        if (Global.doc === null) {
-            console.error("pdfDocument object is null. Cannot build reference list.");
+        if (Global.isNull(Global.doc)) {
+            console.error("PdfDocument object is null. Cannot get pdf data.");
             return;
         }
+
+        const loadingBar = document.getElementById("summaryLoadingGif");
+        const summaryText = document.getElementById("summaryContainerText");
 
         let paperTitle = Global.app._title.split(' - ')[0];
         let result = {};
@@ -46,20 +49,21 @@
             },
             headers: { 'Content-Type': 'application/json' },
         })
-        .then((response) => result = response.data)
+        .then((response) => { 
+            result = response.data
+            loadingBar.hidden = true;
+            if (result && result.tldr && result.tldr.text) {
+                summaryText.innerHTML = result.tldr.text;
+            } else {
+                summaryText.innerHTML = "No summary found.";
+            }
+        })
         .catch((err) => {
             console.log(err);
             result.status = err.response.status;
             result.data = err.message;
         });
 
-        // HTML building
-        // We will create a tree structure of depth 2
-        const newContent = document.createElement("p");
-        console.log(result.tldr.text);
-        newContent.appendChild(document.createTextNode(result.tldr.text));
-        newContent.style.color = "white";
-        content.appendChild(newContent);
         return;
     }
 
