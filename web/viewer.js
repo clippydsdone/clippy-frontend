@@ -2983,7 +2983,7 @@
 						};
 						url = {
 							url,
-							originalUrl: file.name,
+							originalUrl: file.name
 						};
 					}
 					PDFViewerApplication.open(url);
