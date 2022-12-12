@@ -32,6 +32,7 @@
 			this.popupDiv.style.overflow = "hidden";
 			this.popupDiv.style.border = "1px solid black"; //Draw border
 			this.popupDiv.style.zIndex = `${zIndex}`; //z-depth / layer, higher value = more infront
+			this.popupDiv.style.zoom = POPUP_WINDOW_SCALE;
 
 			this.popupContainerDiv = document.createElement("div");
 			this.popupContainerDiv.setAttribute("id", `popupContainer${viewerIndex}`);
@@ -69,8 +70,8 @@
 			});
 			this.popupDiv.addEventListener("mousemove", (event) => {
 				if (this.mouseDown) {
-					let newX = this.viewerDrag_ViewerStartPosition.x + (event.clientX - this.viewerDrag_MouseStartPosition.x);
-					let newY = this.viewerDrag_ViewerStartPosition.y + (event.clientY - this.viewerDrag_MouseStartPosition.y);
+					let newX = this.viewerDrag_ViewerStartPosition.x + (event.clientX - this.viewerDrag_MouseStartPosition.x) * (1.0 / POPUP_WINDOW_SCALE);
+					let newY = this.viewerDrag_ViewerStartPosition.y + (event.clientY - this.viewerDrag_MouseStartPosition.y) * (1.0 / POPUP_WINDOW_SCALE);
 					this.setPosition(newX, newY);
 				}
 			});
@@ -121,6 +122,7 @@
 
 		pin() {
 			this.popupDiv.style.border = "3px solid black";
+			this.popupDiv.style.overflow = "scroll";
 			this.pinned = true;
 		}
 
@@ -163,6 +165,11 @@
 			window["pdfViewer_" + this.viewerIndex].currentScale = scale;
 		}
 
+		scalePopupWindow(scale) {
+			this.popupDiv.style.zoom = scale;
+			this.popupDiv.style.transform = `scale(${scale})`;
+		}
+
 		getCurrentScale() {
 			return window["pdfViewer_" + this.viewerIndex].currentScale;
 		}
@@ -201,6 +208,7 @@
 	let currentViewer = null;
 	let currentlyMouseoverdPinnedPopup = null;
 	let zIndex = 10;
+	const POPUP_WINDOW_SCALE = 0.6;
 
 	// Initializer method
 	PopupPreview.initialize = async function () {
@@ -336,14 +344,34 @@
 			if (type == "tbl") {
 				//Tables do not seem to match the other reference styles.
 				let viewPort = pdfPage.getViewport({ scale: 1.0 });
-				currentViewer.setSize(refDestination[4] * currentViewer.getCurrentScale(), viewPort.height * currentViewer.getCurrentScale());
-				currentViewer.setPosition(event.clientX, event.clientY);
-				currentViewer.setOffset(-((viewPort.width / 3) * currentViewer.getCurrentScale()), 2);
+
+				let maxHeight = viewPort.height * currentViewer.getCurrentScale() > screen.height ? viewPort.height * currentViewer.getCurrentScale() * POPUP_WINDOW_SCALE : screen.height * POPUP_WINDOW_SCALE;
+
+				currentViewer.setSize(refDestination[4] * currentViewer.getCurrentScale(), maxHeight);
+
+				//Is the reference being hovered at the top or bottom half of the page
+				if (event.clientY < screen.height * 0.5) {
+					currentViewer.setPosition(event.clientX * (1.0 / POPUP_WINDOW_SCALE), event.clientY * (1.0 / POPUP_WINDOW_SCALE));
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), 3);
+				} else {
+					currentViewer.setPosition(event.clientX * (1.0 / POPUP_WINDOW_SCALE), event.clientY * (1.0 / POPUP_WINDOW_SCALE) - viewPort.height * POPUP_WINDOW_SCALE * currentViewer.getCurrentScale());
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -3);
+				}
 			} else {
 				let viewPort = pdfPage.getViewport({ scale: currentViewer.getCurrentScale() });
-				currentViewer.setSize(viewPort.width * currentViewer.getCurrentScale(), viewPort.height * currentViewer.getCurrentScale());
-				currentViewer.setPosition(event.clientX, event.clientY);
-				currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), 2);
+
+				let maxHeight = viewPort.height * currentViewer.getCurrentScale() > screen.height ? viewPort.height * currentViewer.getCurrentScale() * POPUP_WINDOW_SCALE : screen.height * POPUP_WINDOW_SCALE;
+
+				currentViewer.setSize(viewPort.width * currentViewer.getCurrentScale(), maxHeight);
+
+				//Is the reference being hovered at the top or bottom half of the page
+				if (event.clientY < screen.height * 0.5) {
+					currentViewer.setPosition(event.clientX * (1.0 / POPUP_WINDOW_SCALE), event.clientY * (1.0 / POPUP_WINDOW_SCALE));
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), 3);
+				} else {
+					currentViewer.setPosition(event.clientX * (1.0 / POPUP_WINDOW_SCALE), event.clientY * (1.0 / POPUP_WINDOW_SCALE) - viewPort.height * POPUP_WINDOW_SCALE * currentViewer.getCurrentScale());
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -3);
+				}
 			}
 		});
 	};
