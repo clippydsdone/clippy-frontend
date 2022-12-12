@@ -13,6 +13,11 @@ jobs:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
+      - uses: cinotify/github-action@main
+        with:
+          to: 'dino.grgic@fer.hr'
+          subject: 'building main'
+          body: 'This is a notification from GitHub actions.'
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -32,16 +37,4 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME_DEV}} #Must be unique in Heroku
           heroku_email: "dino.grgic1@gmail.com"
-  notify:
-    name: E-Mail Release Notification
-    runs-on: ubuntu-latest
-    steps:
-    - name: CINotify Email
-      # You may pin to the exact commit or the version.
-      # uses: cinotify/github-action@d99e3149178b27572a58ace227621c333884e3fb
-      uses: cinotify/github-action@v1.1.0
-      with:
-        to: 'dino.grgic@fer.hr'
-        subject: 'test'
-        body: 'test'
     
