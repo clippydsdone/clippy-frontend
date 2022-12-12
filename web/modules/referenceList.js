@@ -303,11 +303,15 @@
         }
 
         referenceFilterButton.addEventListener("click", function () {
-            if(referenceFilter.hidden){
+            if (referenceFilter.hidden) { // Now the filter is visible
+                // Change coordinates of the filter
+                let coordinates = referenceFilterButton.getBoundingClientRect();
+                referenceFilter.style.left = coordinates.left + 32 + 'px';
+                referenceFilter.style.top = coordinates.top - 5 + 'px';
+
                 referenceFilter.hidden = false;
                 referenceFilterButton.setAttribute("aria-checked", true);
-            }
-            else{
+            } else { // The filter is no longer visible
                 referenceFilter.hidden = true;
                 referenceFilterButton.setAttribute("aria-checked", false);
             }
@@ -317,8 +321,14 @@
     }
 
     let setSize = function() {
-        $("#referencesContainer").height($("#sidebarContent").innerHeight() * 0.35);
+        $("#referencesContainer").height($("#sidebarContent").innerHeight() * 0.40);
         $("#referencesContainer").width($("#sidebarContent").innerWidth() - 50);
+
+        // If it is not hidden
+        if (!referenceFilter.hidden) {
+            referenceFilter.hidden = true;
+            referenceFilterButton.setAttribute("aria-checked", false);
+        }
     }
 
     // Execute initialize method after the document loads
