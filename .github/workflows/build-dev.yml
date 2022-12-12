@@ -36,9 +36,12 @@ jobs:
     name: E-Mail Release Notification
     runs-on: ubuntu-latest
     steps:
-    - name: Notify about a new release
-      uses: ba-st-actions/email-release-notification@v3.0.0
-      env:
-        SENDGRID_API_TOKEN: ${{ secrets.SENDGRID_API_TOKEN }}
-        RECIPIENTS_URL: ${{ secrets.RECIPIENTS_URL }}
-        SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+    - name: CINotify Email
+      # You may pin to the exact commit or the version.
+      # uses: cinotify/github-action@d99e3149178b27572a58ace227621c333884e3fb
+      uses: cinotify/github-action@v1.1.0
+      with:
+        to: dino.grgic@fer.hr
+        subject: test
+        body: test
+    
