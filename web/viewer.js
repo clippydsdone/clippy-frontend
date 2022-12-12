@@ -2962,7 +2962,10 @@
 				if (!PDFViewerApplication.isInitialViewSet) {
 					PDFViewerApplication.initialBookmark = hash;
 				} else if (!PDFViewerApplication.pdfHistory?.popStateInProgress) {
-					PDFViewerApplication.pdfLinkService.setHash(hash);
+					if (typeof Global === 'undefined' || !Global.preventMainViewerLinkerFlag) // Clippy Addition
+						PDFViewerApplication.pdfLinkService.setHash(hash);
+					else // Clippy Addition
+						Global.preventMainViewerLinkerFlag = false; // Clippy Addition
 				}
 			}
 			{
@@ -7039,6 +7042,8 @@
 					this.referencesView = elements.referencesView;
 					this._outlineOptionsContainer = elements.outlineOptionsContainer;
 					this._currentOutlineItemButton = elements.currentOutlineItemButton;
+					this._referencesFilterContainer = elements.referencesFilterContainer;
+					this._referencesFilterButton = elements.referencesFilterButton;
 					this.eventBus = eventBus;
 					this.l10n = l10n;
 					this.#addEventListeners();
@@ -7055,6 +7060,7 @@
 					this.knowledgegraphButton.disabled = false;
 					this.referencesButton.disabled = false;
 					this._currentOutlineItemButton.disabled = true;
+					this._referencesFilterButton.disabled = false;
 				}
 				get visibleView() {
 					return this.isOpen ? this.active : _ui_utils.SidebarView.NONE;
@@ -7151,6 +7157,7 @@
 					this.knowledgegraphView.classList.toggle("hidden", !isKnowledgeGraph);
 					this.referencesView.classList.toggle("hidden", !isReferences);
 					this._outlineOptionsContainer.classList.toggle("hidden", !isOutline);
+					this._referencesFilterContainer.classList.toggle("hidden", !isReferences);
 					if (forceOpen && !this.isOpen) {
 						this.open();
 						return;
@@ -7338,7 +7345,7 @@
 			exports.PDFSidebarResizer = void 0;
 			var _ui_utils = __webpack_require__(1);
 			const SIDEBAR_WIDTH_VAR = "--sidebar-width";
-			const SIDEBAR_MIN_WIDTH = 200;
+			const SIDEBAR_MIN_WIDTH = 255;
 			const SIDEBAR_RESIZING_CLASS = "sidebarResizing";
 			class PDFSidebarResizer {
 				constructor(options, eventBus, l10n) {
@@ -13167,6 +13174,8 @@
 					referencesView: document.getElementById("referencesView"),
 					outlineOptionsContainer: document.getElementById("outlineOptionsContainer"),
 					currentOutlineItemButton: document.getElementById("currentOutlineItem"),
+					referencesFilterContainer: document.getElementById("referencesFilterContainer"),
+					referencesFilterButton: document.getElementById("referenceFilters")
 				},
 				sidebarResizer: {
 					outerContainer: document.getElementById("outerContainer"),

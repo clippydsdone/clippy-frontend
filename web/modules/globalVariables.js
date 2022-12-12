@@ -1,6 +1,7 @@
 (function (Global) {
 	// Global variables start
-	
+	Global.preventMainViewerLinkerFlag = false;
+
 	let setProperties = function () {
 		// TODO: fix this terribleness
 		if (Global.isNull(window.PDFViewerApplication)
@@ -50,14 +51,14 @@
 // Module namespace
 (function (Clippy) {
 	// Clippy modules namespace start
-	OnLoadEvents = {};
+	let OnLoadEvents = {};
 
 	// Public method for listing active modules
 	Clippy.listActiveModules = function () {
-		var keys = Object.keys(this);
-		var modules = {};
+		let keys = Object.keys(this);
+		let modules = {};
 
-		for (var i = 0; i < keys.length; i++) {
+		for (let i = 0; i < keys.length; i++) {
 			if (typeof this[keys[i]] === "object") {
 				modules[keys[i]] = this[keys[i]];
 			}
