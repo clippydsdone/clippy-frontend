@@ -14,6 +14,7 @@
     let zoomOutButton = null;
     let referenceFilter = null;
     let referenceListContainer = null;
+    let referenceFilterButton = null;
 
     // Reference List elements
     let referenceList = [];
@@ -56,6 +57,9 @@
         zoomOutButton = document.getElementById('zoomOutPreview');
         referenceFilter = document.getElementById('referenceFilterContainer');
         referenceListContainer = document.getElementById('referenceListContainer');
+        referenceFilterButton = document.getElementById('referenceFilters');
+
+        referenceFilter.hidden = true;
 
         $(window).on("resize", function () {
             setSize();
@@ -155,9 +159,8 @@
 
         // TODO: these are only temporary CSS adjustments; a better and more permanent solution is required
         container.style.position = 'relative';
-        container.style.height = '150px';
-        container.style.width = '240px';
         container.style.overflow = 'auto';
+        setSize();
 
         return;
     }
@@ -299,11 +302,22 @@
             referenceListContainer.appendChild(div);
         }
 
+        referenceFilterButton.addEventListener("click", function () {
+            if(referenceFilter.hidden){
+                referenceFilter.hidden = false;
+                referenceFilterButton.setAttribute("aria-checked", true);
+            }
+            else{
+                referenceFilter.hidden = true;
+                referenceFilterButton.setAttribute("aria-checked", false);
+            }
+        })
+
         return;
     }
 
     let setSize = function() {
-        $("#referencesContainer").height($("#sidebarContent").innerHeight() * 0.4);
+        $("#referencesContainer").height($("#sidebarContent").innerHeight() * 0.35);
         $("#referencesContainer").width($("#sidebarContent").innerWidth() - 50);
     }
 

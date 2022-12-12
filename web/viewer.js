@@ -7248,6 +7248,8 @@
           this.referencesView = elements.referencesView;
           this._outlineOptionsContainer = elements.outlineOptionsContainer;
           this._currentOutlineItemButton = elements.currentOutlineItemButton;
+          this._referencesFilterContainer = elements.referencesFilterContainer;
+          this._referencesFilterButton = elements.referencesFilterButton;
           this.eventBus = eventBus;
           this.l10n = l10n;
           this.#addEventListeners();
@@ -7264,6 +7266,7 @@
           this.knowledgegraphButton.disabled = false;
           this.referencesButton.disabled = false;
           this._currentOutlineItemButton.disabled = true;
+          this._referencesFilterButton.disabled = false;
         }
         get visibleView() {
           return this.isOpen ? this.active : _ui_utils.SidebarView.NONE;
@@ -7360,6 +7363,7 @@
           this.knowledgegraphView.classList.toggle("hidden", !isKnowledgeGraph);
           this.referencesView.classList.toggle("hidden", !isReferences);
           this._outlineOptionsContainer.classList.toggle("hidden", !isOutline);
+          this._referencesFilterContainer.classList.toggle("hidden", !isReferences);
           if (forceOpen && !this.isOpen) {
             this.open();
             return;
@@ -13595,7 +13599,9 @@
           knowledgegraphView: document.getElementById("knowledgegraphView"),
           referencesView: document.getElementById("referencesView"),
           outlineOptionsContainer: document.getElementById("outlineOptionsContainer"),
-          currentOutlineItemButton: document.getElementById("currentOutlineItem")
+          currentOutlineItemButton: document.getElementById("currentOutlineItem"),
+          referencesFilterContainer: document.getElementById("referencesFilterContainer"),
+          referencesFilterButton: document.getElementById("referenceFilters")
         },
         sidebarResizer: {
           outerContainer: document.getElementById("outerContainer"),
