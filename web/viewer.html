@@ -28,6 +28,7 @@ See https://github.com/adobe-type-tools/cmap-resources
     <title>PDF.js viewer</title>
 
     <link rel="stylesheet" href="viewer.css">
+    <link rel="stylesheet" href="graph.css">
 
     <!-- This snippet is used in production (included from viewer.html) -->
     <link rel="resource" type="application/l10n" href="locale/locale.properties">
@@ -37,13 +38,18 @@ See https://github.com/adobe-type-tools/cmap-resources
     <!-- External scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="graph.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <!-- Clippy modules -->
     <script src="./modules/globalVariables.js"></script>
     <script src="./modules/summary.js"></script>
     <script src="./modules/referenceList.js"></script>
     <script src="./modules/popupPreview.js"></script>
+    <script src="./modules/graph.js"></script>
+
+
+    <script src="graph.js"></script>
 
 </head>
 
@@ -99,10 +105,19 @@ See https://github.com/adobe-type-tools/cmap-resources
                 </div>
                 <div id="summaryView" class="hidden">
                     <div id="summaryContainer" style="position: absolute">
-                        <div id="summaryViewer" class="pdfViewer"></div>
+                        <div id="summaryViewer" class="pdfViewer treeItem">
+                            <h1 id="toolbarField">Details</h1>
+                            <p id="detailsContainerText"></p>
+                            <h1 id="textLayer">Summary</h1>
+                            <p id="summaryContainerText"></p>
+                            <image id="summaryLoadingGif" src="images/loading-icon.gif"></image>
+                        </div>
                     </div>
                 </div>
                 <div id="knowledgegraphView" class="hidden">
+                    <div id="knowledgegraphContainer" style="position: absolute">
+                        <div id="d3container"></div>
+                    </div>
                 </div>
                 <div id="referencesView" class="hidden" tabindex="1">
                     <div id="referencesContainer" style="position: absolute">
