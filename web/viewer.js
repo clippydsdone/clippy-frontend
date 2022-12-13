@@ -2765,7 +2765,7 @@
 				let file;
 				const queryString = document.location.search.substring(1);
 				const params = (0, _ui_utils.parseQueryString)(queryString);
-				file = localStorage.getItem("lastOpenedFile") ?? null; //CLIPPY REPLACEMENT
+				file = localStorage.getItem("lastOpenedFile") ?? "default_tutorial.pdf";
 				const fileInput = appConfig.openFileInput;
 				fileInput.value = null;
 				fileInput.addEventListener("change", function (evt) {
