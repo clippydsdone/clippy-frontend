@@ -44,7 +44,6 @@
 			this.zoomInButton.style.height = `22px`;
 			this.zoomInButton.style.backgroundImage = "url(images/toolbarButton-zoomInPreview.svg)";
 			this.zoomInButton.style.backgroundPosition = "2px center";
-			this.zoomInButton.style.backgroundColor = "#FFF";
 			this.zoomBar.appendChild(this.zoomInButton);
 
 			this.zoomOutButton = document.createElement("BUTTON");
@@ -201,7 +200,6 @@
 
 		setZoom(zoomAmt) {
 			this.popupDiv.style.zoom = zoomAmt;
-			//document.getElementById(`popupDiv${this.viewerIndex}`).style.zoom = zoomAmt;
 		}
 
 		setPosition(x, y) {
@@ -298,7 +296,6 @@
 
 	let showPopupTooltipDiv = function (x, y) {
 		let p = document.getElementById("popupTooltipDiv1");
-		let eps = 3;
 		p.style.visibility = "visible";
 		p.style.left = `${x + 25}px`;
 		p.style.top = `${y - 25}px`;
