@@ -19,21 +19,49 @@
 
     // Reference List elements
     let referenceList = [];
-    let validReferences = {
+    let validReferences = [
         /*
         "aff": "AFF"
         "para": "Paragraph",
         "sec": "Section",
         "crf": "CRF",
         */
-        "bib": "Bibliographies",
-        "B": "Bibliographies",
-        "cor": "Corresponding Authors",        
-        "eqn": "Equations",
-        "fig": "Figures",
-        "tbl": "Tables",
-        "ueqn": "Inequations"
-    };
+        {
+            fullName: "Bibliography",
+            fullNames: "Bibliographies",
+            tags: ["bib", "B"]
+        },
+        {
+            fullName: "Citation",
+            fullNames: "Citations",
+            tags: ["cite"]
+        },
+        {
+            fullName: "Corresponding Author",
+            fullNames: "Corresponding Authors",
+            tags: ["cor"]
+        },        
+        {
+            fullName: "Equation",
+            fullNames: "Equations",
+            tags: ["eqn", "equation"]
+        },
+        {
+            fullName: "Figure",
+            fullNames: "Figures",
+            tags: ["fig", "figure"]
+        },
+        {
+            fullName: "Table",
+            fullNames: "Tables",
+            tags: ["tbl", "table"]
+        },
+        {
+            fullName: "Inequation",
+            fullNames: "Inequations",
+            tags: ["ueqn", "B"]
+        }
+    ];
 
     // Preview (PDFViewer) elements
     let referenceViewer = null;
@@ -80,34 +108,6 @@
 
         createReferencePreview();
         buildReferenceList();
-
-        Global.doc.getPage(2).then((page) => {
-            page.getAnnotations().then(function (res) { // Sadrzi linkove
-                console.log("Annotations");
-                console.log(res);
-            })
-
-            page.getOperatorList().then(function (res) {
-                console.log("Operator List");
-                console.log(res);
-                for (var i = 0; i < res.fnArray.length; i++) {
-                    if (res.fnArray[i] == 85) {
-                        console.log(res.fnArray[i])
-                    }
-                    
-                }
-            })
-
-            page.getStructTree().then(function (res) { // Sadrzi figures (vjv samo slike)
-                console.log("Structure Tree");
-                console.log(res);
-            })
-
-            page.getXfa().then(function (res) {
-                console.log("Xfa");
-                console.log(res);
-            })
-        })
     }
 
     let createReferencePreview = function () {
@@ -218,10 +218,9 @@
         }
 
         // HTML Building of reference filter
-        let keys = Object.keys(validReferences);
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-            let referenceName = validReferences[key];
+        for (let i = 0; i < validReferences.length; i++) {
+            let key = validReferences[i].tags[0];
+            let referenceName = validReferences[i].fullNames;
             let id = key + "Filter";
 
             let input = document.createElement("input");
@@ -272,8 +271,7 @@
 
         // Get a list of all references in the PDF and create Clippy objects from these references
         destinations = await Global.doc.getDestinations();
-        console.log(destinations)
-        keys = Object.keys(destinations);
+        let keys = Object.keys(destinations);
         if (keys.length === 0) {
             referencesNotFoundText.classList.remove('hidden')
             return;
@@ -281,7 +279,8 @@
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i]; // fig0001
             let tag = key.split(/[0-9]/)[0]; // fig
-            if (Global.isNull(validReferences[tag])) // Check if it is a valid reference
+            validReference = isValidReference(tag); // Get
+            if (validReference == null) // Check if it is an invalid reference
                 continue;
 
             // Build reference if it is a valid reference
@@ -289,11 +288,10 @@
             reference.key = key;                        // fig0001
             reference.tag = tag;                        // fig
             reference.num = key.substring(tag.length);  // 0001
-            reference.tagName = validReferences[tag];   // Figure
+            reference.tagName = validReference.fullName;   // Figure
             reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
             referenceList.push(reference);
         }
-        console.log(referenceList.length)
         if (referenceList.length === 0) {
             referencesNotFoundText.classList.remove('hidden')
             return;
@@ -368,6 +366,20 @@
             referenceFilter.hidden = true;
             referenceFilterButton.setAttribute("aria-checked", false);
         }
+    }
+
+    let isValidReference = function (tag) {
+        let validTags = [];
+
+        for (let i = 0; i < validReferences.length; i++) {
+            for (let j = 0; j < validReferences[i].tags.length; j++) {
+                if (tag.startsWith(validReferences[i].tags[j])) {
+                    return validReferences[i];
+                }  
+            }
+        }
+       
+        return null;
     }
 
     // Execute initialize method after the document loads
