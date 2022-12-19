@@ -15,6 +15,7 @@
     let referenceFilter = null;
     let referenceListContainer = null;
     let referenceFilterButton = null;
+    let referencesNotFoundText = null;
 
     // Reference List elements
     let referenceList = [];
@@ -25,12 +26,13 @@
         "sec": "Section",
         "crf": "CRF",
         */
-        "bib": "Bibliography",
-        "cor": "Corresponding Author",        
-        "eqn": "Equation",
-        "fig": "Figure",
-        "tbl": "Table",
-        "ueqn": "Inequation"
+        "bib": "Bibliographies",
+        "B": "Bibliographies",
+        "cor": "Corresponding Authors",        
+        "eqn": "Equations",
+        "fig": "Figures",
+        "tbl": "Tables",
+        "ueqn": "Inequations"
     };
 
     // Preview (PDFViewer) elements
@@ -58,6 +60,7 @@
         referenceFilter = document.getElementById('referenceFilterContainer');
         referenceListContainer = document.getElementById('referenceListContainer');
         referenceFilterButton = document.getElementById('referenceFilters');
+        referencesNotFoundText = document.getElementById('referencesNotFoundText');
 
         referenceFilter.hidden = true;
 
@@ -77,6 +80,34 @@
 
         createReferencePreview();
         buildReferenceList();
+
+        Global.doc.getPage(2).then((page) => {
+            page.getAnnotations().then(function (res) { // Sadrzi linkove
+                console.log("Annotations");
+                console.log(res);
+            })
+
+            page.getOperatorList().then(function (res) {
+                console.log("Operator List");
+                console.log(res);
+                for (var i = 0; i < res.fnArray.length; i++) {
+                    if (res.fnArray[i] == 85) {
+                        console.log(res.fnArray[i])
+                    }
+                    
+                }
+            })
+
+            page.getStructTree().then(function (res) { // Sadrzi figures (vjv samo slike)
+                console.log("Structure Tree");
+                console.log(res);
+            })
+
+            page.getXfa().then(function (res) {
+                console.log("Xfa");
+                console.log(res);
+            })
+        })
     }
 
     let createReferencePreview = function () {
@@ -181,14 +212,12 @@
         } else if (Global.isNull(referenceListContainer)) {
             console.error("HTML div with id 'referenceListContainer' is null. Cannot create reference preview.");
             return;
+        } else if (Global.isNull(referencesNotFoundText)) {
+            console.error("HTML div with id 'referencesNotFoundText' is null. Cannot create reference preview.");
+            return;
         }
 
-        /*
-        <input type="checkbox" id="findHighlightAll" class="toolbarField" tabindex="94">
-        <label for="findHighlightAll" class="toolbarLabel" data-l10n-id="find_highlight">Highlight All</label>
-                    
-        */
-
+        // HTML Building of reference filter
         let keys = Object.keys(validReferences);
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
@@ -218,16 +247,37 @@
             let label = document.createElement("label");
             label.htmlFor = id;
             label.classList.add('toolbarLabel')
-            let labelTextNode = document.createTextNode(referenceName + "s");
+            let labelTextNode = document.createTextNode(referenceName);
             label.appendChild(labelTextNode);
 
             referenceFilter.appendChild(input);
             referenceFilter.appendChild(label);
         }
 
-        // Get a list of all references in the PDF
+        // Add event listener to open/close the filter
+        referenceFilterButton.addEventListener("click", function () {
+            if (referenceFilter.hidden) { // Now the filter is visible
+                // Change coordinates of the filter
+                let coordinates = referenceFilterButton.getBoundingClientRect();
+                referenceFilter.style.left = coordinates.left + 32 + 'px';
+                referenceFilter.style.top = coordinates.top - 5 + 'px';
+
+                referenceFilter.hidden = false;
+                referenceFilterButton.setAttribute("aria-checked", true);
+            } else { // The filter is no longer visible
+                referenceFilter.hidden = true;
+                referenceFilterButton.setAttribute("aria-checked", false);
+            }
+        })
+
+        // Get a list of all references in the PDF and create Clippy objects from these references
         destinations = await Global.doc.getDestinations();
+        console.log(destinations)
         keys = Object.keys(destinations);
+        if (keys.length === 0) {
+            referencesNotFoundText.classList.remove('hidden')
+            return;
+        }
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i]; // fig0001
             let tag = key.split(/[0-9]/)[0]; // fig
@@ -243,11 +293,15 @@
             reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
             referenceList.push(reference);
         }
+        console.log(referenceList.length)
+        if (referenceList.length === 0) {
+            referencesNotFoundText.classList.remove('hidden')
+            return;
+        }
 
-        // HTML building
+        // HTML building of list of references
         // We will create a tree structure of depth 2
         referenceListContainer.classList.add("treeWithDeepNesting");
-
         for (let i = 0; i < referenceList.length; i++) {
             // Top level div of reference
             let div = document.createElement("div");
@@ -301,21 +355,6 @@
 
             referenceListContainer.appendChild(div);
         }
-
-        referenceFilterButton.addEventListener("click", function () {
-            if (referenceFilter.hidden) { // Now the filter is visible
-                // Change coordinates of the filter
-                let coordinates = referenceFilterButton.getBoundingClientRect();
-                referenceFilter.style.left = coordinates.left + 32 + 'px';
-                referenceFilter.style.top = coordinates.top - 5 + 'px';
-
-                referenceFilter.hidden = false;
-                referenceFilterButton.setAttribute("aria-checked", true);
-            } else { // The filter is no longer visible
-                referenceFilter.hidden = true;
-                referenceFilterButton.setAttribute("aria-checked", false);
-            }
-        })
 
         return;
     }
