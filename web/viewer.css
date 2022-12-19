@@ -1053,6 +1053,7 @@
 }
 
 :root {
+    --sidebar-container-bg-color: rgb(240, 240, 240);
     --dir-factor: 1;
     --sidebar-width: 255px;
     --sidebar-transition-duration: 200ms;
@@ -1156,6 +1157,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --sidebar-container-bg-color: rgb(40, 40, 40);
     --main-color: rgba(249, 249, 250, 1);
     --body-bg-color: rgba(42, 42, 46, 1);
     --progressBar-color: rgba(0, 96, 223, 1);
@@ -1337,6 +1339,7 @@ body {
   transition-property: inset-inline-start;
   transition-duration: var(--sidebar-transition-duration);
   transition-timing-function: var(--sidebar-transition-timing-function);
+  background-color: var(--sidebar-container-bg-color);
 }
 
 #outerContainer.sidebarMoving #sidebarContainer,

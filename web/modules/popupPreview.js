@@ -15,24 +15,57 @@
 			//Vars
 			this.mouseovered = false;
 			this.pinned = false;
-			this.mouseDown = false;
 			this.position = { x: 0.0, y: 0.0 };
 			this.offset = { x: 0.0, y: 0.0 };
-			this.viewerDrag_MouseStartPosition = { x: 0.0, y: 0.0 };
-			this.viewerDrag_ViewerStartPosition = { x: 0.0, y: 0.0 };
 
 			//Load checking vars
 			window[`pdfViewer${viewerIndex}Ready`] = false;
 			window[`linkService${viewerIndex}Ready`] = false;
 
-			//HTML div stucts
+			this.popupWrapper = document.createElement("div");
+			this.popupWrapper.setAttribute("id", `popupWrapper${viewerIndex}`);
+			this.popupWrapper.setAttribute("class", `popupWrapper${viewerIndex}`);
+			this.popupWrapper.style.position = "absolute"; //static|absolute|fixed|relative|sticky|initial|inherit
+			this.popupWrapper.style.overflow = "hidden";
+			this.popupWrapper.style.border = `${POPUP_BORDER_SIZE}px solid black`; //Draw border
+			this.popupWrapper.style.backgroundColor = "#FFF";
+			this.popupWrapper.style.zIndex = `${zIndex}`;
+			this.popupWrapper.style.top = `${0}px`;
+
+			this.zoomBar = document.createElement("div");
+			this.zoomBar.setAttribute("id", `zoomBar${viewerIndex}`);
+			this.zoomBar.style.position = "absolute";
+			this.zoomBar.style.overflow = "hidden";
+			this.zoomBar.style.backgroundColor = "#BBB";
+			this.zoomBar.style.width = `22px`;
+			this.zoomBar.style.height = `46px`;
+			this.zoomBar.style.zIndex = `${zIndex}`;
+			this.zoomBar.style.visibility = "hidden";
+			this.zoomBar.style.top = `${0}px`;
+
+			this.zoomInButton = document.createElement("BUTTON");
+			this.zoomInButton.setAttribute("id", `zoomInButton${viewerIndex}`);
+			this.zoomInButton.style.width = `22px`;
+			this.zoomInButton.style.height = `22px`;
+			this.zoomInButton.style.backgroundImage = "url(images/toolbarButton-zoomInPreview.svg)";
+			this.zoomInButton.style.backgroundPosition = "2px center";
+			this.zoomBar.appendChild(this.zoomInButton);
+
+			this.zoomOutButton = document.createElement("BUTTON");
+			this.zoomOutButton.setAttribute("id", `zoomOutButton${viewerIndex}`);
+			this.zoomOutButton.style.width = `22px`;
+			this.zoomOutButton.style.height = `22px`;
+			this.zoomOutButton.style.backgroundImage = "url(images/toolbarButton-zoomOutPreview.svg)";
+			this.zoomOutButton.style.backgroundPosition = "2px center";
+			this.zoomBar.appendChild(this.zoomOutButton);
+
 			this.popupDiv = document.createElement("div");
 			this.popupDiv.setAttribute("id", `popupDiv${viewerIndex}`);
-			this.popupDiv.style.position = "fixed"; //static|absolute|fixed|relative|sticky|initial|inherit
-			this.popupDiv.style.overflow = "hidden";
-			this.popupDiv.style.border = "1px solid black"; //Draw border
-			this.popupDiv.style.zIndex = `${zIndex}`; //z-depth / layer, higher value = more infront
-			this.popupDiv.style.zoom = POPUP_WINDOW_SCALE;
+			this.popupDiv.style.position = "absolute"; //static|absolute|fixed|relative|sticky|initial|inherit
+			this.popupDiv.style.overflow = "scroll";
+			this.popupDiv.style.width = "100%";
+			this.popupDiv.style.height = "100%";
+			this.popupDiv.style.zoom = 1.0;
 
 			this.popupContainerDiv = document.createElement("div");
 			this.popupContainerDiv.setAttribute("id", `popupContainer${viewerIndex}`);
@@ -42,38 +75,55 @@
 			this.popupViewerDiv.setAttribute("id", `popupViewer${viewerIndex}`);
 			this.popupViewerDiv.setAttribute("class", "pdfViewer");
 
-			document.body.appendChild(this.popupDiv);
+			document.body.appendChild(this.popupWrapper);
+			this.popupWrapper.appendChild(this.popupDiv);
 			this.popupDiv.appendChild(this.popupContainerDiv);
 			this.popupContainerDiv.appendChild(this.popupViewerDiv);
+			document.body.appendChild(this.zoomBar);
+
+			//JQuery resize & drag functions
+			$(`#popupWrapper${this.viewerIndex}`)
+				.resizable({
+					handles: "all",
+					resize: function (event, ui) {
+						document.getElementById(`zoomBar${viewerIndex}`).style.left = `${ui.position.left - 22}px`;
+						document.getElementById(`zoomBar${viewerIndex}`).style.top = `${ui.position.top}px`;
+					},
+				})
+				.draggable({
+					drag: function (event, ui) {
+						document.getElementById(`zoomBar${viewerIndex}`).style.left = `${ui.position.left - 22}px`;
+						document.getElementById(`zoomBar${viewerIndex}`).style.top = `${ui.position.top}px`;
+					},
+				});
 
 			//Event Listeners
-			this.popupDiv.addEventListener("mouseover", (event) => {
+			this.popupWrapper.addEventListener("mouseover", (event) => {
 				currentlyMouseoverdPinnedPopup = this.id;
 				if (!this.pinned) {
 					this.hide();
 				}
 			});
-			this.popupDiv.addEventListener("mouseleave", (event) => {
+			this.popupWrapper.addEventListener("mouseleave", (event) => {
 				currentlyMouseoverdPinnedPopup = null;
 			});
+			//If we have multiple popup open if we click one then it should
+			//be rendered infront
+			this.popupWrapper.addEventListener("mousedown", (event) => {
+				this.popupWrapper.style.zIndex = `${++zIndex}`;
+				this.zoomBar.style.zIndex = `${zIndex}`;
+			});
 
-			this.popupDiv.addEventListener("mousedown", (event) => {
-				this.viewerDrag_ViewerStartPosition.x = this.position.x;
-				this.viewerDrag_ViewerStartPosition.y = this.position.y;
-				this.viewerDrag_MouseStartPosition.x = event.clientX;
-				this.viewerDrag_MouseStartPosition.y = event.clientY;
-				this.popupDiv.style.zIndex = `${++zIndex}`;
-				this.mouseDown = true;
+			this.zoomInButton.addEventListener("click", function () {
+				let index = this.id.replace("zoomInButton", "");
+				let newZoom = parseFloat(document.getElementById(`popupDiv${index}`).style.zoom) + 0.1;
+				document.getElementById(`popupDiv${index}`).style.zoom = newZoom;
 			});
-			this.popupDiv.addEventListener("mouseup", (event) => {
-				this.mouseDown = false;
-			});
-			this.popupDiv.addEventListener("mousemove", (event) => {
-				if (this.mouseDown) {
-					let newX = this.viewerDrag_ViewerStartPosition.x + (event.clientX - this.viewerDrag_MouseStartPosition.x) * (1.0 / POPUP_WINDOW_SCALE);
-					let newY = this.viewerDrag_ViewerStartPosition.y + (event.clientY - this.viewerDrag_MouseStartPosition.y) * (1.0 / POPUP_WINDOW_SCALE);
-					this.setPosition(newX, newY);
-				}
+
+			this.zoomOutButton.addEventListener("click", function () {
+				let index = this.id.replace("zoomOutButton", "");
+				let newZoom = parseFloat(document.getElementById(`popupDiv${index}`).style.zoom) - 0.1;
+				document.getElementById(`popupDiv${index}`).style.zoom = newZoom;
 			});
 
 			//PDFJS elements
@@ -86,10 +136,12 @@
 			window["linkService_" + viewerIndex] = new Global.app.pdfLinkService.constructor({
 				eventBus: eventBus,
 			});
+
 			window["pdfViewer_" + viewerIndex] = new Global.app.pdfViewer.constructor({
 				container: this.popupContainerDiv,
 				eventBus: eventBus,
 				linkService: window["linkService_" + viewerIndex],
+				scriptingManager: pdfScriptingManager,
 				removePageBorders: true,
 			});
 
@@ -101,10 +153,13 @@
 				window["pdfViewer_" + viewerIndex].currentScaleValue = "page-width";
 			});
 
-			//thrown from then end of pdfViewer.setDocument() and linkService.setDocument() in viewer.js
+			//thrown from then end of pdfViewer.setDocument() in viewer.js on line 8439 by
+			//this.eventBus.dispatch("pdfViewerReady", { source: this });
 			eventBus.on("pdfViewerReady", function () {
 				window[`pdfViewer${viewerIndex}Ready`] = true;
 			});
+			//thrown from then end of PDFLinkService.setDocument() in viewer.js on line 898 by
+			//this.eventBus.dispatch("linkServiceReady", { source: this });
 			eventBus.on("linkServiceReady", function () {
 				window[`linkService${viewerIndex}Ready`] = true;
 			});
@@ -121,8 +176,7 @@
 		}
 
 		pin() {
-			this.popupDiv.style.border = "3px solid black";
-			this.popupDiv.style.overflow = "scroll";
+			this.popupWrapper.style.border = `${POPUP_PINNED_BORDER_SIZE}px solid black`;
 			this.pinned = true;
 		}
 
@@ -131,34 +185,44 @@
 		}
 
 		show() {
-			this.popupDiv.style.visibility = "visible";
+			this.popupWrapper.style.visibility = "visible";
+			this.zoomBar.style.visibility = "visible";
 		}
 
 		hide() {
-			this.popupDiv.style.visibility = "hidden";
+			this.popupWrapper.style.visibility = "hidden";
+			this.zoomBar.style.visibility = "hidden";
 		}
 
 		isHidden() {
-			return this.popupDiv.style.visibility == "hidden";
+			return this.popupWrapper.style.visibility == "hidden";
 		}
 
 		setSize(width, height) {
-			this.popupDiv.style.width = `${width}px`;
-			this.popupDiv.style.height = `${height}px`;
+			this.popupWrapper.style.width = `${width}px`;
+			this.popupWrapper.style.height = `${height}px`;
+		}
+
+		setZoom(zoomAmt) {
+			this.popupDiv.style.zoom = zoomAmt;
 		}
 
 		setPosition(x, y) {
 			this.position.x = x;
 			this.position.y = y;
-			this.popupDiv.style.left = `${this.position.x + this.offset.x}px`;
-			this.popupDiv.style.top = `${this.position.y + this.offset.y}px`;
+			this.popupWrapper.style.left = `${this.position.x + this.offset.x}px`;
+			this.popupWrapper.style.top = `${this.position.y + this.offset.y}px`;
+			this.zoomBar.style.left = `${this.position.x + this.offset.x - 22}px`;
+			this.zoomBar.style.top = `${this.position.y + this.offset.y}px`;
 		}
 
 		setOffset(offX, offY) {
 			this.offset.x = offX;
 			this.offset.y = offY;
-			this.popupDiv.style.left = `${this.position.x + this.offset.x}px`;
-			this.popupDiv.style.top = `${this.position.y + this.offset.y}px`;
+			this.popupWrapper.style.left = `${this.position.x + this.offset.x}px`;
+			this.popupWrapper.style.top = `${this.position.y + this.offset.y}px`;
+			this.zoomBar.style.left = `${this.position.x + this.offset.x - 22}px`;
+			this.zoomBar.style.top = `${this.position.y + this.offset.y}px`;
 		}
 
 		setCurrentScale(scale) {
@@ -194,9 +258,8 @@
 			window[`linkService${this.viewerIndex}Ready`] = null;
 
 			//Remove divs
-			this.popupViewerDiv.remove();
-			this.popupContainerDiv.remove();
-			this.popupDiv.remove();
+			document.getElementById(`popupWrapper${this.viewerIndex}`).remove();
+			document.getElementById(`zoomBar${this.viewerIndex}`).remove();
 		}
 	}
 
@@ -208,7 +271,10 @@
 	let currentViewer = null;
 	let currentlyMouseoverdPinnedPopup = null;
 	let zIndex = 10;
-	const POPUP_WINDOW_SCALE = 0.6;
+	const POPUP_INIT_SCALE = 0.7;
+	const POPUP_BORDER_SIZE = 4;
+	const POPUP_PINNED_BORDER_SIZE = 6;
+	let popupTooltipDiv;
 
 	// Initializer method
 	PopupPreview.initialize = async function () {
@@ -220,7 +286,32 @@
 			viewerDiv = document.getElementById("viewer"); // Main non-popup viewer
 			currentViewer = new PopupViewer(currentViewerIndex);
 			PopupPreview.togglePreview();
+			initPopupTooltipDiv();
 		}
+	};
+
+	let initPopupTooltipDiv = function () {
+		popupTooltipDiv = document.createElement("div");
+		popupTooltipDiv.setAttribute("id", `popupTooltipDiv1`);
+		popupTooltipDiv.style.position = "absolute"; //static|absolute|fixed|relative|sticky|initial|inherit
+		popupTooltipDiv.style.backgroundColor = "#f5dd9a";
+		popupTooltipDiv.style.borderStyle = "dashed";
+		popupTooltipDiv.innerHTML = `Press "${keyUsedToPinPopup}" to pin/unpin popup window`;
+		popupTooltipDiv.style.visibility = "hidden";
+		popupTooltipDiv.style.zIndex = "999";
+		popupTooltipDiv.style.top = `${0}px`;
+		document.body.appendChild(popupTooltipDiv);
+	};
+
+	let showPopupTooltipDiv = function (x, y) {
+		let p = document.getElementById("popupTooltipDiv1");
+		p.style.visibility = "visible";
+		p.style.left = `${x + 25}px`;
+		p.style.top = `${y - 25}px`;
+	};
+
+	let hidePopupTooltipDiv = function () {
+		popupTooltipDiv.style.visibility = "hidden";
 	};
 
 	//Incase we want the option to turn previewing off.
@@ -286,9 +377,9 @@
 			if (currentlyMouseoverdPinnedPopup != null) {
 				unpinViewer(currentlyMouseoverdPinnedPopup);
 			}
-
-			//If currentViewer is showing(i.e. some reference is being hovered) then pin the current viewer.
-			if (!currentViewer.isHidden()) {
+			//If we are mouseovering a popup that is currently being shown
+			//(because we preload the viewer and keep hidden until something is mouseovered)
+			else if (!currentViewer.isHidden()) {
 				pinCurrentViewer();
 			}
 		}
@@ -301,6 +392,16 @@
 		//event.target		 		gets the full path of the internal link.
 		//event.target.hash 		gets the reference ID with a hash prefix i.e. #bib00012 or #fig0001.
 		const referenceID = event.target.hash.substring(1); //Removes the # from #fig0001.
+
+		showPopupTooltipDiv(event.clientX, event.clientY);
+
+		//Hyperlink Parent
+		const refParent = event.target.parentElement;
+		let refBoundingRect = refParent.getBoundingClientRect();
+
+		refParent.addEventListener("mouseleave", function () {
+			hidePopupTooltipDiv();
+		});
 
 		/**
 		 * ---- ref : basically a JSON array ----
@@ -340,37 +441,41 @@
 			 * @param {double} event.clientY	Mouse coordinate Y
 			 **/
 
+			let maxHeight;
+
+			//Scale content of popup by zooming to appropriate level
+			currentViewer.setZoom(POPUP_INIT_SCALE);
+
 			const type = referenceID.replaceAll(/[0-9]/g, ""); // fig,tbl,bib,eqn
 			if (type == "tbl") {
-				//Tables do not seem to match the other reference styles.
-				let viewPort = pdfPage.getViewport({ scale: 1.0 });
-
-				let maxHeight = viewPort.height * currentViewer.getCurrentScale() > screen.height ? viewPort.height * currentViewer.getCurrentScale() * POPUP_WINDOW_SCALE : screen.height * POPUP_WINDOW_SCALE;
-
+				let viewPort = pdfPage.getViewport({ scale: POPUP_INIT_SCALE });
+				maxHeight = viewPort.height * currentViewer.getCurrentScale() < pdfPage.view[3] * 0.5 ? viewPort.height * currentViewer.getCurrentScale() : pdfPage.view[3] * 0.5;
 				currentViewer.setSize(refDestination[4] * currentViewer.getCurrentScale(), maxHeight);
 
-				//Is the reference being hovered at the top or bottom half of the page
-				if (event.clientY < screen.height * 0.5) {
-					currentViewer.setPosition(event.clientX * (1.0 / POPUP_WINDOW_SCALE), event.clientY * (1.0 / POPUP_WINDOW_SCALE));
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), 3);
+				let x = refBoundingRect.x + refBoundingRect.width / 2;
+				let y = refBoundingRect.y + refBoundingRect.height / 2;
+
+				currentViewer.setPosition(x, y);
+
+				if (event.clientY > screen.height / 2) {
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -(refBoundingRect.height + maxHeight + POPUP_PINNED_BORDER_SIZE));
 				} else {
-					currentViewer.setPosition(event.clientX * (1.0 / POPUP_WINDOW_SCALE), event.clientY * (1.0 / POPUP_WINDOW_SCALE) - viewPort.height * POPUP_WINDOW_SCALE * currentViewer.getCurrentScale());
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -3);
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), refBoundingRect.height);
 				}
 			} else {
-				let viewPort = pdfPage.getViewport({ scale: currentViewer.getCurrentScale() });
-
-				let maxHeight = viewPort.height * currentViewer.getCurrentScale() > screen.height ? viewPort.height * currentViewer.getCurrentScale() * POPUP_WINDOW_SCALE : screen.height * POPUP_WINDOW_SCALE;
-
+				let viewPort = pdfPage.getViewport({ scale: currentViewer.getCurrentScale() * POPUP_INIT_SCALE });
+				maxHeight = viewPort.height * currentViewer.getCurrentScale() < pdfPage.view[3] * 0.5 ? viewPort.height * currentViewer.getCurrentScale() : pdfPage.view[3] * 0.5;
 				currentViewer.setSize(viewPort.width * currentViewer.getCurrentScale(), maxHeight);
 
-				//Is the reference being hovered at the top or bottom half of the page
-				if (event.clientY < screen.height * 0.5) {
-					currentViewer.setPosition(event.clientX * (1.0 / POPUP_WINDOW_SCALE), event.clientY * (1.0 / POPUP_WINDOW_SCALE));
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), 3);
+				let x = refBoundingRect.x + refBoundingRect.width / 2;
+				let y = refBoundingRect.y + refBoundingRect.height / 2;
+
+				currentViewer.setPosition(x, y);
+
+				if (event.clientY > screen.height / 2) {
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -(refBoundingRect.height + maxHeight + POPUP_PINNED_BORDER_SIZE));
 				} else {
-					currentViewer.setPosition(event.clientX * (1.0 / POPUP_WINDOW_SCALE), event.clientY * (1.0 / POPUP_WINDOW_SCALE) - viewPort.height * POPUP_WINDOW_SCALE * currentViewer.getCurrentScale());
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -3);
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), refBoundingRect.height);
 				}
 			}
 		});
