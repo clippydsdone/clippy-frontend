@@ -29,37 +29,44 @@
         {
             fullName: "Bibliography",
             fullNames: "Bibliographies",
-            tags: ["bib", "B"]
+            tags: ["bib", "B"],
+            counter: 0
         },
         {
             fullName: "Citation",
             fullNames: "Citations",
-            tags: ["cite"]
+            tags: ["cite"],
+            counter: 0
         },
         {
             fullName: "Corresponding Author",
             fullNames: "Corresponding Authors",
-            tags: ["cor"]
+            tags: ["cor"],
+            counter: 0
         },        
         {
             fullName: "Equation",
             fullNames: "Equations",
-            tags: ["eqn", "equation"]
+            tags: ["eqn", "equation"],
+            counter: 0
         },
         {
             fullName: "Figure",
             fullNames: "Figures",
-            tags: ["fig", "figure"]
+            tags: ["fig", "figure"],
+            counter: 0
         },
         {
             fullName: "Table",
             fullNames: "Tables",
-            tags: ["tbl", "table"]
+            tags: ["tbl", "table"],
+            counter: 0
         },
         {
             fullName: "Inequation",
             fullNames: "Inequations",
-            tags: ["ueqn", "B"]
+            tags: ["ueqn", "B"],
+            counter: 0
         }
     ];
 
@@ -287,7 +294,7 @@
             let reference = {};
             reference.key = key;                        // fig0001
             reference.tag = tag;                        // fig
-            reference.num = key.substring(tag.length);  // 0001
+            reference.num = validReference.counter;     // 0001
             reference.tagName = validReference.fullName;   // Figure
             reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
             referenceList.push(reference);
@@ -374,6 +381,7 @@
         for (let i = 0; i < validReferences.length; i++) {
             for (let j = 0; j < validReferences[i].tags.length; j++) {
                 if (tag.startsWith(validReferences[i].tags[j])) {
+                    validReferences[i].counter++;
                     return validReferences[i];
                 }  
             }
