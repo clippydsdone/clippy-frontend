@@ -30,6 +30,7 @@
 			this.popupWrapper.style.border = `${POPUP_BORDER_SIZE}px solid black`; //Draw border
 			this.popupWrapper.style.backgroundColor = "#FFF";
 			this.popupWrapper.style.zIndex = `${zIndex}`;
+			this.popupWrapper.style.top = `${0}px`;
 
 			this.zoomBar = document.createElement("div");
 			this.zoomBar.setAttribute("id", `zoomBar${viewerIndex}`);
@@ -40,6 +41,7 @@
 			this.zoomBar.style.height = `46px`;
 			this.zoomBar.style.zIndex = `${zIndex}`;
 			this.zoomBar.style.visibility = "hidden";
+			this.zoomBar.style.top = `${0}px`;
 
 			this.zoomInButton = document.createElement("BUTTON");
 			this.zoomInButton.setAttribute("id", `zoomInButton${viewerIndex}`);
@@ -294,9 +296,10 @@
 		popupTooltipDiv.style.position = "absolute"; //static|absolute|fixed|relative|sticky|initial|inherit
 		popupTooltipDiv.style.backgroundColor = "#f5dd9a";
 		popupTooltipDiv.style.borderStyle = "dashed";
-		popupTooltipDiv.innerHTML = `Press "${keyUsedToPinPopup}" to pin popup window`;
+		popupTooltipDiv.innerHTML = `Press "${keyUsedToPinPopup}" to pin/unpin popup window`;
 		popupTooltipDiv.style.visibility = "hidden";
 		popupTooltipDiv.style.zIndex = "999";
+		popupTooltipDiv.style.top = `${0}px`;
 		document.body.appendChild(popupTooltipDiv);
 	};
 
