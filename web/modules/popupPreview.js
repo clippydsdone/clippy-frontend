@@ -24,9 +24,10 @@
 
 			this.popupWrapper = document.createElement("div");
 			this.popupWrapper.setAttribute("id", `popupWrapper${viewerIndex}`);
+			this.popupWrapper.setAttribute("class", `popupWrapper${viewerIndex}`);
 			this.popupWrapper.style.position = "absolute"; //static|absolute|fixed|relative|sticky|initial|inherit
 			this.popupWrapper.style.overflow = "hidden";
-			this.popupWrapper.style.border = "1px solid black"; //Draw border
+			this.popupWrapper.style.border = `${POPUP_BORDER_SIZE}px solid black`; //Draw border
 			this.popupWrapper.style.backgroundColor = "#FFF";
 			this.popupWrapper.style.zIndex = `${zIndex}`;
 
@@ -34,9 +35,11 @@
 			this.zoomBar.setAttribute("id", `zoomBar${viewerIndex}`);
 			this.zoomBar.style.position = "absolute";
 			this.zoomBar.style.overflow = "hidden";
+			this.zoomBar.style.backgroundColor = "#BBB";
 			this.zoomBar.style.width = `22px`;
+			this.zoomBar.style.height = `46px`;
 			this.zoomBar.style.zIndex = `${zIndex}`;
-			this.zoomBar.style.display = "block";
+			//this.zoomBar.style.display = "block";
 
 			this.zoomInButton = document.createElement("BUTTON");
 			this.zoomInButton.setAttribute("id", `zoomInButton${viewerIndex}`);
@@ -81,13 +84,13 @@
 				.resizable({
 					handles: "all",
 					resize: function (event, ui) {
-						document.getElementById(`zoomBar${viewerIndex}`).style.left = `${ui.position.left - 25}px`;
+						document.getElementById(`zoomBar${viewerIndex}`).style.left = `${ui.position.left - 22}px`;
 						document.getElementById(`zoomBar${viewerIndex}`).style.top = `${ui.position.top}px`;
 					},
 				})
 				.draggable({
 					drag: function (event, ui) {
-						document.getElementById(`zoomBar${viewerIndex}`).style.left = `${ui.position.left - 25}px`;
+						document.getElementById(`zoomBar${viewerIndex}`).style.left = `${ui.position.left - 22}px`;
 						document.getElementById(`zoomBar${viewerIndex}`).style.top = `${ui.position.top}px`;
 					},
 				});
@@ -171,7 +174,7 @@
 		}
 
 		pin() {
-			this.popupWrapper.style.border = "3px solid black";
+			this.popupWrapper.style.border = `${POPUP_PINNED_BORDER_SIZE}px solid black`;
 			this.pinned = true;
 		}
 
@@ -207,7 +210,7 @@
 			this.position.y = y;
 			this.popupWrapper.style.left = `${this.position.x + this.offset.x}px`;
 			this.popupWrapper.style.top = `${this.position.y + this.offset.y}px`;
-			this.zoomBar.style.left = `${this.position.x + this.offset.x - 25}px`;
+			this.zoomBar.style.left = `${this.position.x + this.offset.x - 22}px`;
 			this.zoomBar.style.top = `${this.position.y + this.offset.y}px`;
 		}
 
@@ -216,7 +219,7 @@
 			this.offset.y = offY;
 			this.popupWrapper.style.left = `${this.position.x + this.offset.x}px`;
 			this.popupWrapper.style.top = `${this.position.y + this.offset.y}px`;
-			this.zoomBar.style.left = `${this.position.x + this.offset.x - 25}px`;
+			this.zoomBar.style.left = `${this.position.x + this.offset.x - 22}px`;
 			this.zoomBar.style.top = `${this.position.y + this.offset.y}px`;
 		}
 
@@ -267,6 +270,8 @@
 	let currentlyMouseoverdPinnedPopup = null;
 	let zIndex = 10;
 	const POPUP_INIT_SCALE = 0.7;
+	const POPUP_BORDER_SIZE = 4;
+	const POPUP_PINNED_BORDER_SIZE = 6;
 	let popupTooltipDiv;
 
 	// Initializer method
@@ -291,6 +296,7 @@
 		popupTooltipDiv.style.borderStyle = "dashed";
 		popupTooltipDiv.innerHTML = `Press "${keyUsedToPinPopup}" to pin popup window`;
 		popupTooltipDiv.style.visibility = "hidden";
+		popupTooltipDiv.style.zIndex = "999";
 		document.body.appendChild(popupTooltipDiv);
 	};
 
@@ -388,6 +394,9 @@
 
 		//Hyperlink Parent
 		const refParent = event.target.parentElement;
+		let refBoundingRect = refParent.getBoundingClientRect();
+		console.log("refParent:" + JSON.stringify(refParent.getBoundingClientRect()));
+		console.log("refParent:" + refParent.getBoundingClientRect().y);
 
 		refParent.addEventListener("mouseleave", function () {
 			hidePopupTooltipDiv();
@@ -452,12 +461,16 @@
 				let viewPort = pdfPage.getViewport({ scale: currentViewer.getCurrentScale() * POPUP_INIT_SCALE });
 				maxHeight = viewPort.height * currentViewer.getCurrentScale() < pdfPage.view[3] * 0.5 ? viewPort.height * currentViewer.getCurrentScale() : pdfPage.view[3] * 0.5;
 				currentViewer.setSize(viewPort.width * currentViewer.getCurrentScale(), maxHeight);
-				currentViewer.setPosition(event.clientX, event.clientY);
+
+				let x = refBoundingRect.x + refBoundingRect.width / 2;
+				let y = refBoundingRect.y + refBoundingRect.height / 2;
+
+				currentViewer.setPosition(x, y);
 
 				if (event.clientY > screen.height / 2) {
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -(5 + maxHeight));
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -(refBoundingRect.height + maxHeight + 5));
 				} else {
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), 8);
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), refBoundingRect.height);
 				}
 			}
 		});
