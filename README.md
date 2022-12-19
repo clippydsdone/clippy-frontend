@@ -22,7 +22,7 @@ There are multiple important objects to take note while working with PDF.js. The
 
 ## Useful Web Documentation
 The documentation for PDF.js is incomplete but the following websites are recommended for analyzing the library and its API:
-- [Work-in-progress Official PDF.js wiki](https://mozilla.github.io/pdf.js/api/draft/module-pdfjsLib-PDFDocumentProxy.html)
+- [Work-in-progress Official PDF.js wiki](https://mozilla.github.io/pdf.js/api/draft/index.html)
 - [PDF.js Github code comments](https://github.com/mozilla/pdf.js/blob/master/src/display/api.js)
 - [Pub.dev autoconstructed documentation](https://pub.dev/documentation/pdfjs/latest/pdfjs/PageReference-class.html)
 
