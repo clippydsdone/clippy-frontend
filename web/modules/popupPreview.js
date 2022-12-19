@@ -39,7 +39,7 @@
 			this.zoomBar.style.width = `22px`;
 			this.zoomBar.style.height = `46px`;
 			this.zoomBar.style.zIndex = `${zIndex}`;
-			//this.zoomBar.style.display = "block";
+			this.zoomBar.style.visibility = "hidden";
 
 			this.zoomInButton = document.createElement("BUTTON");
 			this.zoomInButton.setAttribute("id", `zoomInButton${viewerIndex}`);
@@ -395,8 +395,6 @@
 		//Hyperlink Parent
 		const refParent = event.target.parentElement;
 		let refBoundingRect = refParent.getBoundingClientRect();
-		console.log("refParent:" + JSON.stringify(refParent.getBoundingClientRect()));
-		console.log("refParent:" + refParent.getBoundingClientRect().y);
 
 		refParent.addEventListener("mouseleave", function () {
 			hidePopupTooltipDiv();
@@ -450,12 +448,16 @@
 				let viewPort = pdfPage.getViewport({ scale: POPUP_INIT_SCALE });
 				maxHeight = viewPort.height * currentViewer.getCurrentScale() < pdfPage.view[3] * 0.5 ? viewPort.height * currentViewer.getCurrentScale() : pdfPage.view[3] * 0.5;
 				currentViewer.setSize(refDestination[4] * currentViewer.getCurrentScale(), maxHeight);
-				currentViewer.setPosition(event.clientX, event.clientY);
+
+				let x = refBoundingRect.x + refBoundingRect.width / 2;
+				let y = refBoundingRect.y + refBoundingRect.height / 2;
+
+				currentViewer.setPosition(x, y);
 
 				if (event.clientY > screen.height / 2) {
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -(5 + maxHeight));
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -(refBoundingRect.height + maxHeight + POPUP_PINNED_BORDER_SIZE));
 				} else {
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), 8);
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), refBoundingRect.height);
 				}
 			} else {
 				let viewPort = pdfPage.getViewport({ scale: currentViewer.getCurrentScale() * POPUP_INIT_SCALE });
@@ -468,7 +470,7 @@
 				currentViewer.setPosition(x, y);
 
 				if (event.clientY > screen.height / 2) {
-					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -(refBoundingRect.height + maxHeight + 5));
+					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), -(refBoundingRect.height + maxHeight + POPUP_PINNED_BORDER_SIZE));
 				} else {
 					currentViewer.setOffset(-((viewPort.width / 2) * currentViewer.getCurrentScale()), refBoundingRect.height);
 				}
