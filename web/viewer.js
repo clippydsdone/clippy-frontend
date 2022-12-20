@@ -2986,7 +2986,8 @@
 							originalUrl: file.name
 						};
 					}
-					PDFViewerApplication.open(url);
+					// PDFViewerApplication.open(url); // Clippy commented out
+					location.reload(); // Clippy addition
 				};
 				var webViewerOpenFile = function (evt) {
 					const fileInput = PDFViewerApplication.appConfig.openFileInput;
