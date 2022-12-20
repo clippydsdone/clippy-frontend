@@ -15,23 +15,60 @@
     let referenceFilter = null;
     let referenceListContainer = null;
     let referenceFilterButton = null;
+    let referencesNotFoundText = null;
 
     // Reference List elements
     let referenceList = [];
-    let validReferences = {
+    let validReferences = [
         /*
         "aff": "AFF"
         "para": "Paragraph",
         "sec": "Section",
         "crf": "CRF",
         */
-        "bib": "Bibliography",
-        "cor": "Corresponding Author",        
-        "eqn": "Equation",
-        "fig": "Figure",
-        "tbl": "Table",
-        "ueqn": "Inequation"
-    };
+        {
+            fullName: "Bibliography",
+            fullNames: "Bibliographies",
+            tags: ["bib", "B"],
+            counter: 0
+        },
+        {
+            fullName: "Citation",
+            fullNames: "Citations",
+            tags: ["cite"],
+            counter: 0
+        },
+        {
+            fullName: "Corresponding Author",
+            fullNames: "Corresponding Authors",
+            tags: ["cor"],
+            counter: 0
+        },        
+        {
+            fullName: "Equation",
+            fullNames: "Equations",
+            tags: ["eqn", "equation"],
+            counter: 0
+        },
+        {
+            fullName: "Figure",
+            fullNames: "Figures",
+            tags: ["fig", "figure"],
+            counter: 0
+        },
+        {
+            fullName: "Table",
+            fullNames: "Tables",
+            tags: ["tbl", "table"],
+            counter: 0
+        },
+        {
+            fullName: "Inequation",
+            fullNames: "Inequations",
+            tags: ["ueqn", "B"],
+            counter: 0
+        }
+    ];
 
     // Preview (PDFViewer) elements
     let referenceViewer = null;
@@ -58,6 +95,7 @@
         referenceFilter = document.getElementById('referenceFilterContainer');
         referenceListContainer = document.getElementById('referenceListContainer');
         referenceFilterButton = document.getElementById('referenceFilters');
+        referencesNotFoundText = document.getElementById('referencesNotFoundText');
 
         referenceFilter.hidden = true;
 
@@ -181,18 +219,15 @@
         } else if (Global.isNull(referenceListContainer)) {
             console.error("HTML div with id 'referenceListContainer' is null. Cannot create reference preview.");
             return;
+        } else if (Global.isNull(referencesNotFoundText)) {
+            console.error("HTML div with id 'referencesNotFoundText' is null. Cannot create reference preview.");
+            return;
         }
 
-        /*
-        <input type="checkbox" id="findHighlightAll" class="toolbarField" tabindex="94">
-        <label for="findHighlightAll" class="toolbarLabel" data-l10n-id="find_highlight">Highlight All</label>
-                    
-        */
-
-        let keys = Object.keys(validReferences);
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-            let referenceName = validReferences[key];
+        // HTML Building of reference filter
+        for (let i = 0; i < validReferences.length; i++) {
+            let key = validReferences[i].tags[0];
+            let referenceName = validReferences[i].fullNames;
             let id = key + "Filter";
 
             let input = document.createElement("input");
@@ -218,36 +253,60 @@
             let label = document.createElement("label");
             label.htmlFor = id;
             label.classList.add('toolbarLabel')
-            let labelTextNode = document.createTextNode(referenceName + "s");
+            let labelTextNode = document.createTextNode(referenceName);
             label.appendChild(labelTextNode);
 
             referenceFilter.appendChild(input);
             referenceFilter.appendChild(label);
         }
 
-        // Get a list of all references in the PDF
+        // Add event listener to open/close the filter
+        referenceFilterButton.addEventListener("click", function () {
+            if (referenceFilter.hidden) { // Now the filter is visible
+                // Change coordinates of the filter
+                let coordinates = referenceFilterButton.getBoundingClientRect();
+                referenceFilter.style.left = coordinates.left + 32 + 'px';
+                referenceFilter.style.top = coordinates.top - 5 + 'px';
+
+                referenceFilter.hidden = false;
+                referenceFilterButton.setAttribute("aria-checked", true);
+            } else { // The filter is no longer visible
+                referenceFilter.hidden = true;
+                referenceFilterButton.setAttribute("aria-checked", false);
+            }
+        })
+
+        // Get a list of all references in the PDF and create Clippy objects from these references
         destinations = await Global.doc.getDestinations();
-        keys = Object.keys(destinations);
+        let keys = Object.keys(destinations);
+        if (keys.length === 0) {
+            referencesNotFoundText.classList.remove('hidden')
+            return;
+        }
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i]; // fig0001
             let tag = key.split(/[0-9]/)[0]; // fig
-            if (Global.isNull(validReferences[tag])) // Check if it is a valid reference
+            validReference = isValidReference(tag); // Get
+            if (validReference == null) // Check if it is an invalid reference
                 continue;
 
             // Build reference if it is a valid reference
             let reference = {};
             reference.key = key;                        // fig0001
             reference.tag = tag;                        // fig
-            reference.num = key.substring(tag.length);  // 0001
-            reference.tagName = validReferences[tag];   // Figure
+            reference.num = validReference.counter;     // 0001
+            reference.tagName = validReference.fullName;   // Figure
             reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
             referenceList.push(reference);
         }
+        if (referenceList.length === 0) {
+            referencesNotFoundText.classList.remove('hidden')
+            return;
+        }
 
-        // HTML building
+        // HTML building of list of references
         // We will create a tree structure of depth 2
         referenceListContainer.classList.add("treeWithDeepNesting");
-
         for (let i = 0; i < referenceList.length; i++) {
             // Top level div of reference
             let div = document.createElement("div");
@@ -302,21 +361,6 @@
             referenceListContainer.appendChild(div);
         }
 
-        referenceFilterButton.addEventListener("click", function () {
-            if (referenceFilter.hidden) { // Now the filter is visible
-                // Change coordinates of the filter
-                let coordinates = referenceFilterButton.getBoundingClientRect();
-                referenceFilter.style.left = coordinates.left + 32 + 'px';
-                referenceFilter.style.top = coordinates.top - 5 + 'px';
-
-                referenceFilter.hidden = false;
-                referenceFilterButton.setAttribute("aria-checked", true);
-            } else { // The filter is no longer visible
-                referenceFilter.hidden = true;
-                referenceFilterButton.setAttribute("aria-checked", false);
-            }
-        })
-
         return;
     }
 
@@ -329,6 +373,21 @@
             referenceFilter.hidden = true;
             referenceFilterButton.setAttribute("aria-checked", false);
         }
+    }
+
+    let isValidReference = function (tag) {
+        let validTags = [];
+
+        for (let i = 0; i < validReferences.length; i++) {
+            for (let j = 0; j < validReferences[i].tags.length; j++) {
+                if (tag.startsWith(validReferences[i].tags[j])) {
+                    validReferences[i].counter++;
+                    return validReferences[i];
+                }  
+            }
+        }
+       
+        return null;
     }
 
     // Execute initialize method after the document loads
