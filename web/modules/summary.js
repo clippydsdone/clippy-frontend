@@ -36,6 +36,7 @@
             return;
         }
 
+        const detailsText = document.getElementById("detailsContainerText");
         const loadingBar = document.getElementById("summaryLoadingGif");
         const summaryText = document.getElementById("summaryContainerText");
 
@@ -57,6 +58,26 @@
             } else {
                 summaryText.innerHTML = "No summary found.";
             }
+
+            delete result.references;
+            delete result.tldr;
+
+            for(var objKey in result){ // this will loop through all the keys in the object
+
+                //create a table row element and two column elements:
+                var row = document.createElement('tr'),
+                    td1 = document.createElement('td'),
+                    td2 = document.createElement('td');
+     
+                //assign object key to first column and value to second column:
+                td1.innerHTML = objKey;
+                td2.innerHTML = result[objKey];
+     
+                //append the columns to the row, and the row to the tbody element:
+                row.appendChild(td1).appendChild(td2);
+                detailsText.appendChild(row);          
+     
+           }
         })
         .catch((err) => {
             console.log(err);

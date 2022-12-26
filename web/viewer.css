@@ -1118,6 +1118,7 @@
     --toolbarButton-presentationMode-icon: url(images/toolbarButton-presentationMode.svg);
     --toolbarButton-print-icon: url(images/toolbarButton-print.svg);
     --toolbarButton-openFile-icon: url(images/toolbarButton-openFile.svg);
+    --toolbarButton-openDefaultPdf-icon: url(images/toolbarButton-openDefaultPdf.svg);
     --toolbarButton-download-icon: url(images/toolbarButton-download.svg);
     --toolbarButton-bookmark-icon: url(images/toolbarButton-bookmark.svg);
     --toolbarButton-viewThumbnail-icon: url(images/toolbarButton-viewThumbnail.svg);
@@ -2320,6 +2321,11 @@ body {
 #secondaryOpenFile::before {
   -webkit-mask-image: var(--toolbarButton-openFile-icon);
           mask-image: var(--toolbarButton-openFile-icon);
+}
+
+#openDefaultPdf::before {
+  -webkit-mask-image: var(--toolbarButton-openDefaultPdf-icon);
+          mask-image: var(--toolbarButton-openDefaultPdf-icon);
 }
 
 #download::before,

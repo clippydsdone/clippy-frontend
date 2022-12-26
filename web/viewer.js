@@ -2561,6 +2561,7 @@
 					}
 					eventBus._on("fileinputchange", webViewerFileInputChange);
 					eventBus._on("openfile", webViewerOpenFile);
+					eventBus._on("opendefaultpdf", webViewerOpenDeafultPdf);
 				},
 				bindWindowEvents() {
 					const { eventBus, _boundEvents } = this;
@@ -2665,6 +2666,7 @@
 					}
 					eventBus._off("fileinputchange", webViewerFileInputChange);
 					eventBus._off("openfile", webViewerOpenFile);
+					eventBus._off("opendefaultpdf", webViewerOpenDeafultPdf);
 					_boundEvents.beforePrint = null;
 					_boundEvents.afterPrint = null;
 				},
@@ -2993,6 +2995,12 @@
 					const fileInput = PDFViewerApplication.appConfig.openFileInput;
 					fileInput.click();
 				};
+
+				var webViewerOpenDeafultPdf = function (evt) {
+					console.log(evt);
+					localStorage.removeItem("lastOpenedFile");
+					location.reload(); // Clippy addition
+				};
 			}
 			function webViewerPresentationMode() {
 				PDFViewerApplication.requestPresentationMode();
@@ -3259,6 +3267,7 @@
 					}
 				}
 				if (cmd === 1 || cmd === 8) {
+					console.log(evt.keyCode);
 					switch (evt.keyCode) {
 						case 83:
 							eventBus.dispatch("download", {
@@ -11398,6 +11407,10 @@
 						element: options.openFile,
 						eventName: "openfile",
 					});
+					this.buttons.push({
+						element: options.openDefaultPdf,
+						eventName: "opendefaultpdf",
+					});
 					this.items = {
 						numPages: options.numPages,
 						pageNumber: options.pageNumber,
@@ -13125,6 +13138,7 @@
 					zoomOut: document.getElementById("zoomOut"),
 					viewFind: document.getElementById("viewFind"),
 					openFile: document.getElementById("openFile"),
+					openDefaultPdf: document.getElementById("openDefaultPdf"),
 					print: document.getElementById("print"),
 					editorFreeTextButton: document.getElementById("editorFreeText"),
 					editorFreeTextParamsToolbar: document.getElementById("editorFreeTextParamsToolbar"),

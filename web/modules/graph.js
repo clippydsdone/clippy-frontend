@@ -59,8 +59,9 @@
             .force("collision", d3.forceCollide(100))
             .force("center", d3.forceCenter(width / 2, height / 2));
     
-        var result = {};
+        var result = { references: {links: [], nodes: []}};
         let paperTitle = Global.app._title.split(' - ')[0];
+
         await axios({
             method: 'POST',
             url: 'https://clippyapidev.herokuapp.com/semantic/paper/search',
@@ -70,11 +71,9 @@
             headers: { 'Content-Type': 'application/json' },
         })
         .then((response) => {
-            console.log(response);
             result = response.data
         })
         .catch((err) => {
-            console.log(err);
             result.status = err.response.status;
             result.data = err.message;
         });
