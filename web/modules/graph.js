@@ -20,6 +20,10 @@
             setTimeout(Graph.initialize, 100);
             return;
         }
+        else if (Global.isNull(Global.data)) {
+            setTimeout(Graph.initialize, 100);
+            return;
+        }
         console.log("Initializing Graph.");
 
         // Both are null because we need to wait for the document to load before we can access DOM elements
@@ -31,6 +35,11 @@
     }
 
     let drawD3 = async function () {
+        let graph = Global.data.references;
+        if (graph == undefined) {
+            graph = { links: [], nodes: [] };
+        }
+
         var height = 800;
         var width = 1000;
     
@@ -44,8 +53,6 @@
             .call(zoom)
             .append("g")
             .attr("id", "allZ");
-        
-        console.log(svg);
     
         // initial zoom level and call zoom manually
         zoom.scaleTo(d3.select("svg"), 0.35);
@@ -58,28 +65,7 @@
             .force("charge", d3.forceManyBody())
             .force("collision", d3.forceCollide(100))
             .force("center", d3.forceCenter(width / 2, height / 2));
-    
-        var result = {};
-        let paperTitle = Global.app._title.split(' - ')[0];
-        await axios({
-            method: 'POST',
-            url: 'https://clippyapidev.herokuapp.com/semantic/paper/search',
-            data: {
-                query: paperTitle
-            },
-            headers: { 'Content-Type': 'application/json' },
-        })
-        .then((response) => {
-            console.log(response);
-            result = response.data
-        })
-        .catch((err) => {
-            console.log(err);
-            result.status = err.response.status;
-            result.data = err.message;
-        });
-    
-        const graph = result.references;
+
         var link = svg.append("g")
             .attr("class", "links")
             .call(d3.zoomTransform)

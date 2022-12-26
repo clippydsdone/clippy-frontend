@@ -37,13 +37,15 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     <!-- External scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <!-- Clippy modules -->
     <script src="./modules/globalVariables.js"></script>
-    <script src="./modules/summary.js"></script>
+    <script id="summaryScript" src="./modules/summary.js"></script>
     <script src="./modules/referenceList.js"></script>
     <script src="./modules/popupPreview.js"></script>
     <script src="./modules/graph.js"></script>
@@ -135,6 +137,8 @@ See https://github.com/adobe-type-tools/cmap-resources
                             <span data-l10n-id="zoom_in_label">Preview Zoom In</span>
                         </button>
                     </div>
+                    <h2>List of References</h2>
+                    <p id="referencesNotFoundText" class="hidden">No references found. This might be due to PDF file's internal structure.<!--For something to be considered a reference, it has to be a link.--></p>
                     <div id="referenceFilterContainer" class="findbar"></div>
                     <div id="referenceListContainer"></div>
                 </div>
@@ -332,6 +336,10 @@ See https://github.com/adobe-type-tools/cmap-resources
 
                             <button id="download" class="toolbarButton hiddenMediumView" title="Save" tabindex="33" data-l10n-id="save">
                                 <span data-l10n-id="save_label">Save</span>
+                            </button>
+
+                            <button id="openDefaultPdf" class="toolbarButton hiddenLargeView" title="Open Default PDF" tabindex="31" data-l10n-id="open_deafult_pdf">
+                                <span data-l10n-id="open_deafult_pdf_label">Open Deafult PDF</span>
                             </button>
 
                             <div class="verticalToolbarSeparator hiddenMediumView"></div>

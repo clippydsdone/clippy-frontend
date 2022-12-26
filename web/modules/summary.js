@@ -19,6 +19,9 @@
         } else if (Global.isNull(Global.doc)) {
             setTimeout(Summary.initialize, 100);
             return;
+        } else if (Global.isNull(Global.app.documentInfo)) {
+            setTimeout(Summary.initialize, 100);
+            return;
         }
         console.log("Initializing Summary.");
 
@@ -36,11 +39,13 @@
             return;
         }
 
+        const detailsText = document.getElementById("detailsContainerText");
         const loadingBar = document.getElementById("summaryLoadingGif");
         const summaryText = document.getElementById("summaryContainerText");
 
-        let paperTitle = Global.app._title.split(' - ')[0];
+        let paperTitle = Global.app.documentInfo.Title;
         let result = {};
+
         await axios({
             method: 'POST',
             url: 'https://clippyapidev.herokuapp.com/semantic/paper/search',
@@ -57,11 +62,14 @@
             } else {
                 summaryText.innerHTML = "No summary found.";
             }
+            Global.data = result;
         })
         .catch((err) => {
-            console.log(err);
+            loadingBar.hidden = true;
+            summaryText.innerHTML = "Paper with title " +  paperTitle + " couldn't be found on Semantic Scholar.";
             result.status = err.response.status;
             result.data = err.message;
+            Global.data = {};
         });
 
         return;

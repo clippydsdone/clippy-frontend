@@ -1053,6 +1053,7 @@
 }
 
 :root {
+    --sidebar-container-bg-color: rgb(240, 240, 240);
     --dir-factor: 1;
     --sidebar-width: 255px;
     --sidebar-transition-duration: 200ms;
@@ -1117,6 +1118,7 @@
     --toolbarButton-presentationMode-icon: url(images/toolbarButton-presentationMode.svg);
     --toolbarButton-print-icon: url(images/toolbarButton-print.svg);
     --toolbarButton-openFile-icon: url(images/toolbarButton-openFile.svg);
+    --toolbarButton-openDefaultPdf-icon: url(images/toolbarButton-openDefaultPdf.svg);
     --toolbarButton-download-icon: url(images/toolbarButton-download.svg);
     --toolbarButton-bookmark-icon: url(images/toolbarButton-bookmark.svg);
     --toolbarButton-viewThumbnail-icon: url(images/toolbarButton-viewThumbnail.svg);
@@ -1156,6 +1158,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --sidebar-container-bg-color: rgb(40, 40, 40);
     --main-color: rgba(249, 249, 250, 1);
     --body-bg-color: rgba(42, 42, 46, 1);
     --progressBar-color: rgba(0, 96, 223, 1);
@@ -1337,6 +1340,7 @@ body {
   transition-property: inset-inline-start;
   transition-duration: var(--sidebar-transition-duration);
   transition-timing-function: var(--sidebar-transition-timing-function);
+  background-color: var(--sidebar-container-bg-color);
 }
 
 #outerContainer.sidebarMoving #sidebarContainer,
@@ -2317,6 +2321,11 @@ body {
 #secondaryOpenFile::before {
   -webkit-mask-image: var(--toolbarButton-openFile-icon);
           mask-image: var(--toolbarButton-openFile-icon);
+}
+
+#openDefaultPdf::before {
+  -webkit-mask-image: var(--toolbarButton-openDefaultPdf-icon);
+          mask-image: var(--toolbarButton-openDefaultPdf-icon);
 }
 
 #download::before,
