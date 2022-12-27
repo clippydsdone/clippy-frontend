@@ -7,19 +7,19 @@
     });
 
     // HTML elements
-    let content = null;     // Parent div of content to be displayed in sidebar
-    let container = null;   // Container for the viewer
-    let viewer = null;      // Div of the viewer
-    let zoomInButton = null;
-    let zoomOutButton = null;
-    let referenceFilter = null;
-    let referenceListContainer = null;
-    let referenceFilterButton = null;
-    let referencesNotFoundText = null;
+    let content = null;         // Parent div of content to be displayed in sidebar
+    let container = null;       // Container for the previewer
+    let viewer = null;          // Div of the viewer
+    let zoomInButton = null;    // Zoom-in button
+    let zoomOutButton = null;   // Zoom-out button
+    let referenceFilter = null; // Reference type filter container
+    let referenceFilterButton = null;  // Button for opening/closing the reference type filter
+    let referenceListContainer = null; // Div containing all the references and their groups
+    let referencesNotFoundText = null; // Default text displayed when no references were found
 
     // Reference List elements
-    let allReferencesList = [];
-    let validReferences = [
+    let allReferencesList = []; // Contains all the reference object types
+    let validReferences = [     // Reference type group
         /*
         "aff": "AFF"
         "para": "Paragraph",
@@ -85,8 +85,8 @@
     ];
 
     // Preview (PDFViewer) elements
-    let referenceViewer = null;
-    let referenceLinkService = null;
+    let referencePreviewer = null;      // Reference previewer object displayed in sidebar
+    let referenceLinkService = null; // Linker for references used by reference previewer
 
     // Initializer method
     ReferenceList.initialize = async function () {
@@ -100,7 +100,7 @@
         }
         console.log("Initializing ReferenceList.");
 
-        // Both are null because we need to wait for the document to load before we can access DOM elements
+        // Bind all variables to their HTML elements
         content = document.getElementById('referencesView');
         container = document.getElementById('referencesContainer');
         viewer = document.getElementById('referencesViewer');
@@ -111,12 +111,15 @@
         referenceFilterButton = document.getElementById('referenceFilters');
         referencesNotFoundText = document.getElementById('referencesNotFoundText');
 
+        // Hide reference filter at start
         referenceFilter.hidden = true;
 
+        // Initial resizing
         $(window).on("resize", function () {
             setSize();
         })
 
+        // Add resizer listener
         $("#sidebarResizer").mousedown(function () {
             $(document).mousemove(function () {
                 setSize();
@@ -127,8 +130,8 @@
             });
         });
 
-        createReferencePreview();
-        buildReferenceList();
+        createReferencePreview(); // Instantiate our own PDFViewer
+        buildReferenceList();     // Build the HTML for the reference list
     }
 
     let createReferencePreview = function () {
@@ -162,51 +165,36 @@
             eventBus
         });
 
-        // (Optionally) enable find controller. (NOTE: no idea what this is nor do we need it)
-        const pdfFindController = new findControllerConstructor({
-            eventBus,
-            linkService: referenceLinkService
-        });
-
-        // (Optionally) enable scripting support (NOTE: no idea what this is nor do we need it)
-        const pdfScriptingManager = new scriptingManagerConstructor({
-            eventBus,
-            sandboxBundleSrc: scriptingSrc
-        });
-
         // Construct PDFViewer for reference preview
-        referenceViewer = new viewerConstructor({
+        referencePreviewer = new viewerConstructor({
             container,
             eventBus,
             linkService: referenceLinkService,
-            findController: pdfFindController,
-            scriptingManager: pdfScriptingManager,
             removePageBorders: true
         });
-        referenceLinkService.setViewer(referenceViewer);
-        pdfScriptingManager.setViewer(referenceViewer);
+        referenceLinkService.setViewer(referencePreviewer);
+        pdfScriptingManager.setViewer(referencePreviewer);
 
         eventBus.on("pagesinit", function () {
-            // We can use referenceViewer now, e.g. let's change default scale.
-            referenceViewer.currentScaleValue = "page-actual";
+            // Set default zoom value to 'Page fit'
+            referencePreviewer.currentScaleValue = "page-actual";
 
             zoomInButton.addEventListener("click", function () {
-                if (referenceViewer.currentScale <= 9.8) {
-                    referenceViewer.currentScale += 0.2;
+                if (referencePreviewer.currentScale <= 9.8) {
+                    referencePreviewer.currentScale += 0.2;
                 }
-                
             });
 
             zoomOutButton.addEventListener("click", function () {
-                if (referenceViewer.currentScale >= 0.3) {
-                    referenceViewer.currentScale -= 0.2;
+                if (referencePreviewer.currentScale >= 0.3) {
+                    referencePreviewer.currentScale -= 0.2;
                 }
             });
         });
 
         // Deep copy the active PDF document from the viewer
         let documentClone = Global.deepCopy(Global.viewer.pdfDocument);
-        referenceViewer.setDocument(documentClone);
+        referencePreviewer.setDocument(documentClone);
         referenceLinkService.setDocument(documentClone, null);
 
         // TODO: these are only temporary CSS adjustments; a better and more permanent solution is required
@@ -290,7 +278,7 @@
             }
         })
 
-        // Get a list of all references in the PDF and create Clippy objects from these references
+        // Get a list of all references in the PDF and create objects from these references
         destinations = await Global.doc.getDestinations();
         let keys = Object.keys(destinations);
         if (keys.length === 0) {
@@ -311,6 +299,7 @@
             reference.num = validReference.counter;     // 0001
             reference.tagName = validReference.fullName;   // Figure
             reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
+
             validReference.referenceList.push(reference);
             allReferencesList.push(reference);
         }
@@ -319,26 +308,28 @@
             return;
         }
 
-        // Annotations that are links
-        
+        // TODO: Add annotations that are links
+
 
         // HTML building of list of references
         // We will create a tree structure of depth 2
         referenceListContainer.classList.add("treeWithDeepNesting");
         for (let i = 0; i < validReferences.length; i++) {
-            if (validReferences[i].referenceList.length == 0)
+            if (validReferences[i].referenceList.length == 0) // Skip if reference group type is empty
                 continue;
 
+            // Set variables
             let key = validReferences[i].tags[0];
             let referenceName = validReferences[i].fullNames;
             let id = key + "Group";
 
-            // Top level div of reference
+            // Top level div of reference group type
             let referenceGroupDiv = document.createElement("div");
             referenceGroupDiv.classList.add('treeItem');
             referenceGroupDiv.classList.add(key);
             referenceGroupDiv.id = id;
 
+            // Create text for reference group type
             let linkGroup = document.createElement('a');
             let linkGroupText = document.createTextNode(referenceName);
             linkGroup.appendChild(linkGroupText);
@@ -346,7 +337,7 @@
                 toggler.classList.toggle("treeItemsHidden");
             })
             
-            // Toggler div is used to enable/disable the display of canvas
+            // Toggler div is used to display/hide actual references
             let toggler = document.createElement('div');
             toggler.classList.add('treeItemToggler')
             toggler.classList.add('treeItemsHidden')
@@ -354,6 +345,7 @@
                 toggler.classList.toggle("treeItemsHidden");
             })
 
+            // Reference list div
             let referencesDiv = document.createElement("div");
             referencesDiv.classList.add('treeItems');
             for (let j = 0; j < validReferences[i].referenceList.length; j++) {
