@@ -18,7 +18,7 @@
     let referencesNotFoundText = null;
 
     // Reference List elements
-    let referenceList = [];
+    let allReferencesList = [];
     let validReferences = [
         /*
         "aff": "AFF"
@@ -30,42 +30,56 @@
             fullName: "Bibliography",
             fullNames: "Bibliographies",
             tags: ["bib", "B"],
+            referenceList: [],
             counter: 0
         },
         {
             fullName: "Citation",
             fullNames: "Citations",
             tags: ["cite"],
+            referenceList: [],
             counter: 0
         },
         {
             fullName: "Corresponding Author",
             fullNames: "Corresponding Authors",
             tags: ["cor"],
+            referenceList: [],
             counter: 0
         },        
         {
             fullName: "Equation",
             fullNames: "Equations",
             tags: ["eqn", "equation"],
+            referenceList: [],
             counter: 0
         },
         {
             fullName: "Figure",
             fullNames: "Figures",
             tags: ["fig", "figure"],
+            referenceList: [],
             counter: 0
         },
         {
             fullName: "Table",
             fullNames: "Tables",
             tags: ["tbl", "table"],
+            referenceList: [],
             counter: 0
         },
         {
             fullName: "Inequation",
             fullNames: "Inequations",
             tags: ["ueqn", "B"],
+            referenceList: [],
+            counter: 0
+        },
+        {
+            fullName: "Reference",
+            fullNames: "Unsorted",
+            tags: [],
+            referenceList: [],
             counter: 0
         }
     ];
@@ -286,7 +300,7 @@
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i]; // fig0001
             let tag = key.split(/[0-9]/)[0]; // fig
-            validReference = isValidReference(tag); // Get
+            validReference = isValidReference(tag); // Get validReference object
             if (validReference == null) // Check if it is an invalid reference
                 continue;
 
@@ -297,69 +311,109 @@
             reference.num = validReference.counter;     // 0001
             reference.tagName = validReference.fullName;   // Figure
             reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
-            referenceList.push(reference);
+            validReference.referenceList.push(reference);
+            allReferencesList.push(reference);
         }
-        if (referenceList.length === 0) {
+        if (allReferencesList.length === 0) {
             referencesNotFoundText.classList.remove('hidden')
             return;
         }
 
+        // Annotations that are links
+        
+
         // HTML building of list of references
         // We will create a tree structure of depth 2
         referenceListContainer.classList.add("treeWithDeepNesting");
-        for (let i = 0; i < referenceList.length; i++) {
-            // Top level div of reference
-            let div = document.createElement("div");
-            div.classList.add('treeItem')
-            div.classList.add(referenceList[i].tag)
+        for (let i = 0; i < validReferences.length; i++) {
+            if (validReferences[i].referenceList.length == 0)
+                continue;
 
+            let key = validReferences[i].tags[0];
+            let referenceName = validReferences[i].fullNames;
+            let id = key + "Group";
+
+            // Top level div of reference
+            let referenceGroupDiv = document.createElement("div");
+            referenceGroupDiv.classList.add('treeItem');
+            referenceGroupDiv.classList.add(key);
+            referenceGroupDiv.id = id;
+
+            let linkGroup = document.createElement('a');
+            let linkGroupText = document.createTextNode(referenceName);
+            linkGroup.appendChild(linkGroupText);
+            linkGroup.addEventListener("click", function (evt) {
+                toggler.classList.toggle("treeItemsHidden");
+            })
+            
             // Toggler div is used to enable/disable the display of canvas
             let toggler = document.createElement('div');
             toggler.classList.add('treeItemToggler')
             toggler.classList.add('treeItemsHidden')
+            toggler.addEventListener("click", function (evt) {
+                toggler.classList.toggle("treeItemsHidden");
+            })
 
-            // Link to go to the page when clicking the reference
-            let link = document.createElement('a');
-            let linkText = document.createTextNode(referenceList[i].fullName);
-            link.appendChild(linkText);
-            link.href = "#" + referenceList[i].key;
-            link.addEventListener("click", function (evt) {
-                Global.preventMainViewerLinkerFlag = true;  // TODO: find a better solution
-                if (evt.target !== null) { 
-                    referenceLinkService.goToDestination(evt.target.hash.substring(1))
+            let referencesDiv = document.createElement("div");
+            referencesDiv.classList.add('treeItems');
+            for (let j = 0; j < validReferences[i].referenceList.length; j++) {
+                let reference = validReferences[i].referenceList[j];
 
-                    // Scroll up to Preview when reference is clicked
-                    $(document.getElementById('sidebarContent')).scrollTop(0);
-                }
-            });
+                // Top level div of reference
+                let referenceDiv = document.createElement("div");
+                referenceDiv.classList.add('treeItem');
+                referenceDiv.classList.add(key)
 
-            let renameButton = document.createElement('button');
-            let input = document.createElement("input");
-            renameButton.addEventListener("click", function () {
-                if (link.hidden) {
-                    link.innerText = input.value;
-                    link.hidden = false;
-                    input.hidden = true;
-                } else {
-                    link.hidden = true;
-                    input.hidden = false;
-                }
-            });
-            renameButton.classList.add('toolbarButton')
-            renameButton.classList.add('renameButton')
+                // Link to go to the page when clicking the reference
+                let link = document.createElement('a');
+                let linkText = document.createTextNode(reference.fullName);
+                link.appendChild(linkText);
+                link.href = "#" + reference.key;
+                link.addEventListener("click", function (evt) {
+                    Global.preventMainViewerLinkerFlag = true;  // TODO: find a better solution
+                    if (evt.target !== null) {
+                        referenceLinkService.goToDestination(evt.target.hash.substring(1))
 
-            input.type = "text";
-            input.classList.add('toolbarField');
-            input.value = link.innerText;
-            input.hidden = true;
+                        // Scroll up to Preview when reference is clicked
+                        $(document.getElementById('sidebarContent')).scrollTop(0);
+                    }
+                });
 
-            div.appendChild(toggler);
-            div.appendChild(link);
-            div.appendChild(input)
-            div.appendChild(renameButton);
+                // Text field for renaming reference
+                let renameTextField = document.createElement("input");
+                renameTextField.type = "text";
+                renameTextField.classList.add('toolbarField');
+                renameTextField.value = link.innerText;
+                renameTextField.hidden = true;
 
-            referenceListContainer.appendChild(div);
-        }
+                // Rename reference button
+                let renameButton = document.createElement('button');
+                renameButton.classList.add('toolbarButton')
+                renameButton.classList.add('renameButton')
+                renameButton.addEventListener("click", function () {
+                    if (link.hidden) {
+                        link.innerText = renameTextField.value;
+                        link.hidden = false;
+                        renameTextField.hidden = true;
+                    } else {
+                        link.hidden = true;
+                        renameTextField.hidden = false;
+                    }
+                });
+                
+                referenceDiv.appendChild(link);
+                referenceDiv.appendChild(renameTextField)
+                referenceDiv.appendChild(renameButton);
+
+                referencesDiv.appendChild(referenceDiv);
+            }
+
+            referenceGroupDiv.appendChild(toggler);
+            referenceGroupDiv.appendChild(linkGroup);
+            referenceGroupDiv.appendChild(referencesDiv);
+
+            referenceListContainer.appendChild(referenceGroupDiv);
+        } 
 
         return;
     }
