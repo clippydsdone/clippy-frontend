@@ -172,8 +172,8 @@
             linkService: referenceLinkService,
             removePageBorders: true
         });
+
         referenceLinkService.setViewer(referencePreviewer);
-        pdfScriptingManager.setViewer(referencePreviewer);
 
         eventBus.on("pagesinit", function () {
             // Set default zoom value to 'Page fit'
