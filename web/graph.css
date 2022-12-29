@@ -28,7 +28,7 @@
     fill: rgb(176, 139, 139);
 }
 
-#d3container {
+#knowledgegraphViewer {
     width: 1000px; 
     height: 800px; 
     background-color: rgba(132, 124, 124, 0.498);
