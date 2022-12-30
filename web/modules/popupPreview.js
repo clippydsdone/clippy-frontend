@@ -75,11 +75,11 @@
 			this.popupViewerDiv.setAttribute("id", `popupViewer${viewerIndex}`);
 			this.popupViewerDiv.setAttribute("class", "pdfViewer");
 
-			document.body.appendChild(this.popupWrapper);
+			document.getElementById("popupEcosystem").appendChild(this.popupWrapper);
 			this.popupWrapper.appendChild(this.popupDiv);
 			this.popupDiv.appendChild(this.popupContainerDiv);
 			this.popupContainerDiv.appendChild(this.popupViewerDiv);
-			document.body.appendChild(this.zoomBar);
+			document.getElementById("popupEcosystem").appendChild(this.zoomBar);
 
 			//JQuery resize & drag functions
 			$(`#popupWrapper${this.viewerIndex}`)
@@ -270,7 +270,7 @@
 	let currentViewerIndex = 1;
 	let currentViewer = null;
 	let currentlyMouseoverdPinnedPopup = null;
-	let zIndex = 10;
+	let zIndex = 11;
 	const POPUP_INIT_SCALE = 0.7;
 	const POPUP_BORDER_SIZE = 4;
 	const POPUP_PINNED_BORDER_SIZE = 6;
