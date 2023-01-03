@@ -1134,6 +1134,7 @@
     --toolbarButton-referenceFilters-icon: url(images/toolbarButton-filterReferences.svg);
     --toolbarButton-currentOutlineItem-icon: url(images/toolbarButton-currentOutlineItem.svg);
     --toolbarButton-search-icon: url(images/toolbarButton-search.svg);
+    --toolbarButton-searchSemanticScholar-icon: url(images/toolbarButton-searchSemanticScholar.svg);
     --findbarButton-previous-icon: url(images/findbarButton-previous.svg);
     --findbarButton-next-icon: url(images/findbarButton-next.svg);
     --secondaryToolbarButton-firstPage-icon: url(images/secondaryToolbarButton-firstPage.svg);
@@ -2401,6 +2402,12 @@ a.secondaryToolbarButton[href="#"] {
   -webkit-mask-image: var(--toolbarButton-search-icon);
           mask-image: var(--toolbarButton-search-icon);
 }
+
+#viewFindSemanticScholar::before {
+    -webkit-mask-image: var(--toolbarButton-searchSemanticScholar-icon);
+    mask-image: var(--toolbarButton-searchSemanticScholar-icon);
+}
+
 
 [dir="ltr"] .pdfSidebarNotification::after {
   right: 2px;
