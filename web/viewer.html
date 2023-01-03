@@ -29,15 +29,17 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     <link rel="stylesheet" href="viewer.css">
     <link rel="stylesheet" href="graph.css">
+    <link rel="stylesheet" href="spin.css">
 
     <!-- This snippet is used in production (included from viewer.html) -->
     <link rel="resource" type="application/l10n" href="locale/locale.properties">
     <script src="../build/pdf.js"></script>
     <script src="viewer.js"></script>
+    <script async type="module" src="spin.umd.js"></script>    <!-- External scripts -->
 
-    <!-- External scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -114,12 +116,13 @@ See https://github.com/adobe-type-tools/cmap-resources
                             <p id="detailsContainerText"></p>
                             <h1 id="textLayer">Summary</h1>
                             <p id="summaryContainerText"></p>
-                            <image id="summaryLoadingGif" src="images/loading-icon.gif"></image>
+                            <div id="summaryLoadingGif"></div>
                         </div>
                     </div>
                 </div>
                 <div id="knowledgegraphView" class="hidden">
                     <div id="knowledgegraphContainer" style="position: absolute">
+                        <div id="knowledgeGraphLoadingGif"></div>
                         <div id="knowledgegraphViewer"></div>
                     </div>
                 </div>

@@ -6,6 +6,7 @@
         writable: false
     });
 
+
     // Initializer method
     Graph.initialize = async function () {
         if (Global.isNull(Global.app) || Global.isNull(Global.doc) || Global.isNull(Global.data)) {
@@ -16,6 +17,8 @@
         await drawD3();
     }
 
+
+
     let drawD3 = async function () {
         let graph = Global.data.references;
         if (graph == undefined) {
@@ -25,11 +28,19 @@
         const height = 800;
         const width = 1000;
 
+        var zoom = d3.zoom()
+            .scaleExtent([0.1, 8])
+            .on("zoom", zoomed);
+
         const svg = d3.select("#knowledgegraphViewer").append("svg")
             .attr("width", width)
             .attr("height", height)
+            .call(zoom)
             .append("g")
             .attr("id", "allZ");
+        
+        // initial zoom level and call zoom manually
+        zoom.scaleTo(d3.select("svg"), 0.5);
 
         // If zoom hits limit the mousewheel events revert to scrolling the page.
         window.onwheel = function () { return false; }
@@ -88,17 +99,6 @@
 
         simulation.force("link")
             .links(graph.links);
-        
-        let zoom = d3.zoom()
-            .on('zoom', handleZoom);
-        
-        d3.select('svg')
-            .call(zoom);
-
-        function handleZoom(e) {
-            d3.select('svg g')
-                .attr('transform', e.transform);
-        }
 
         function ticked() {
             link
@@ -136,6 +136,11 @@
             node.each(function (d) {
                 d.fixed = true;
             });
+        }
+
+        function zoomed() {
+            var allZ = d3.select("#allZ");
+            allZ.attr("transform", "translate(" + d3.event.transform.x + "," + d3.event.transform.y + ")scale(" + d3.event.transform.k + ")");
         }
     }
 
