@@ -37,18 +37,20 @@
             .attr("height", height)
             .call(zoom)
             .append("g")
-            .attr("id", "allZ");
+            .attr("id", "allZ")
         
         // initial zoom level and call zoom manually
-        zoom.scaleTo(d3.select("svg"), 0.5);
+        zoom.scaleTo(d3.select("svg"), 2);
+        zoom.translateTo(d3.select("svg"), 700, 400);
+
 
         // If zoom hits limit the mousewheel events revert to scrolling the page.
         window.onwheel = function () { return false; }
 
         const simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function (d) { return d.id; }).distance(500))
+            .force("link", d3.forceLink().id(function (d) { return d.id; }).distance(150))
             .force("charge", d3.forceManyBody())
-            .force("collision", d3.forceCollide(100))
+            .force("collision", d3.forceCollide(5))
             .force("center", d3.forceCenter(width / 2, height / 2));
 
         const link = svg.append("g")
@@ -74,24 +76,28 @@
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
-                .on("end", dragended));
+                .on("end", dragended))
 
         node.append("circle")
-            .attr("r", function(d) { d.r = 100; return d.r; });
+            .attr("r", 10);
 
+        node.append("rect");
+        
         node.append("text")
             .attr("dy", ".3em")
-            .style("text-anchor", "middle")
-            .style("font-size", function (d) {
-                let len = d.title.substring(0, d.r / 3).length;
-                let size = d.r / 3;
-                size *= 10 / len;
-                size += 1;
-                return Math.round(size) + 'px';
-            })
+            .style("text-anchor", "left")
+            .style("font-size", "5px")
             .text(function (d) {
-                return d.title.substring(0, d.r / 3);
-            });
+                return d.title;
+        });
+
+        node.append("text")
+            .attr("dy", "1.3em")
+            .style("text-anchor", "left")
+            .style("font-size", "5px")
+            .text(function (d) {
+                return d.title;
+        });
 
         simulation
             .nodes(graph.nodes)
