@@ -1612,6 +1612,10 @@ body {
   right: 64px;
 }
 
+#paperFinderBar {
+    inset-inline-start: 36px;
+}
+
 .findbar {
   inset-inline-start: 64px;
   min-width: 300px;
@@ -2403,9 +2407,9 @@ a.secondaryToolbarButton[href="#"] {
           mask-image: var(--toolbarButton-search-icon);
 }
 
-#viewFindSemanticScholar::before {
+#viewPaperFinder::before {
     -webkit-mask-image: var(--toolbarButton-searchSemanticScholar-icon);
-    mask-image: var(--toolbarButton-searchSemanticScholar-icon);
+            mask-image: var(--toolbarButton-searchSemanticScholar-icon);
 }
 
 
