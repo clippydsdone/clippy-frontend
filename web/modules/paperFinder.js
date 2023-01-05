@@ -80,6 +80,7 @@
             }
         });
 
+        // Add event listener for setting search mode (title or ID)
         findTextInput.value = "";
         findByIdInput.checked = false;
         findByIdInput.addEventListener("click", function () {
@@ -119,12 +120,57 @@
         findBar.classList.add("hidden");
     }
 
-    let find = function () {
+    let find = async function () {
         if (findByIdMode) {
-            console.log("Finding by Id: " + findTextInput.value)
+            console.log("Finding by Id: " + findTextInput.value);
+            let paperID = findTextInput.value;
+
+            await axios({
+                method: 'GET',
+                url: 'https://clippyapidev.herokuapp.com/semantic/paper/id/' + paperID,
+                headers: { 'Content-Type': 'application/json' },
+            })
+                .then((response) => {
+                    result = response.data
+                    if (Global.isNull(result.openAccessPdf.url)) {
+                        return; // TODO
+                    }
+                    console.log(result)
+                    openFile(result.openAccessPdf.url);
+                })
+                .catch((err) => {
+                    console.error(err)
+                });
+
         } else {
-            console.log("Finding by title: " + findTextInput.value)
-        }
+            console.log("Finding by title: " + findTextInput.value);
+            let paperTitle = findTextInput.value;
+
+            await axios({
+                method: 'POST',
+                url: 'https://clippyapidev.herokuapp.com/semantic/paper/search',
+                data: {
+                    query: paperTitle
+                },
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then((response) => { 
+                result = response.data
+                if (Global.isNull(result.openAccessPdf.url)) {
+                    return; // TODO
+                }
+                console.log(result)
+                openFile(result.openAccessPdf.url);
+            })
+            .catch((err) => {
+                console.error(err)
+            });
+        } 
+    }
+
+    let openFile = function (url) {
+        console.log(url);
+        Global.app.open(url);
     }
 
     Clippy.addOnLoadEvent(PaperFinder.name, PaperFinder.initialize);
