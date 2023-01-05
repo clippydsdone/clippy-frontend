@@ -154,11 +154,10 @@
                 },
                 headers: { 'Content-Type': 'application/json' },
             })
-            .then((response) => { 
-                console.log(response.data);
-                localStorage.setItem("lastOpenedFile", "data:application/pdf;base64," + response.data);
+            .then((response) => {
+                let base64data = response.data.data;
+                localStorage.setItem("lastOpenedFile", response.data.data);
                 location.reload();
-                //Global.app.open(response.data);
             })
             .catch((err) => {
                 console.error(err)
