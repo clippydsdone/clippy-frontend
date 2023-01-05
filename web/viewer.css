@@ -1616,6 +1616,21 @@ body {
     inset-inline-start: 36px;
 }
 
+.loadingSpin {
+    border: 8px solid #f3f3f3; /* Inner circle */
+    border-top: 8px solid #009b00; /* Green color */
+    border-radius: 100%;
+    width: 10px;
+    height: 10px;
+    animation: spin 2s linear infinite;
+    margin-top: 3px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .findbar {
   inset-inline-start: 64px;
   min-width: 300px;
