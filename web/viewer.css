@@ -2296,6 +2296,16 @@ body {
           mask-image: var(--toolbarButton-editorInk-icon);
 }
 
+#values {
+  margin-left: 20px;
+  color: lightgray;
+}
+
+#topics {
+  font-weight: 900;
+  padding-top: 2px;
+}
+
 .renameButton {
     -webkit-mask-image: var(--toolbarButton-renameReference-icon);
             mask-image: var(--toolbarButton-renameReference-icon);
