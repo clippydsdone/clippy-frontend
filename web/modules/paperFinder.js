@@ -148,28 +148,22 @@
             
             await axios({
                 method: 'POST',
-                url: 'https://clippyapidev.herokuapp.com/semantic/paper/search',
+                url: 'https://clippyapidev.herokuapp.com/semantic/paper/base64',
                 data: {
                     query: paperTitle
                 },
                 headers: { 'Content-Type': 'application/json' },
             })
             .then((response) => { 
-                result = response.data
-                if (result.isOpenAccess) {
-                    openFile(result.openAccessPdf.url);
-                }
+                console.log(response.data);
+                localStorage.setItem("lastOpenedFile", "data:application/pdf;base64," + response.data);
+                location.reload();
+                //Global.app.open(response.data);
             })
             .catch((err) => {
                 console.error(err)
             });
         } 
-    }
-
-    let openFile = async function (url) {
-        console.log('sending request... ');
-        console.log(url);
-        Global.app.open(url);
     }
 
     Clippy.addOnLoadEvent(PaperFinder.name, PaperFinder.initialize);
