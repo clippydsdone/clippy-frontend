@@ -145,7 +145,7 @@
         } else {
             console.log("Finding by title: " + findTextInput.value);
             let paperTitle = findTextInput.value;
-
+            
             await axios({
                 method: 'POST',
                 url: 'https://clippyapidev.herokuapp.com/semantic/paper/search',
@@ -156,11 +156,9 @@
             })
             .then((response) => { 
                 result = response.data
-                if (Global.isNull(result.openAccessPdf.url)) {
-                    return; // TODO
+                if (result.isOpenAccess) {
+                    openFile(result.openAccessPdf.url);
                 }
-                console.log(result)
-                openFile(result.openAccessPdf.url);
             })
             .catch((err) => {
                 console.error(err)
@@ -168,7 +166,8 @@
         } 
     }
 
-    let openFile = function (url) {
+    let openFile = async function (url) {
+        console.log('sending request... ');
         console.log(url);
         Global.app.open(url);
     }
