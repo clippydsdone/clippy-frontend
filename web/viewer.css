@@ -1616,6 +1616,39 @@ body {
     inset-inline-start: 36px;
 }
 
+#paperFinderMsg {
+    inset-inline-start: 36px;
+    top: 68px;
+    min-width: 220px;
+    padding-right: 0px;
+}
+
+#paperFinderMsg::after {
+    content: none;
+}
+
+#paperFinderMsg::before {
+    content: none;
+}
+
+.paperFinderMsgFadeIn {
+    animation: fadein 0.2s linear forwards;
+}
+
+.paperFinderMsgFadeOut {
+    animation: fadeout 1s linear forwards;
+}
+
+@keyframes fadein {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeout {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 .loadingSpin {
     border: 8px solid #f3f3f3; /* Inner circle */
     border-top: 8px solid #009b00; /* Green color */

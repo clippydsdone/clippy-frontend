@@ -6,8 +6,9 @@
     });
 
     // Class variables
-    opened = false;
-    findByIdMode = false;
+    let opened = false;
+    let findByIdMode = false;
+    let loadingFlag = false;
 
     // HTML elements
     let findButton = null;       // Button to open the bar  
@@ -15,7 +16,10 @@
     let findTextInput = null;    // Text input for the paper title/ID
     let findByIdInput = null;    // Checkbox input whether title or ID is used
     let findSubmitButton = null; // Submit button to start the API call
-    let spinnerDiv = null;
+    let spinnerDiv = null;       // Div that contains the loading spinner
+    let messageDiv = null;       // Div that contains the messages during loading
+    let successMessage = null;   // Label for success message for loading pdf
+    let errorMessage = null;     // Label for error message for loading pdf
 
     // PDF.js objects
     let textFindBar = null;      // PDFFindBar object used to search text in PDF
@@ -36,6 +40,9 @@
         findByIdInput = document.getElementById('paperFinderById');
         findSubmitButton = document.getElementById('paperFindSubmit');
         spinnerDiv = document.getElementById('paperFinderSpinner');
+        messageDiv = document.getElementById('paperFinderMsg');
+        successMessage = document.getElementById('paperFinderSuccessMsg');
+        errorMessage = document.getElementById('paperFinderErrorMsg');
         textFindBar = Global.app.findBar;
 
         assignListeners();
@@ -59,6 +66,15 @@
             return;
         } else if (Global.isNull(spinnerDiv)) {
             console.error("HTML div with id 'paperFinderSpinner' is null. Cannot assign event listeners.");
+            return;
+        } else if (Global.isNull(messageDiv)) {
+            console.error("HTML div with id 'paperFinderMsg' is null. Cannot assign event listeners.");
+            return;
+        } else if (Global.isNull(successMessage)) {
+            console.error("HTML div with id 'paperFinderSuccessMsg' is null. Cannot assign event listeners.");
+            return;
+        } else if (Global.isNull(errorMessage)) {
+            console.error("HTML div with id 'paperFinderErrorMsg' is null. Cannot assign event listeners.");
             return;
         } else if (Global.isNull(textFindBar)) {
             console.error("findBar object is null. Cannot assign event listeners.");
@@ -101,8 +117,22 @@
 
         // Add submit functionality
         findSubmitButton.addEventListener("click", function () {
-            find();
+            if (!loadingFlag) {
+                find();
+            }
         });
+
+        /*
+        messageDiv.addEventListener('animationend', () => {
+            messageDiv.classList.remove('paperFinderMsgFadeIn');
+            messageDiv.classList.remove('paperFinderMsgFadeOut');
+        });
+
+        errorMessage.addEventListener('animationend', () => {
+            errorMessage.classList.remove('paperFinderMsgFadeIn');
+            errorMessage.classList.remove('paperFinderMsgFadeOut');
+        });
+        */
     }
 
     let open = function () {
@@ -125,27 +155,69 @@
         findBar.classList.add("hidden");
     }
 
-    let loading = function (status) {
-        if (status) { // If the paper is loading
+    
+    let loading = function (loading, status) {
+        loadingFlag = loading;
+        messageDiv.classList.remove("hidden");
+
+        if (loading) { // If the paper is loading
             spinnerDiv.classList.remove("hidden");
-        } else { // Paper is not loading
+        } else { // Paper is not loading (results phase)
             spinnerDiv.classList.add("hidden");
+            if (status) {
+                successMessage.classList.remove("hidden");
+            } else {
+                errorMessage.classList.remove("hidden");
+            }
+
+            setTimeout(function () {
+                messageDiv.classList.add("hidden");
+                successMessage.classList.add("hidden");
+                errorMessage.classList.add("hidden");
+            }, 5000);
         }
     }
+
+    /* Animations
+    let loading = function (loading, status) {
+        loadingFlag = loading;
+        messageDiv.classList.add("paperFinderMsgFadeIn");
+        messageDiv.classList.remove("hidden");
+
+        if (loading) { // If the paper is loading
+            spinnerDiv.classList.remove("hidden");
+        } else { // Paper is not loading (results phase)
+            spinnerDiv.classList.add("hidden");
+            if (status) {
+                successMessage.classList.remove("hidden");
+            } else {
+                errorMessage.classList.remove("hidden");
+            }
+
+            setTimeout(function () {
+                messageDiv.classList.add("paperFinderMsgFadeOut");
+                messageDiv.classList.add("hidden");
+                successMessage.classList.add("hidden");
+                errorMessage.classList.add("paperFinderMsgFadeOut");
+                errorMessage.classList.add("hidden");
+            }, 5000);
+        }
+    }
+    */
 
     let find = async function () {
         if (findByIdMode) { // Find paper by ID
             console.log("Finding by Id: " + findTextInput.value);
             let paperID = findTextInput.value;
             
-            loading(true);
+            loading(true, null);
             await axios({
                 method: 'GET',
                 url: 'https://clippyapidev.herokuapp.com/semantic/paper/id/' + paperID,
                 headers: { 'Content-Type': 'application/json' },
             })
             .then((response) => {
-                loading(false);
+                loading(false, true);
                 if (Global.isNull(response.data.data)) {
                     return; // TODO
                 }
@@ -155,7 +227,7 @@
                 location.reload();
             })
             .catch((err) => {
-                loading(false);
+                loading(false, false);
                 if (err.response.status == 404) {
                     console.error("Paper not found or publicy available");
                 } else {
@@ -167,7 +239,7 @@
             console.log("Finding by title: " + findTextInput.value);
             let paperTitle = findTextInput.value;
 
-            loading(true);
+            loading(true, null);
             await axios({
                 method: 'POST',
                 url: 'https://clippyapidev.herokuapp.com/semantic/paper/base64',
@@ -177,7 +249,7 @@
                 headers: { 'Content-Type': 'application/json' },
             })
             .then((response) => {
-                loading(false);
+                loading(false, true);
                 if (Global.isNull(response.data.data)) {
                     return; // TODO
                 }
@@ -187,7 +259,7 @@
                 location.reload();
             })
             .catch((err) => {
-                loading(false);
+                loading(false, false);
                 if (err.response.status == 404) {
                     console.error("Paper not found or publicy available");
                 } else {

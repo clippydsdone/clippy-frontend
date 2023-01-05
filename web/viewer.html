@@ -161,14 +161,18 @@ See https://github.com/adobe-type-tools/cmap-resources
                 </div>
 
                 <div id="paperFinderBarMessageContainer" aria-live="polite">
-                    <div id="paperFinderSpinner" class="hidden">
-                        <div class="loadingSpin"></div>
-                        <span class="toolbarLabel">Loading...</span>
-                    </div>
-                    <span id="paperFinderBarResultsCount" class="toolbarLabel"></span>
-                    <span id="paperFinderBarMsg" class="toolbarLabel"></span>
                 </div>
             </div>  <!-- paperFinderBar -->
+            <div class="findbar doorHanger" id="paperFinderMsg">
+                <span id="paperFinderSuccessMsg" class="toolbarLabel hidden">Paper found, please wait...</span>
+                <span id="paperFinderErrorMsg" class="toolbarLabel hidden">Paper not found or publicly available.</span>
+                <div id="paperFinderSpinner" class="hidden">
+                    <div class="loadingSpin"></div>
+                    <span class="toolbarLabel">Loading, please wait...</span>
+                </div>
+
+            </div>
+
 
             <div class="findbar hidden doorHanger" id="findbar">
                 <div id="findbarInputContainer">
