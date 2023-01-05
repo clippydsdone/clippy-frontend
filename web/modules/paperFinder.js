@@ -108,10 +108,10 @@
             // Check is already toggled by the time this event fires
             if (findByIdInput.checked) {
                 findByIdMode = true;
-                findTextInput.placeholder = "Find on Semantic Scholar by ID...";
+                findTextInput.placeholder = "Find paper on Semantic Scholar by ID...";
             } else {
                 findByIdMode = false;
-                findTextInput.placeholder = "Find on Semantic Scholar by title...";
+                findTextInput.placeholder = "Find paper on Semantic Scholar by title...";
             }
         });
 
