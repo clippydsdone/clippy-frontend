@@ -2347,7 +2347,7 @@ body {
 }
 
 #referencesContainer:active {
-  cursor: grab;
+  cursor: grabbing !important;
 }
 
 .renameButton {
