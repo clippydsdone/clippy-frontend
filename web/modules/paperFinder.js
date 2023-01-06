@@ -6,9 +6,9 @@
     });
 
     // Class variables
-    let opened = false;
-    let findByIdMode = false;
-    let loadingFlag = false;
+    let opened = false;         // Whether the panel for searching is open or not
+    let findByIdMode = false;   // Flag for finding papers by ID
+    let loadingFlag = false;    // Flag indicating that loading an external pdf is in progress
 
     // HTML elements
     let findButton = null;       // Button to open the bar  
@@ -121,18 +121,6 @@
                 find();
             }
         });
-
-        /*
-        messageDiv.addEventListener('animationend', () => {
-            messageDiv.classList.remove('paperFinderMsgFadeIn');
-            messageDiv.classList.remove('paperFinderMsgFadeOut');
-        });
-
-        errorMessage.addEventListener('animationend', () => {
-            errorMessage.classList.remove('paperFinderMsgFadeIn');
-            errorMessage.classList.remove('paperFinderMsgFadeOut');
-        });
-        */
     }
 
     let open = function () {
@@ -162,7 +150,7 @@
 
         if (loading) { // If the paper is loading
             spinnerDiv.classList.remove("hidden");
-        } else { // Paper is not loading (results phase)
+        } else {       // Paper is not loading; providing results instead
             spinnerDiv.classList.add("hidden");
             if (status) {
                 successMessage.classList.remove("hidden");
@@ -170,6 +158,7 @@
                 errorMessage.classList.remove("hidden");
             }
 
+            // Delete message after 5 seconds
             setTimeout(function () {
                 messageDiv.classList.add("hidden");
                 successMessage.classList.add("hidden");
@@ -177,66 +166,40 @@
             }, 5000);
         }
     }
-
-    /* Animations
-    let loading = function (loading, status) {
-        loadingFlag = loading;
-        messageDiv.classList.add("paperFinderMsgFadeIn");
-        messageDiv.classList.remove("hidden");
-
-        if (loading) { // If the paper is loading
-            spinnerDiv.classList.remove("hidden");
-        } else { // Paper is not loading (results phase)
-            spinnerDiv.classList.add("hidden");
-            if (status) {
-                successMessage.classList.remove("hidden");
-            } else {
-                errorMessage.classList.remove("hidden");
-            }
-
-            setTimeout(function () {
-                messageDiv.classList.add("paperFinderMsgFadeOut");
-                messageDiv.classList.add("hidden");
-                successMessage.classList.add("hidden");
-                errorMessage.classList.add("paperFinderMsgFadeOut");
-                errorMessage.classList.add("hidden");
-            }, 5000);
-        }
-    }
-    */
 
     let find = async function () {
         if (findByIdMode) { // Find paper by ID
-            console.log("Finding by Id: " + findTextInput.value);
             let paperID = findTextInput.value;
             
             loading(true, null);
             await axios({
                 method: 'GET',
-                url: 'https://clippyapidev.herokuapp.com/semantic/paper/id/' + paperID,
+                url: 'https://clippyapidev.herokuapp.com/semantic/paper/base64/id/' + paperID,
                 headers: { 'Content-Type': 'application/json' },
             })
             .then((response) => {
                 loading(false, true);
-                if (Global.isNull(response.data.data)) {
-                    return; // TODO
+                if (Global.isNull(response?.data?.data)) {
+                    loading(false, false);
+                    return;
                 }
 
                 let base64data = response.data.data;
-                localStorage.setItem("lastOpenedFile", response.data.data);
-                location.reload();
+                try {
+                    localStorage.setItem("lastOpenedFile", response.data.data);
+                    location.reload();
+                } catch (e) {
+                    loading(false, false);
+                }
             })
             .catch((err) => {
                 loading(false, false);
-                if (err.response.status == 404) {
-                    console.error("Paper not found or publicy available");
-                } else {
-                    console.error(err);
+                if (Global.isNull(err?.response?.status) || err.response.status != 404) {
+                    console.error(err)
                 }
             });
 
         } else { // Find paper by title
-            console.log("Finding by title: " + findTextInput.value);
             let paperTitle = findTextInput.value;
 
             loading(true, null);
@@ -250,19 +213,25 @@
             })
             .then((response) => {
                 loading(false, true);
-                if (Global.isNull(response.data.data)) {
-                    return; // TODO
+                if (Global.isNull(response?.data?.data)) {
+                    loading(false, false);
+                    return;
                 }
 
                 let base64data = response.data.data;
-                localStorage.setItem("lastOpenedFile", response.data.data);
-                location.reload();
+                try {
+                    localStorage.setItem("lastOpenedFile", response.data.data);
+                    location.reload();
+                } catch (e) {
+                    successMessage.innerText = "File too large to load from external source."
+                    setTimeout(function () {
+                        successMessage.innerText = "Paper found, please wait...";
+                    }, 5000);
+                }
             })
             .catch((err) => {
                 loading(false, false);
-                if (err.response.status == 404) {
-                    console.error("Paper not found or publicy available");
-                } else {
+                if (Global.isNull(err?.response?.status) || err.response.status != 404) {
                     console.error(err);
                 }
             });
