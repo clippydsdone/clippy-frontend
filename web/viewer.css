@@ -2296,6 +2296,25 @@ body {
           mask-image: var(--toolbarButton-editorInk-icon);
 }
 
+#referencesContainer::-webkit-scrollbar {
+  display: none;
+}
+
+#referencesContainer {
+  scrollbar-width: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#referencesViewer {
+  pointer-events: none !important;
+}
+
+#referencesContainer:active {
+  cursor: grab;
+}
+
 .renameButton {
     -webkit-mask-image: var(--toolbarButton-renameReference-icon);
             mask-image: var(--toolbarButton-renameReference-icon);

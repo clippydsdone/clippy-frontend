@@ -130,6 +130,22 @@
             });
         });
 
+        let elementPositions = {startPositionX:0,startPositionY:0};
+        let disp = {x:0,y:0};
+        $('#referencesContainer').on("mousedown",function(element){
+            elementPositions.startPositionX=element.pageX-disp.x;
+            elementPositions.startPositionY=element.pageY-disp.y;
+            $(document).on("mousemove",function(element){
+               disp.x=element.pageX-elementPositions.startPositionX;
+               disp.y=element.pageY-elementPositions.startPositionY;
+               $('#referencesViewer').css('transform','scale('+1.0+') translate('+disp.x+'px, '+disp.y+'px)');
+            });
+
+            $(document).mouseup(function(){
+               $(this).unbind();
+            });
+        });
+
         createReferencePreview(); // Instantiate our own PDFViewer
         buildReferenceList();     // Build the HTML for the reference list
     }
