@@ -206,6 +206,16 @@
                     referencePreviewer.currentScale -= 0.2;
                 }
             });
+
+            if (viewer.children.length == 0) {
+                return;
+            }
+            let viewerWidth = container.clientWidth;
+            let pageWidth = viewer.children[0].clientWidth;
+            let pageHeight = viewer.children[0].clientHeight;
+
+            $(container).scrollLeft((pageWidth - viewerWidth)/2);
+            $(container).scrollTop(pageHeight * 0.08);
         });
 
         // Deep copy the active PDF document from the viewer
@@ -216,6 +226,8 @@
         // TODO: these are only temporary CSS adjustments; a better and more permanent solution is required
         container.style.position = 'relative';
         container.style.overflow = 'auto';
+
+        container.style.border = "5px solid blue";
         setSize();
 
         return;
