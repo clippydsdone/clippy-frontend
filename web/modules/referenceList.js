@@ -17,6 +17,10 @@
     let referenceListContainer = null; // Div containing all the references and their groups
     let referencesNotFoundText = null; // Default text displayed when no references were found
 
+    // Handtool elements
+    let elementPositions = { startPositionX: 0, startPositionY: 0 };
+    let disp = { x: 0, y: 0 };
+
     // Reference List elements
     let allReferencesList = []; // Contains all the reference object types
     let validReferences = [     // Reference type group
@@ -130,8 +134,7 @@
             });
         });
 
-        let elementPositions = {startPositionX:0,startPositionY:0};
-        let disp = {x:0,y:0};
+        
         $('#referencesContainer').on("mousedown",function(element){
             elementPositions.startPositionX=element.pageX-disp.x;
             elementPositions.startPositionY=element.pageY-disp.y;
@@ -392,6 +395,7 @@
                     Global.preventMainViewerLinkerFlag = true;  // TODO: find a better solution
                     if (evt.target !== null) {
                         viewer.style.removeProperty('transform');
+                        disp = { x: 0, y: 0 };
 
                         referenceLinkService.goToDestination(evt.target.hash.substring(1))
 
