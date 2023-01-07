@@ -2331,6 +2331,28 @@ body {
           mask-image: var(--toolbarButton-editorInk-icon);
 }
 
+#referencesContainer::-webkit-scrollbar {
+  display: none;
+}
+
+#referencesContainer {
+  scrollbar-width: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  border: 5px;
+  border-style: solid;
+  border-color: #bababa;
+}
+
+#referencesViewer {
+  pointer-events: none !important;
+}
+
+#referencesContainer:active {
+  cursor: grabbing !important;
+}
+
 .renameButton {
     -webkit-mask-image: var(--toolbarButton-renameReference-icon);
             mask-image: var(--toolbarButton-renameReference-icon);
