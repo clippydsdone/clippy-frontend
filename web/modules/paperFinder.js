@@ -20,6 +20,8 @@
     let messageDiv = null;       // Div that contains the messages during loading
     let successMessage = null;   // Label for success message for loading pdf
     let errorMessage = null;     // Label for error message for loading pdf
+    let noTitleMessage = null;   // Label for message displayed when there is no title
+
 
     // PDF.js objects
     let textFindBar = null;      // PDFFindBar object used to search text in PDF
@@ -44,6 +46,7 @@
         messageDiv = document.getElementById('paperFinderMsg');
         successMessage = document.getElementById('paperFinderSuccessMsg');
         errorMessage = document.getElementById('paperFinderErrorMsg');
+        noTitleMessage = document.getElementById('paperFinderNoTitleMsg');
         textFindBar = Global.app.findBar;
 
         assignListeners();
@@ -155,6 +158,13 @@
         findButton.classList.remove("toggled");
         findButton.setAttribute("aria-expanded", "false");
         findBar.classList.add("hidden");
+
+        // Hide all the messages upon closing
+        messageDiv.classList.add("hidden");
+        spinnerDiv.classList.add("hidden");
+        successMessage.classList.add("hidden");
+        errorMessage.classList.add("hidden");
+        noTitleMessage.classList.add("hidden");
     }
 
     
@@ -265,6 +275,15 @@
             }
         });
     }
+
+    PaperFinder.noTitleFound = function () {
+        findButton.click();
+        paperFinderContentType.value = "paperSummary";
+        noTitleMessage.classList.remove('hidden');
+        setTimeout(function () {
+            noTitleMessage.classList.add("hidden");
+        }, 10000);
+    } 
 
     Clippy.addOnLoadEvent(PaperFinder.name, PaperFinder.initialize);
 }(window.Clippy.PaperFinder = window.Clippy.PaperFinder || {}));
