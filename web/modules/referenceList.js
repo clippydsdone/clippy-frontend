@@ -17,6 +17,10 @@
     let referenceListContainer = null; // Div containing all the references and their groups
     let referencesNotFoundText = null; // Default text displayed when no references were found
 
+    // Handtool elements
+    let elementPositions = { startPositionX: 0, startPositionY: 0 };
+    let disp = { x: 0, y: 0 };
+
     // Reference List elements
     let allReferencesList = []; // Contains all the reference object types
     let validReferences = [     // Reference type group
@@ -130,6 +134,21 @@
             });
         });
 
+        
+        $('#referencesContainer').on("mousedown",function(element){
+            elementPositions.startPositionX=element.pageX-disp.x;
+            elementPositions.startPositionY=element.pageY-disp.y;
+            $(document).on("mousemove",function(element){
+               disp.x=element.pageX-elementPositions.startPositionX;
+               disp.y=element.pageY-elementPositions.startPositionY;
+               $('#referencesViewer').css('transform','scale('+1.0+') translate('+disp.x+'px, '+disp.y+'px)');
+            });
+
+            $(document).mouseup(function(){
+               $(this).unbind();
+            });
+        });
+
         createReferencePreview(); // Instantiate our own PDFViewer
         buildReferenceList();     // Build the HTML for the reference list
     }
@@ -190,6 +209,16 @@
                     referencePreviewer.currentScale -= 0.2;
                 }
             });
+
+            if (viewer.children.length == 0) {
+                return;
+            }
+            let viewerWidth = container.clientWidth;
+            let pageWidth = viewer.children[0].clientWidth;
+            let pageHeight = viewer.children[0].clientHeight;
+
+            $(container).scrollLeft((pageWidth - viewerWidth)/2);
+            $(container).scrollTop(pageHeight * 0.08);
         });
 
         // Deep copy the active PDF document from the viewer
@@ -200,6 +229,7 @@
         // TODO: these are only temporary CSS adjustments; a better and more permanent solution is required
         container.style.position = 'relative';
         container.style.overflow = 'auto';
+
         setSize();
 
         return;
@@ -364,6 +394,9 @@
                 link.addEventListener("click", function (evt) {
                     Global.preventMainViewerLinkerFlag = true;  // TODO: find a better solution
                     if (evt.target !== null) {
+                        viewer.style.removeProperty('transform');
+                        disp = { x: 0, y: 0 };
+
                         referenceLinkService.goToDestination(evt.target.hash.substring(1))
 
                         // Scroll up to Preview when reference is clicked
