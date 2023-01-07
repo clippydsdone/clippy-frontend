@@ -3084,3 +3084,26 @@ dialog :link {
     display: none;
   }
 }
+
+#summaryContainerText > div > h3,
+#summaryContainerText > div
+{
+  padding-bottom: 5px;
+}
+
+#summaryContainerText{
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+#summaryContainerText * button {
+  padding: 8px;
+  background-color: rgb(19, 120, 170);
+  border: none;
+  color: white;
+  border-radius: 5px;
+}
+
+#summaryContainerText * button:disabled{
+  background-color: rgb(102, 166, 197);
+}
