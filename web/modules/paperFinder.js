@@ -39,6 +39,7 @@
         findTextInput = document.getElementById('paperFinderInput');
         findByIdInput = document.getElementById('paperFinderById');
         findSubmitButton = document.getElementById('paperFindSubmit');
+        paperFinderContentType = document.getElementById('paperFinderModeSelect');
         spinnerDiv = document.getElementById('paperFinderSpinner');
         messageDiv = document.getElementById('paperFinderMsg');
         successMessage = document.getElementById('paperFinderSuccessMsg');
@@ -63,6 +64,9 @@
             return;
         } else if (Global.isNull(findSubmitButton)) {
             console.error("HTML div with id 'paperFindSubmit' is null. Cannot assign event listeners.");
+            return;
+        } else if (Global.isNull(paperFinderContentType)) {
+            console.error("HTML div with id 'paperFinderModeSelect' is null. Cannot assign event listeners.");
             return;
         } else if (Global.isNull(spinnerDiv)) {
             console.error("HTML div with id 'paperFinderSpinner' is null. Cannot assign event listeners.");
@@ -108,17 +112,27 @@
             // Check is already toggled by the time this event fires
             if (findByIdInput.checked) {
                 findByIdMode = true;
-                findTextInput.placeholder = "Find paper on Semantic Scholar by ID...";
+                findTextInput.placeholder = "Find on Semantic Scholar by ID...";
             } else {
                 findByIdMode = false;
-                findTextInput.placeholder = "Find paper on Semantic Scholar by title...";
+                findTextInput.placeholder = "Find on Semantic Scholar by title...";
             }
         });
+
+        // Add event listener for content type
+
 
         // Add submit functionality
         findSubmitButton.addEventListener("click", function () {
             if (!loadingFlag) {
-                find();
+                let contentType = paperFinderContentType.value;
+                if (contentType == "paperPdf") {
+                    pdfSearch();
+                } else if (contentType == "paperSummary") {
+                    summarySearch();
+                } else {
+                    console.error("No valid content type search selected.")
+                }
             }
         });
     }
@@ -167,75 +181,89 @@
         }
     }
 
-    let find = async function () {
+    let pdfSearch = async function () {
+        let request = null;
+
         if (findByIdMode) { // Find paper by ID
             let paperID = findTextInput.value;
-            
-            loading(true, null);
-            await axios({
+            request = {
                 method: 'GET',
                 url: 'https://clippyapidev.herokuapp.com/semantic/paper/base64/id/' + paperID,
                 headers: { 'Content-Type': 'application/json' },
-            })
-            .then((response) => {
-                loading(false, true);
-                if (Global.isNull(response?.data?.data)) {
-                    loading(false, false);
-                    return;
-                }
-
-                let base64data = response.data.data;
-                try {
-                    localStorage.setItem("lastOpenedFile", response.data.data);
-                    location.reload();
-                } catch (e) {
-                    loading(false, false);
-                }
-            })
-            .catch((err) => {
-                loading(false, false);
-                if (Global.isNull(err?.response?.status) || err.response.status != 404) {
-                    console.error(err)
-                }
-            });
-
+            }
         } else { // Find paper by title
             let paperTitle = findTextInput.value;
-
-            loading(true, null);
-            await axios({
+            request = {
                 method: 'POST',
                 url: 'https://clippyapidev.herokuapp.com/semantic/paper/base64',
                 data: {
                     query: paperTitle
                 },
                 headers: { 'Content-Type': 'application/json' },
-            })
-            .then((response) => {
-                loading(false, true);
-                if (Global.isNull(response?.data?.data)) {
-                    loading(false, false);
-                    return;
-                }
+            }
+        }
 
-                let base64data = response.data.data;
-                try {
-                    localStorage.setItem("lastOpenedFile", response.data.data);
-                    location.reload();
-                } catch (e) {
-                    successMessage.innerText = "File too large to load from external source."
-                    setTimeout(function () {
-                        successMessage.innerText = "Paper found, please wait...";
-                    }, 5000);
-                }
-            })
-            .catch((err) => {
+        loading(true, null);
+        await axios(request).then((response) => {
+            loading(false, true);
+            if (Global.isNull(response?.data?.data)) {
                 loading(false, false);
-                if (Global.isNull(err?.response?.status) || err.response.status != 404) {
-                    console.error(err);
-                }
-            });
-        } 
+                return;
+            }
+            let base64data = response.data.data;
+            try {
+                localStorage.setItem("lastOpenedFile", response.data.data);
+                location.reload();
+            } catch (e) {
+                successMessage.innerText = "File too large to load from external source."
+                setTimeout(function () {
+                    successMessage.innerText = "Paper found, please wait...";
+                }, 5000);
+            }
+        }).catch((err) => {
+            loading(false, false);
+            if (Global.isNull(err?.response?.status) || err.response.status != 404) {
+                console.error(err)
+            }
+        });
+    }
+
+    let summarySearch = async function () {
+        let request = null;
+
+        if (findByIdMode) { // Find paper by ID
+            let paperID = findTextInput.value;
+            request = {
+                method: 'GET',
+                url: 'https://clippyapidev.herokuapp.com/semantic/paper/id/' + paperID,
+                headers: { 'Content-Type': 'application/json' },
+            }
+        } else { // Find paper by title
+            let paperTitle = findTextInput.value;
+            request = {
+                method: 'POST',
+                url: 'https://clippyapidev.herokuapp.com/semantic/paper/search',
+                data: {
+                    query: paperTitle
+                },
+                headers: { 'Content-Type': 'application/json' },
+            }
+        }
+
+        loading(true, null);
+        await axios(request).then((response) => {
+            loading(false, true);
+            if (Global.isNull(response?.data)) {
+                loading(false, false);
+                return;
+            }
+            Global.data = response.data
+        }).catch((err) => {
+            loading(false, false);
+            if (Global.isNull(err?.response?.status) || err.response.status != 404) {
+                console.error(err)
+            }
+        });
     }
 
     Clippy.addOnLoadEvent(PaperFinder.name, PaperFinder.initialize);
