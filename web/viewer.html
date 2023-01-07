@@ -151,7 +151,7 @@ See https://github.com/adobe-type-tools/cmap-resources
         <div id="mainContainer">
             <div class="findbar hidden doorHanger" id="paperFinderBar">
                 <div id="paperFinderBarInputContainer">
-                    <input id="paperFinderInput" class="toolbarField" title="Text field for searching on Semantic Scholar" placeholder="Find paper on Semantic Scholar by title..." tabindex="91" aria-invalid="false" size="40">
+                    <input id="paperFinderInput" class="toolbarField" title="Text field for searching on Semantic Scholar" placeholder="Find on Semantic Scholar by title..." tabindex="91" aria-invalid="false" size="40">
                     <button id="paperFindSubmit" class="dialogButton" title="Submit button to send a search request to Semantic Scholar" tabindex="12" aria-expanded="false" aria-controls="findbar">
                         <span>Submit</span>
                     </button>
@@ -159,10 +159,13 @@ See https://github.com/adobe-type-tools/cmap-resources
                     <input type="checkbox" id="paperFinderById" class="toolbarField" tabindex="94">
                     <label for="paperFinderById" class="toolbarLabel" title="Search Semantic Scholar by paper ID instead of title">Find By Id</label>
                 </div>
-
-                <div id="paperFinderBarMessageContainer" aria-live="polite">
-                </div>
-            </div>  <!-- paperFinderBar -->
+                <span id="paperFinderModeSelectContainer" class="dropdownToolbarButton">
+                    <select id="paperFinderModeSelect" title="Select what you are searching for on Semantic Scholar" tabindex="23">
+                        <option id="paperPdfOption" title="" value="paperPdf" selected="selected">Paper PDF</option>
+                        <option id="paperSummaryOption" title="" value="paperSummary">Paper Summary</option>
+                    </select>
+                </span>
+            </div>  <!-- paperFinder searchbar panel -->
             <div class="findbar doorHanger" id="paperFinderMsg">
                 <span id="paperFinderSuccessMsg" class="toolbarLabel hidden">Paper found, please wait...</span>
                 <span id="paperFinderErrorMsg" class="toolbarLabel hidden">Paper not found or publicly available.</span>
@@ -170,8 +173,7 @@ See https://github.com/adobe-type-tools/cmap-resources
                     <div class="loadingSpin"></div>
                     <span class="toolbarLabel">Loading, please wait...</span>
                 </div>
-
-            </div>
+            </div> <!-- paperFinder message panel -->
 
 
             <div class="findbar hidden doorHanger" id="findbar">
