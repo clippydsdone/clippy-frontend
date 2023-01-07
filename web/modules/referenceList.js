@@ -7,35 +7,86 @@
     });
 
     // HTML elements
-    let content = null;     // Parent div of content to be displayed in sidebar
-    let container = null;   // Container for the viewer
-    let viewer = null;      // Div of the viewer
-    let zoomInButton = null;
-    let zoomOutButton = null;
-    let referenceFilter = null;
-    let referenceListContainer = null;
-    let referenceFilterButton = null;
+    let content = null;         // Parent div of content to be displayed in sidebar
+    let container = null;       // Container for the previewer
+    let viewer = null;          // Div of the viewer
+    let zoomInButton = null;    // Zoom-in button
+    let zoomOutButton = null;   // Zoom-out button
+    let referenceFilter = null; // Reference type filter container
+    let referenceFilterButton = null;  // Button for opening/closing the reference type filter
+    let referenceListContainer = null; // Div containing all the references and their groups
+    let referencesNotFoundText = null; // Default text displayed when no references were found
 
     // Reference List elements
-    let referenceList = [];
-    let validReferences = {
+    let allReferencesList = []; // Contains all the reference object types
+    let validReferences = [     // Reference type group
         /*
         "aff": "AFF"
         "para": "Paragraph",
         "sec": "Section",
         "crf": "CRF",
         */
-        "bib": "Bibliography",
-        "cor": "Corresponding Author",        
-        "eqn": "Equation",
-        "fig": "Figure",
-        "tbl": "Table",
-        "ueqn": "Inequation"
-    };
+        {
+            fullName: "Bibliography",
+            fullNames: "Bibliographies",
+            tags: ["bib", "B"],
+            referenceList: [],
+            counter: 0
+        },
+        {
+            fullName: "Citation",
+            fullNames: "Citations",
+            tags: ["cite"],
+            referenceList: [],
+            counter: 0
+        },
+        {
+            fullName: "Corresponding Author",
+            fullNames: "Corresponding Authors",
+            tags: ["cor"],
+            referenceList: [],
+            counter: 0
+        },        
+        {
+            fullName: "Equation",
+            fullNames: "Equations",
+            tags: ["eqn", "equation"],
+            referenceList: [],
+            counter: 0
+        },
+        {
+            fullName: "Figure",
+            fullNames: "Figures",
+            tags: ["fig", "figure"],
+            referenceList: [],
+            counter: 0
+        },
+        {
+            fullName: "Table",
+            fullNames: "Tables",
+            tags: ["tbl", "table"],
+            referenceList: [],
+            counter: 0
+        },
+        {
+            fullName: "Inequation",
+            fullNames: "Inequations",
+            tags: ["ueqn", "B"],
+            referenceList: [],
+            counter: 0
+        },
+        {
+            fullName: "Reference",
+            fullNames: "Unsorted",
+            tags: [],
+            referenceList: [],
+            counter: 0
+        }
+    ];
 
     // Preview (PDFViewer) elements
-    let referenceViewer = null;
-    let referenceLinkService = null;
+    let referencePreviewer = null;      // Reference previewer object displayed in sidebar
+    let referenceLinkService = null; // Linker for references used by reference previewer
 
     // Initializer method
     ReferenceList.initialize = async function () {
@@ -49,7 +100,7 @@
         }
         console.log("Initializing ReferenceList.");
 
-        // Both are null because we need to wait for the document to load before we can access DOM elements
+        // Bind all variables to their HTML elements
         content = document.getElementById('referencesView');
         container = document.getElementById('referencesContainer');
         viewer = document.getElementById('referencesViewer');
@@ -58,13 +109,17 @@
         referenceFilter = document.getElementById('referenceFilterContainer');
         referenceListContainer = document.getElementById('referenceListContainer');
         referenceFilterButton = document.getElementById('referenceFilters');
+        referencesNotFoundText = document.getElementById('referencesNotFoundText');
 
+        // Hide reference filter at start
         referenceFilter.hidden = true;
 
+        // Initial resizing
         $(window).on("resize", function () {
             setSize();
         })
 
+        // Add resizer listener
         $("#sidebarResizer").mousedown(function () {
             $(document).mousemove(function () {
                 setSize();
@@ -75,8 +130,8 @@
             });
         });
 
-        createReferencePreview();
-        buildReferenceList();
+        createReferencePreview(); // Instantiate our own PDFViewer
+        buildReferenceList();     // Build the HTML for the reference list
     }
 
     let createReferencePreview = function () {
@@ -110,51 +165,36 @@
             eventBus
         });
 
-        // (Optionally) enable find controller. (NOTE: no idea what this is nor do we need it)
-        const pdfFindController = new findControllerConstructor({
-            eventBus,
-            linkService: referenceLinkService
-        });
-
-        // (Optionally) enable scripting support (NOTE: no idea what this is nor do we need it)
-        const pdfScriptingManager = new scriptingManagerConstructor({
-            eventBus,
-            sandboxBundleSrc: scriptingSrc
-        });
-
         // Construct PDFViewer for reference preview
-        referenceViewer = new viewerConstructor({
+        referencePreviewer = new viewerConstructor({
             container,
             eventBus,
             linkService: referenceLinkService,
-            findController: pdfFindController,
-            scriptingManager: pdfScriptingManager,
             removePageBorders: true
         });
-        referenceLinkService.setViewer(referenceViewer);
-        pdfScriptingManager.setViewer(referenceViewer);
+
+        referenceLinkService.setViewer(referencePreviewer);
 
         eventBus.on("pagesinit", function () {
-            // We can use referenceViewer now, e.g. let's change default scale.
-            referenceViewer.currentScaleValue = "page-actual";
+            // Set default zoom value to 'Page fit'
+            referencePreviewer.currentScaleValue = "page-actual";
 
             zoomInButton.addEventListener("click", function () {
-                if (referenceViewer.currentScale <= 9.8) {
-                    referenceViewer.currentScale += 0.2;
+                if (referencePreviewer.currentScale <= 9.8) {
+                    referencePreviewer.currentScale += 0.2;
                 }
-                
             });
 
             zoomOutButton.addEventListener("click", function () {
-                if (referenceViewer.currentScale >= 0.3) {
-                    referenceViewer.currentScale -= 0.2;
+                if (referencePreviewer.currentScale >= 0.3) {
+                    referencePreviewer.currentScale -= 0.2;
                 }
             });
         });
 
         // Deep copy the active PDF document from the viewer
         let documentClone = Global.deepCopy(Global.viewer.pdfDocument);
-        referenceViewer.setDocument(documentClone);
+        referencePreviewer.setDocument(documentClone);
         referenceLinkService.setDocument(documentClone, null);
 
         // TODO: these are only temporary CSS adjustments; a better and more permanent solution is required
@@ -181,18 +221,15 @@
         } else if (Global.isNull(referenceListContainer)) {
             console.error("HTML div with id 'referenceListContainer' is null. Cannot create reference preview.");
             return;
+        } else if (Global.isNull(referencesNotFoundText)) {
+            console.error("HTML div with id 'referencesNotFoundText' is null. Cannot create reference preview.");
+            return;
         }
 
-        /*
-        <input type="checkbox" id="findHighlightAll" class="toolbarField" tabindex="94">
-        <label for="findHighlightAll" class="toolbarLabel" data-l10n-id="find_highlight">Highlight All</label>
-                    
-        */
-
-        let keys = Object.keys(validReferences);
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-            let referenceName = validReferences[key];
+        // HTML Building of reference filter
+        for (let i = 0; i < validReferences.length; i++) {
+            let key = validReferences[i].tags[0];
+            let referenceName = validReferences[i].fullNames;
             let id = key + "Filter";
 
             let input = document.createElement("input");
@@ -218,90 +255,14 @@
             let label = document.createElement("label");
             label.htmlFor = id;
             label.classList.add('toolbarLabel')
-            let labelTextNode = document.createTextNode(referenceName + "s");
+            let labelTextNode = document.createTextNode(referenceName);
             label.appendChild(labelTextNode);
 
             referenceFilter.appendChild(input);
             referenceFilter.appendChild(label);
         }
 
-        // Get a list of all references in the PDF
-        destinations = await Global.doc.getDestinations();
-        keys = Object.keys(destinations);
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i]; // fig0001
-            let tag = key.split(/[0-9]/)[0]; // fig
-            if (Global.isNull(validReferences[tag])) // Check if it is a valid reference
-                continue;
-
-            // Build reference if it is a valid reference
-            let reference = {};
-            reference.key = key;                        // fig0001
-            reference.tag = tag;                        // fig
-            reference.num = key.substring(tag.length);  // 0001
-            reference.tagName = validReferences[tag];   // Figure
-            reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
-            referenceList.push(reference);
-        }
-
-        // HTML building
-        // We will create a tree structure of depth 2
-        referenceListContainer.classList.add("treeWithDeepNesting");
-
-        for (let i = 0; i < referenceList.length; i++) {
-            // Top level div of reference
-            let div = document.createElement("div");
-            div.classList.add('treeItem')
-            div.classList.add(referenceList[i].tag)
-
-            // Toggler div is used to enable/disable the display of canvas
-            let toggler = document.createElement('div');
-            toggler.classList.add('treeItemToggler')
-            toggler.classList.add('treeItemsHidden')
-
-            // Link to go to the page when clicking the reference
-            let link = document.createElement('a');
-            let linkText = document.createTextNode(referenceList[i].fullName);
-            link.appendChild(linkText);
-            link.href = "#" + referenceList[i].key;
-            link.addEventListener("click", function (evt) {
-                Global.preventMainViewerLinkerFlag = true;  // TODO: find a better solution
-                if (evt.target !== null) { 
-                    referenceLinkService.goToDestination(evt.target.hash.substring(1))
-
-                    // Scroll up to Preview when reference is clicked
-                    $(document.getElementById('sidebarContent')).scrollTop(0);
-                }
-            });
-
-            let renameButton = document.createElement('button');
-            let input = document.createElement("input");
-            renameButton.addEventListener("click", function () {
-                if (link.hidden) {
-                    link.innerText = input.value;
-                    link.hidden = false;
-                    input.hidden = true;
-                } else {
-                    link.hidden = true;
-                    input.hidden = false;
-                }
-            });
-            renameButton.classList.add('toolbarButton')
-            renameButton.classList.add('renameButton')
-
-            input.type = "text";
-            input.classList.add('toolbarField');
-            input.value = link.innerText;
-            input.hidden = true;
-
-            div.appendChild(toggler);
-            div.appendChild(link);
-            div.appendChild(input)
-            div.appendChild(renameButton);
-
-            referenceListContainer.appendChild(div);
-        }
-
+        // Add event listener to open/close the filter
         referenceFilterButton.addEventListener("click", function () {
             if (referenceFilter.hidden) { // Now the filter is visible
                 // Change coordinates of the filter
@@ -317,6 +278,135 @@
             }
         })
 
+        // Get a list of all references in the PDF and create objects from these references
+        destinations = await Global.doc.getDestinations();
+        let keys = Object.keys(destinations);
+        if (keys.length === 0) {
+            referencesNotFoundText.classList.remove('hidden')
+            return;
+        }
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i]; // fig0001
+            let tag = key.split(/[0-9]/)[0]; // fig
+            validReference = isValidReference(tag); // Get validReference object
+            if (validReference == null) // Check if it is an invalid reference
+                continue;
+
+            // Build reference if it is a valid reference
+            let reference = {};
+            reference.key = key;                        // fig0001
+            reference.tag = tag;                        // fig
+            reference.num = validReference.counter;     // 0001
+            reference.tagName = validReference.fullName;   // Figure
+            reference.fullName = reference.tagName + " " + Number(reference.num); // Figure 1
+
+            validReference.referenceList.push(reference);
+            allReferencesList.push(reference);
+        }
+        if (allReferencesList.length === 0) {
+            referencesNotFoundText.classList.remove('hidden')
+            return;
+        }
+
+        // TODO: Add annotations that are links
+
+
+        // HTML building of list of references
+        // We will create a tree structure of depth 2
+        referenceListContainer.classList.add("treeWithDeepNesting");
+        for (let i = 0; i < validReferences.length; i++) {
+            if (validReferences[i].referenceList.length == 0) // Skip if reference group type is empty
+                continue;
+
+            // Set variables
+            let key = validReferences[i].tags[0];
+            let referenceName = validReferences[i].fullNames;
+            let id = key + "Group";
+
+            // Top level div of reference group type
+            let referenceGroupDiv = document.createElement("div");
+            referenceGroupDiv.classList.add('treeItem');
+            referenceGroupDiv.classList.add(key);
+            referenceGroupDiv.id = id;
+
+            // Create text for reference group type
+            let linkGroup = document.createElement('a');
+            let linkGroupText = document.createTextNode(referenceName);
+            linkGroup.appendChild(linkGroupText);
+            linkGroup.addEventListener("click", function (evt) {
+                toggler.classList.toggle("treeItemsHidden");
+            })
+            
+            // Toggler div is used to display/hide actual references
+            let toggler = document.createElement('div');
+            toggler.classList.add('treeItemToggler')
+            toggler.classList.add('treeItemsHidden')
+            toggler.addEventListener("click", function (evt) {
+                toggler.classList.toggle("treeItemsHidden");
+            })
+
+            // Reference list div
+            let referencesDiv = document.createElement("div");
+            referencesDiv.classList.add('treeItems');
+            for (let j = 0; j < validReferences[i].referenceList.length; j++) {
+                let reference = validReferences[i].referenceList[j];
+
+                // Top level div of reference
+                let referenceDiv = document.createElement("div");
+                referenceDiv.classList.add('treeItem');
+                referenceDiv.classList.add(key)
+
+                // Link to go to the page when clicking the reference
+                let link = document.createElement('a');
+                let linkText = document.createTextNode(reference.fullName);
+                link.appendChild(linkText);
+                link.href = "#" + reference.key;
+                link.addEventListener("click", function (evt) {
+                    Global.preventMainViewerLinkerFlag = true;  // TODO: find a better solution
+                    if (evt.target !== null) {
+                        referenceLinkService.goToDestination(evt.target.hash.substring(1))
+
+                        // Scroll up to Preview when reference is clicked
+                        $(document.getElementById('sidebarContent')).scrollTop(0);
+                    }
+                });
+
+                // Text field for renaming reference
+                let renameTextField = document.createElement("input");
+                renameTextField.type = "text";
+                renameTextField.classList.add('toolbarField');
+                renameTextField.value = link.innerText;
+                renameTextField.hidden = true;
+
+                // Rename reference button
+                let renameButton = document.createElement('button');
+                renameButton.classList.add('toolbarButton')
+                renameButton.classList.add('renameButton')
+                renameButton.addEventListener("click", function () {
+                    if (link.hidden) {
+                        link.innerText = renameTextField.value;
+                        link.hidden = false;
+                        renameTextField.hidden = true;
+                    } else {
+                        link.hidden = true;
+                        renameTextField.hidden = false;
+                    }
+                });
+                
+                referenceDiv.appendChild(link);
+                referenceDiv.appendChild(renameTextField)
+                referenceDiv.appendChild(renameButton);
+
+                referencesDiv.appendChild(referenceDiv);
+            }
+
+            referenceGroupDiv.appendChild(toggler);
+            referenceGroupDiv.appendChild(linkGroup);
+            referenceGroupDiv.appendChild(referencesDiv);
+
+            referenceListContainer.appendChild(referenceGroupDiv);
+        } 
+
         return;
     }
 
@@ -329,6 +419,21 @@
             referenceFilter.hidden = true;
             referenceFilterButton.setAttribute("aria-checked", false);
         }
+    }
+
+    let isValidReference = function (tag) {
+        let validTags = [];
+
+        for (let i = 0; i < validReferences.length; i++) {
+            for (let j = 0; j < validReferences[i].tags.length; j++) {
+                if (tag.startsWith(validReferences[i].tags[j])) {
+                    validReferences[i].counter++;
+                    return validReferences[i];
+                }  
+            }
+        }
+       
+        return null;
     }
 
     // Execute initialize method after the document loads

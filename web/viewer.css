@@ -1053,6 +1053,7 @@
 }
 
 :root {
+    --sidebar-container-bg-color: rgb(240, 240, 240);
     --dir-factor: 1;
     --sidebar-width: 255px;
     --sidebar-transition-duration: 200ms;
@@ -1117,6 +1118,7 @@
     --toolbarButton-presentationMode-icon: url(images/toolbarButton-presentationMode.svg);
     --toolbarButton-print-icon: url(images/toolbarButton-print.svg);
     --toolbarButton-openFile-icon: url(images/toolbarButton-openFile.svg);
+    --toolbarButton-openDefaultPdf-icon: url(images/toolbarButton-openDefaultPdf.svg);
     --toolbarButton-download-icon: url(images/toolbarButton-download.svg);
     --toolbarButton-bookmark-icon: url(images/toolbarButton-bookmark.svg);
     --toolbarButton-viewThumbnail-icon: url(images/toolbarButton-viewThumbnail.svg);
@@ -1132,6 +1134,7 @@
     --toolbarButton-referenceFilters-icon: url(images/toolbarButton-filterReferences.svg);
     --toolbarButton-currentOutlineItem-icon: url(images/toolbarButton-currentOutlineItem.svg);
     --toolbarButton-search-icon: url(images/toolbarButton-search.svg);
+    --toolbarButton-searchSemanticScholar-icon: url(images/toolbarButton-searchSemanticScholar.svg);
     --findbarButton-previous-icon: url(images/findbarButton-previous.svg);
     --findbarButton-next-icon: url(images/findbarButton-next.svg);
     --secondaryToolbarButton-firstPage-icon: url(images/secondaryToolbarButton-firstPage.svg);
@@ -1156,6 +1159,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --sidebar-container-bg-color: rgb(40, 40, 40);
     --main-color: rgba(249, 249, 250, 1);
     --body-bg-color: rgba(42, 42, 46, 1);
     --progressBar-color: rgba(0, 96, 223, 1);
@@ -1337,6 +1341,7 @@ body {
   transition-property: inset-inline-start;
   transition-duration: var(--sidebar-transition-duration);
   transition-timing-function: var(--sidebar-transition-timing-function);
+  background-color: var(--sidebar-container-bg-color);
 }
 
 #outerContainer.sidebarMoving #sidebarContainer,
@@ -1605,6 +1610,40 @@ body {
 
 [dir="rtl"] .findbar {
   right: 64px;
+}
+
+#paperFinderBar {
+    inset-inline-start: 36px;
+}
+
+#paperFinderMsg {
+    inset-inline-start: 36px;
+    top: 68px;
+    min-width: 220px;
+    padding-right: 0px;
+}
+
+#paperFinderMsg::after {
+    content: none;
+}
+
+#paperFinderMsg::before {
+    content: none;
+}
+
+.loadingSpin {
+    border: 8px solid #f3f3f3; /* Inner circle */
+    border-top: 8px solid #009b00; /* Green color */
+    border-radius: 100%;
+    width: 10px;
+    height: 10px;
+    animation: spin 2s linear infinite;
+    margin-top: 3px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .findbar {
@@ -2296,7 +2335,9 @@ body {
     -webkit-mask-image: var(--toolbarButton-renameReference-icon);
             mask-image: var(--toolbarButton-renameReference-icon);
     position: absolute;
+    -webkit-mask-position: center;
     mask-position: center;
+    -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     right: 10px;
 }
@@ -2317,6 +2358,11 @@ body {
 #secondaryOpenFile::before {
   -webkit-mask-image: var(--toolbarButton-openFile-icon);
           mask-image: var(--toolbarButton-openFile-icon);
+}
+
+#openDefaultPdf::before {
+  -webkit-mask-image: var(--toolbarButton-openDefaultPdf-icon);
+          mask-image: var(--toolbarButton-openDefaultPdf-icon);
 }
 
 #download::before,
@@ -2392,6 +2438,12 @@ a.secondaryToolbarButton[href="#"] {
   -webkit-mask-image: var(--toolbarButton-search-icon);
           mask-image: var(--toolbarButton-search-icon);
 }
+
+#viewPaperFinder::before {
+    -webkit-mask-image: var(--toolbarButton-searchSemanticScholar-icon);
+            mask-image: var(--toolbarButton-searchSemanticScholar-icon);
+}
+
 
 [dir="ltr"] .pdfSidebarNotification::after {
   right: 2px;

@@ -37,6 +37,8 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     <!-- External scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -44,16 +46,18 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     <!-- Clippy modules -->
     <script src="./modules/globalVariables.js"></script>
-    <script src="./modules/summary.js"></script>
+    <script id="summaryScript" src="./modules/summary.js"></script>
     <script src="./modules/referenceList.js"></script>
     <script src="./modules/popupPreview.js"></script>
     <script src="./modules/graph.js"></script>
     <script src="./modules/citationExport.js"></script>
+    <script src="./modules/paperFinder.js"></script>
 </head>
 
 <body tabindex="1">
-    <div id="outerContainer">
+    <div id="popupEcosystem" style="width: 100%; height: 100%; overflow: clip; position: absolute;"></div>
 
+    <div id="outerContainer">
         <div id="sidebarContainer">
             <div id="toolbarSidebar">
                 <div id="toolbarSidebarLeft">
@@ -137,6 +141,8 @@ See https://github.com/adobe-type-tools/cmap-resources
                             <span data-l10n-id="zoom_in_label">Preview Zoom In</span>
                         </button>
                     </div>
+                    <h2>List of References</h2>
+                    <p id="referencesNotFoundText" class="hidden">No references found. This might be due to PDF file's internal structure.<!--For something to be considered a reference, it has to be a link.--></p>
                     <div id="referenceFilterContainer" class="findbar"></div>
                     <div id="referenceListContainer"></div>
                 </div>
@@ -145,6 +151,31 @@ See https://github.com/adobe-type-tools/cmap-resources
         </div>  <!-- sidebarContainer -->
 
         <div id="mainContainer">
+            <div class="findbar hidden doorHanger" id="paperFinderBar">
+                <div id="paperFinderBarInputContainer">
+                    <input id="paperFinderInput" class="toolbarField" title="Text field for searching on Semantic Scholar" placeholder="Find paper on Semantic Scholar by title..." tabindex="91" aria-invalid="false" size="40">
+                    <button id="paperFindSubmit" class="dialogButton" title="Submit button to send a search request to Semantic Scholar" tabindex="12" aria-expanded="false" aria-controls="findbar">
+                        <span>Submit</span>
+                    </button>
+                    <div class="splitToolbarButtonSeparator"></div>
+                    <input type="checkbox" id="paperFinderById" class="toolbarField" tabindex="94">
+                    <label for="paperFinderById" class="toolbarLabel" title="Search Semantic Scholar by paper ID instead of title">Find By Id</label>
+                </div>
+
+                <div id="paperFinderBarMessageContainer" aria-live="polite">
+                </div>
+            </div>  <!-- paperFinderBar -->
+            <div class="findbar doorHanger" id="paperFinderMsg">
+                <span id="paperFinderSuccessMsg" class="toolbarLabel hidden">Paper found, please wait...</span>
+                <span id="paperFinderErrorMsg" class="toolbarLabel hidden">Paper not found or publicly available.</span>
+                <div id="paperFinderSpinner" class="hidden">
+                    <div class="loadingSpin"></div>
+                    <span class="toolbarLabel">Loading, please wait...</span>
+                </div>
+
+            </div>
+
+
             <div class="findbar hidden doorHanger" id="findbar">
                 <div id="findbarInputContainer">
                     <input id="findInput" class="toolbarField" title="Find" placeholder="Find in document…" tabindex="91" data-l10n-id="find_input" aria-invalid="false">
@@ -307,20 +338,22 @@ See https://github.com/adobe-type-tools/cmap-resources
                             <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="11" data-l10n-id="toggle_sidebar" aria-expanded="false" aria-controls="sidebarContainer">
                                 <span data-l10n-id="toggle_sidebar_label">Toggle Sidebar</span>
                             </button>
-                            <div class="toolbarButtonSpacer"></div>
-                            <button id="viewFind" class="toolbarButton" title="Find in Document" tabindex="12" data-l10n-id="findbar" aria-expanded="false" aria-controls="findbar">
+                            <button id="viewPaperFinder" class="toolbarButton" title="Find paper on Semantic Scholar" tabindex="12" aria-expanded="false" aria-controls="findbar">
+                                <span>Find paper on Semantic Scholar</span>
+                            </button>
+                            <button id="viewFind" class="toolbarButton" title="Find in Document" tabindex="13" data-l10n-id="findbar" aria-expanded="false" aria-controls="findbar">
                                 <span data-l10n-id="findbar_label">Find</span>
                             </button>
                             <div class="splitToolbarButton hiddenSmallView">
-                                <button class="toolbarButton" title="Previous Page" id="previous" tabindex="13" data-l10n-id="previous">
+                                <button class="toolbarButton" title="Previous Page" id="previous" tabindex="14" data-l10n-id="previous">
                                     <span data-l10n-id="previous_label">Previous</span>
                                 </button>
                                 <div class="splitToolbarButtonSeparator"></div>
-                                <button class="toolbarButton" title="Next Page" id="next" tabindex="14" data-l10n-id="next">
+                                <button class="toolbarButton" title="Next Page" id="next" tabindex="15" data-l10n-id="next">
                                     <span data-l10n-id="next_label">Next</span>
                                 </button>
                             </div>
-                            <input type="number" id="pageNumber" class="toolbarField" title="Page" value="1" min="1" tabindex="15" data-l10n-id="page" autocomplete="off">
+                            <input type="number" id="pageNumber" class="toolbarField" title="Page" value="1" min="1" tabindex="16" data-l10n-id="page" autocomplete="off">
                             <span id="numPages" class="toolbarLabel"></span>
                         </div>
                         <div id="toolbarViewerRight">
@@ -334,6 +367,10 @@ See https://github.com/adobe-type-tools/cmap-resources
 
                             <button id="download" class="toolbarButton hiddenMediumView" title="Save" tabindex="33" data-l10n-id="save">
                                 <span data-l10n-id="save_label">Save</span>
+                            </button>
+
+                            <button id="openDefaultPdf" class="toolbarButton hiddenLargeView" title="Open Default PDF" tabindex="31" data-l10n-id="open_deafult_pdf">
+                                <span data-l10n-id="open_deafult_pdf_label">Open Deafult PDF</span>
                             </button>
 
                             <div class="verticalToolbarSeparator hiddenMediumView"></div>
@@ -392,7 +429,8 @@ See https://github.com/adobe-type-tools/cmap-resources
             </div>
 
             <div id="viewerContainer" tabindex="0">
-                <div id="viewer" class="pdfViewer"></div>
+                <div id="viewer" class="pdfViewer">
+                </div>
             </div>
         </div> <!-- mainContainer -->
 
@@ -491,12 +529,6 @@ See https://github.com/adobe-type-tools/cmap-resources
     <div id="printContainer"></div>
 
     <input type="file" id="fileInput" class="hidden" accept="application/pdf">
-
-    <!-- Clippy Popup container -->
-    <div id="popupDiv" style="position:fixed;overflow:hidden;border:1px solid black">
-        <div id="popupContainer" style="position: absolute">
-            <div id="popupViewer" class="pdfViewer"></div>
-        </div>
-    </div>
+    
 </body>
 </html>
