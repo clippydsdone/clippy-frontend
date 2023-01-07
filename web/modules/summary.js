@@ -86,12 +86,13 @@
             
             container.id = "details";
             topic.id = "topics";
-            container.appendChild(topic);
+            //container.appendChild(topic);
 
             switch(data){
                 case "abstract":
                     if(Global.data.abstract != null){
-                        topic.innerText = "Abstract";
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Abstract</b>";
                         let abstract = document.createElement("div");
                         abstract.id = "values";
                         abstract.innerText = Global.data.abstract;
@@ -100,29 +101,21 @@
                     break;
                 case "authors":
                     if(Global.data.authors){
-                        topic.innerText = "Authors";
-                        let authors = document.createElement("div");
-                        authors.id = "values";
-                        for(const author of Global.data.authors){
-                            let authorName = document.createElement("div");
-                            authorName.innerText = author.name;
-                            authors.appendChild(authorName);
-                        }
-                        container.appendChild(authors);
+                        container.appendChild(topic);
+                        authors = Global.data.authors.map((author) => author.name).join(', ');
+                        topic.innerHTML = "<b>Authors</b>: " + authors;
                     }
                     break;
                 case "citationCount":
                     if(Global.data.citationCount >= 0){
-                        topic.innerText = "Citation Count";
-                        let counter = document.createElement("div");
-                        counter.id = "values";
-                        counter.innerText = Global.data.citationCount;
-                        container.appendChild(counter);
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Citation Count</b>: " + Global.data.citationCount;
                     }
                     break;
                 case "externalIds":
                     if(Global.data.externalIds){
-                        topic.innerText = "ExternalIds";
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>External Ids</b>";
                         let ids = document.createElement("div");
                         ids.id = "values";
                         for(const id in Global.data.externalIds){
@@ -135,29 +128,15 @@
                     break;
                 case "fieldsOfStudy":
                     if(Global.data.fieldsOfStudy){
-                        topic.innerText = "Fields of Study";
-                        let fields = document.createElement("div");
-                        fields.id = "values";
-                        for(const filed of Global.data.fieldsOfStudy){
-                            let fieldName = document.createElement("div");
-                            fieldName.innerText = filed;
-                            fields.appendChild(fieldName);
-                        }
-                        container.appendChild(fields);
-                    }
-                    break;
-                case "influentialCitationCount":
-                    if(Global.data.influentialCitationCount >= 0){
-                        topic.innerText = "Influential Citation Count";
-                        let counter = document.createElement("div");
-                        counter.id = "values";
-                        counter.innerText = Global.data.influentialCitationCount;
-                        container.appendChild(counter);
+                        container.appendChild(topic);
+                        fields = Global.data.fieldsOfStudy.join(', ');
+                        topic.innerHTML = "<b>Fields of Study</b>: " + fields;
                     }
                     break;
                 case "journal":
                     if(Global.data.journal){
-                        topic.innerText = "Journal";
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Journal</b>";
                         let ids = document.createElement("div");
                         ids.id = "values";
                         for(const id in Global.data.journal){
@@ -170,79 +149,51 @@
                     break;
                 case "paperId":
                     if(Global.data.paperId){
-                        topic.innerText = "Paper Id";
-                        let paperId = document.createElement("div");
-                        paperId.id = "values";
-                        paperId.innerText = Global.data.paperId;
-                        container.appendChild(paperId);
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Paper Id</b>: " + Global.data.paperId;
                     }
                     break;
                 case "publicationDate":
                     if(Global.data.publicationDate){
-                        topic.innerText = "Publication Date";
-                        let publication = document.createElement("div");
-                        publication.id = "values";
-                        publication.innerText = Global.data.publicationDate;
-                        container.appendChild(publication);
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Publication Date</b>: " + Global.data.publicationDate;
                     }
                     break;
                 case "publicationTypes":
                     if(Global.data.publicationTypes){
-                        topic.innerText = "Publication Types";
-                        let types = document.createElement("div");
-                        types.id = "values";
-                        for(const type of Global.data.publicationTypes){
-                            let publicationType = document.createElement("div");
-                            publicationType.innerText = type;
-                            types.appendChild(publicationType);
-                        }
-                        container.appendChild(types);
+                        container.appendChild(topic);
+                        types = Global.data.publicationTypes.join(', ');
+                        topic.innerHTML = "<b>Publication Types</b>: " + types;
                     }
                     break;
                 case "referenceCount":
                     if(Global.data.referenceCount >= 0){
-                        topic.innerText = "Reference Count";
-                        let counter = document.createElement("div");
-                        counter.id = "values";
-                        counter.innerText = Global.data.referenceCount;
-                        container.appendChild(counter);
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Reference Count</b>: " + Global.data.referenceCount;
                     }
                     break;
                 case "title":
                     if(Global.data.title){
-                        topic.innerText = "Title";
-                        let title = document.createElement("div");
-                        title.id = "values";
-                        title.innerText = Global.data.title;
-                        container.appendChild(title);
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Title</b>: " + Global.data.title;
                     }
                     break;
                 case "url":
                     if(Global.data.url){
-                        topic.innerText = "Url";
-                        let url = document.createElement("a");
-                        url.href = Global.data.url;
-                        url.id = "values"
-                        url.innerText = Global.data.url;
-                        container.appendChild(url);
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Url</b>: <a href=\"" + Global.data.url + "\" target=\"_blank\">" + Global.data.url + "</a>";
                     }
                     break;
                 case "venue":
                     if(Global.data.venue){
-                        topic.innerText = "Venue";
-                        let vanue = document.createElement("div");
-                        vanue.id = "values";
-                        vanue.innerText = Global.data.venue;
-                        container.appendChild(vanue);
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Venue</b>: " + Global.data.venue;
                     }
                     break;
                 case "year":
                     if(Global.data.year){
-                        topic.innerText = "Year";
-                        let year = document.createElement("div");
-                        year.id = "values";
-                        year.innerText = Global.data.year;
-                        container.appendChild(year);
+                        container.appendChild(topic);
+                        topic.innerHTML = "<b>Year</b>: " + Global.data.year;
                     }
                     break;
             }

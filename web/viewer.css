@@ -2302,7 +2302,6 @@ body {
 }
 
 #topics {
-  font-weight: 900;
   padding-top: 2px;
 }
 
@@ -3092,3 +3091,27 @@ dialog :link {
     display: none;
   }
 }
+
+a:link {
+    color: var(--treeitem-color);
+    background-color: transparent;
+    text-decoration: none;
+  }
+  
+  a:visited {
+    color: var(--treeitem-color);
+    background-color: transparent;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    color: var(--treeitem-color);
+    background-color: transparent;
+    text-decoration: underline;
+  }
+  
+  a:active {
+    color: var(--treeitem-color);
+    background-color: transparent;
+    text-decoration: none;
+  }
