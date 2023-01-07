@@ -2305,6 +2305,9 @@ body {
   cursor: grab;
   -webkit-user-select: none;
   user-select: none;
+  border: 1px;
+  border-style: solid;
+  border-color: var(--toolbar-border-color);
 }
 
 #referencesViewer {

@@ -227,7 +227,6 @@
         container.style.position = 'relative';
         container.style.overflow = 'auto';
 
-        container.style.border = "5px solid blue";
         setSize();
 
         return;
