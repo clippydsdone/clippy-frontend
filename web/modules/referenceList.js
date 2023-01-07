@@ -391,6 +391,8 @@
                 link.addEventListener("click", function (evt) {
                     Global.preventMainViewerLinkerFlag = true;  // TODO: find a better solution
                     if (evt.target !== null) {
+                        viewer.style.removeProperty('transform');
+
                         referenceLinkService.goToDestination(evt.target.hash.substring(1))
 
                         // Scroll up to Preview when reference is clicked
