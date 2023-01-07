@@ -111,6 +111,8 @@
             result.status = err.response.status;
             result.data = err.message;
             Global.data = {};
+
+            Clippy.PaperFinder.noTitleFound();
         });
 
 

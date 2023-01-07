@@ -1646,6 +1646,14 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+#paperFinderModeSelectContainer{
+    width: 115px;
+}
+
+#paperFinderNoTitleMsg {
+    max-width: 400px;
+}
+
 .findbar {
   inset-inline-start: 64px;
   min-width: 300px;
