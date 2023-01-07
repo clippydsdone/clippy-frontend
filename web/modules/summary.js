@@ -84,7 +84,7 @@
             let container = document.createElement("div");
             let topic = document.createElement("div");
             
-            container.id = "data: " + data;
+            container.id = "details";
             topic.id = "topics";
             container.appendChild(topic);
 
