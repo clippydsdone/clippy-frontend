@@ -2331,6 +2331,15 @@ body {
           mask-image: var(--toolbarButton-editorInk-icon);
 }
 
+#values {
+  margin-left: 20px;
+  color: lightgray;
+}
+
+#topics {
+  padding-top: 2px;
+}
+
 #referencesContainer::-webkit-scrollbar {
   display: none;
 }
@@ -3148,6 +3157,29 @@ dialog :link {
   }
 }
 
+a:link {
+    color: var(--treeitem-color);
+    background-color: transparent;
+    text-decoration: none;
+  }
+  
+  a:visited {
+    color: var(--treeitem-color);
+    background-color: transparent;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    color: var(--treeitem-color);
+    background-color: transparent;
+    text-decoration: underline;
+  }
+  
+  a:active {
+    color: var(--treeitem-color);
+    background-color: transparent;
+    text-decoration: none;
+  }
 #summaryContainerText > div > h3,
 #summaryContainerText > div
 {
