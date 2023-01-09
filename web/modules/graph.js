@@ -42,6 +42,12 @@
             .call(zoom)
             .append("g")
             .attr("id", "allZ")
+
+        var tooltip = d3.select("#knowledgegraphViewer")
+            .append("div")
+              .style("width", "250px")
+              .style("position", "absolute")
+              .style("visibility", "hidden");
         
         // initial zoom level and call zoom manually
         zoom.scaleTo(d3.select("svg"), 2);
@@ -77,6 +83,25 @@
                 d3.select(this).classed("group" + d.group, true);
             })
             .on('mousedown', function () { d3.event.stopPropagation(); })
+            .on('mouseover', function(e, d){
+                return tooltip.style('visibility', 'visible')
+                    .style("top", (d3.event.offsetY - 55)+"px")
+                    .style('background', 'white')
+                    .style('border-radius', '5px')
+                    .style('padding', '5px')
+                    .style("left",(d3.event.offsetX)+"px")
+                    .text(e.title);
+                })
+            .on("mousemove", function(e, d){
+                return tooltip.style('visibility', 'visible')
+                    .style("top", (d3.event.offsetY - 55)+"px")
+                    .style('background', 'white')
+                    .style('border-radius', '5px')
+                    .style('padding', '5px')
+                    .style("left",(d3.event.offsetX)+"px")
+                    .text(e.title);
+                })            
+            .on('mouseout', function()  { return tooltip.style('visibility', 'hidden')})
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
@@ -92,16 +117,17 @@
             .style("text-anchor", "left")
             .style("font-size", "5px")
             .text(function (d) {
-                return d.title;
+                console.log(d);
+                return d.index;
         });
 
-        node.append("text")
+        /*node.append("text")
             .attr("dy", "1.3em")
             .style("text-anchor", "left")
             .style("font-size", "5px")
             .text(function (d) {
                 return d.title;
-        });
+        });*/
 
         simulation
             .nodes(graph.nodes)
