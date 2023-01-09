@@ -69,6 +69,9 @@
         const detailsText = document.getElementById("detailsContainerText");
         const loadingBar = document.getElementById("summaryLoadingGif");
         const summaryText = document.getElementById("summaryContainerText");
+        
+        Clippy.spinnerOptions.color = getComputedStyle(document.documentElement).getPropertyValue('--main-color')
+        var spinner = new Spin.Spinner(Clippy.spinnerOptions).spin(loadingBar);
 
         let paperTitle = Global.app.documentInfo.Title;
         let result = {};
@@ -91,8 +94,8 @@
             headers: { 'Content-Type': 'application/json' },
         })
         .then((response) => { 
-            result = response.data
-            loadingBar.hidden = true;
+            spinner.stop();
+            result = response.data;
             if (result && result.tldr && result.tldr.text) {
                 semanticScholarContainer.append(document.createTextNode(result.tldr.text));
 

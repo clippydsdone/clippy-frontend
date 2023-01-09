@@ -6845,7 +6845,6 @@
 								});
 								break;
 							case "println":
-								console.log(value);
 								break;
 							case "zoom":
 								if (isInPresentationMode) {
