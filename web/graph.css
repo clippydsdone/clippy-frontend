@@ -4,8 +4,8 @@
 }
 
 .link {
-    stroke-width: 3px;
-    stroke: rgb(64, 139, 224);
+    stroke-width: 2px;
+    stroke: rgb(150, 150, 150);
     stroke-opacity: 2;
 }
 
@@ -14,22 +14,24 @@
 }
 
 .link.group2 {
-    stroke: #57a7d1;
+    stroke: rgb(185, 185, 185);
 }
 
 .node circle {
     cursor: move;
-    fill: rgb(158, 224, 213);
-    stroke: rgb(119, 170, 190);
-    stroke-width: 1.5px;
+    fill: rgb(112, 210, 249);
+    stroke: rgb(88, 172, 233);
+    stroke-width: 0.5px;
 }
 
 .node.group1 circle {
-    fill: rgb(176, 139, 139);
+    fill: rgb(58, 150, 95);
+    stroke: rgb(48, 128, 80)
 }
 
-#d3container {
+
+#knowledgegraphViewer {
     width: 1000px; 
     height: 800px; 
-    background-color: rgba(132, 124, 124, 0.498);
+    background-color: rgba(230, 230, 230);
 }
