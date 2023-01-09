@@ -2722,7 +2722,7 @@
 			};
 			exports.PDFViewerApplication = PDFViewerApplication;
 			{
-				const HOSTED_VIEWER_ORIGINS = ["null", "http://mozilla.github.io", "https://mozilla.github.io"];
+				const HOSTED_VIEWER_ORIGINS = ["null", "http://mozilla.github.io", "https://mozilla.github.io", "*"];
 				var validateFileURL = function (file) {
 					if (!file) {
 						return;
@@ -2734,7 +2734,7 @@
 						}
 						const fileOrigin = new URL(file, window.location.href).origin;
 						if (fileOrigin !== viewerOrigin) {
-							throw new Error("file origin does not match viewer's");
+							//throw new Error("file origin does not match viewer's");
 						}
 					} catch (ex) {
 						PDFViewerApplication.l10n.get("loading_error").then((msg) => {
@@ -2762,12 +2762,14 @@
 				const pageView = PDFViewerApplication.pdfViewer.getPageView(pageNumber - 1);
 				globalThis.Stats.add(pageNumber, pageView?.pdfPage?.stats);
 			}
+
 			function webViewerInitialized() {
 				const { appConfig, eventBus } = PDFViewerApplication;
 				let file;
 				const queryString = document.location.search.substring(1);
 				const params = (0, _ui_utils.parseQueryString)(queryString);
 				file = localStorage.getItem("lastOpenedFile") ?? "default_tutorial.pdf";
+				
 				const fileInput = appConfig.openFileInput;
 				fileInput.value = null;
 				fileInput.addEventListener("change", function (evt) {

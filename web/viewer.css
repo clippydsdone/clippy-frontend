@@ -1134,6 +1134,7 @@
     --toolbarButton-referenceFilters-icon: url(images/toolbarButton-filterReferences.svg);
     --toolbarButton-currentOutlineItem-icon: url(images/toolbarButton-currentOutlineItem.svg);
     --toolbarButton-search-icon: url(images/toolbarButton-search.svg);
+    --toolbarButton-searchSemanticScholar-icon: url(images/toolbarButton-searchSemanticScholar.svg);
     --findbarButton-previous-icon: url(images/findbarButton-previous.svg);
     --findbarButton-next-icon: url(images/findbarButton-next.svg);
     --secondaryToolbarButton-firstPage-icon: url(images/secondaryToolbarButton-firstPage.svg);
@@ -1609,6 +1610,40 @@ body {
 
 [dir="rtl"] .findbar {
   right: 64px;
+}
+
+#paperFinderBar {
+    inset-inline-start: 36px;
+}
+
+#paperFinderMsg {
+    inset-inline-start: 36px;
+    top: 68px;
+    min-width: 220px;
+    padding-right: 0px;
+}
+
+#paperFinderMsg::after {
+    content: none;
+}
+
+#paperFinderMsg::before {
+    content: none;
+}
+
+.loadingSpin {
+    border: 8px solid #f3f3f3; /* Inner circle */
+    border-top: 8px solid #009b00; /* Green color */
+    border-radius: 100%;
+    width: 10px;
+    height: 10px;
+    animation: spin 2s linear infinite;
+    margin-top: 3px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .findbar {
@@ -2300,7 +2335,9 @@ body {
     -webkit-mask-image: var(--toolbarButton-renameReference-icon);
             mask-image: var(--toolbarButton-renameReference-icon);
     position: absolute;
+    -webkit-mask-position: center;
     mask-position: center;
+    -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     right: 10px;
 }
@@ -2401,6 +2438,12 @@ a.secondaryToolbarButton[href="#"] {
   -webkit-mask-image: var(--toolbarButton-search-icon);
           mask-image: var(--toolbarButton-search-icon);
 }
+
+#viewPaperFinder::before {
+    -webkit-mask-image: var(--toolbarButton-searchSemanticScholar-icon);
+            mask-image: var(--toolbarButton-searchSemanticScholar-icon);
+}
+
 
 [dir="ltr"] .pdfSidebarNotification::after {
   right: 2px;

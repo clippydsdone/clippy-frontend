@@ -68,7 +68,7 @@
             Global.data = result;
         })
         .catch((err) => {
-            spinner.stop();
+            loadingBar.hidden = true;
             summaryText.innerHTML = "Paper with title " +  paperTitle + " couldn't be found on Semantic Scholar.";
             result.status = err.response.status;
             result.data = err.message;

@@ -13,6 +13,10 @@
             setTimeout(Graph.initialize, 100);
             return;
         }
+        else if (Global.isNull(Global.data)) {
+            setTimeout(Graph.initialize, 100);
+            return;
+        }
         console.log("Initializing Graph.");
         await drawD3();
     }
