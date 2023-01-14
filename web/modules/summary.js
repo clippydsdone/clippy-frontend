@@ -36,27 +36,13 @@
         printPaperDetails();
     }
 
-    var BASE64_MARKER = ';base64,';
-
-    function convertDataURIToBinary(dataURI) {
-        var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-        var base64 = dataURI.substring(base64Index);
-        var raw = window.atob(base64);
-        var rawLength = raw.length;
-        var array = new Uint8Array(new ArrayBuffer(rawLength));
-
-        for(var i = 0; i < rawLength; i++) {
-            array[i] = raw.charCodeAt(i);
-        }
-        return array;
-    }
-
+    const BASE64_MARKER = ';base64,';
     let getPdfFullText = async function (){
-        doc = window.PDFViewerApplication.pdfDocument;
+        let doc = window.PDFViewerApplication.pdfDocument;
 		let pageTexts = Array.from({length: doc.numPages}, async (v,i) => {
 			return (await (await doc.getPage(i+1)).getTextContent()).items.map(token => token.str).join('');
 		});
-		text = (await Promise.all(pageTexts)).join(' ');
+		let text = (await Promise.all(pageTexts)).join(' ');
 		return text;
     }
 
@@ -66,17 +52,14 @@
             return;
         }
 
-        const detailsText = document.getElementById("detailsContainerText");
         const loadingBar = document.getElementById("summaryLoadingGif");
         const summaryText = document.getElementById("summaryContainerText");
         
         Clippy.spinnerOptions.color = getComputedStyle(document.documentElement).getPropertyValue('--main-color')
-        var spinner = new Spin.Spinner(Clippy.spinnerOptions).spin(loadingBar);
+        const spinner = new Spin.Spinner(Clippy.spinnerOptions).spin(loadingBar);
 
         let paperTitle = Global.app.documentInfo.Title;
         let result = {};
-
-
 
         let semanticScholarContainer = document.createElement("div");
         summaryText.append(semanticScholarContainer);
@@ -187,7 +170,6 @@
             
             container.id = "details";
             topic.id = "topics";
-            //container.appendChild(topic);
 
             switch(data){
                 case "abstract":
@@ -203,7 +185,7 @@
                 case "authors":
                     if(Global.data.authors){
                         container.appendChild(topic);
-                        authors = Global.data.authors.map((author) => author.name).join(', ');
+                        let authors = Global.data.authors.map((author) => author.name).join(', ');
                         topic.innerHTML = "<b>Authors</b>: " + authors;
                     }
                     break;
@@ -230,7 +212,7 @@
                 case "fieldsOfStudy":
                     if(Global.data.fieldsOfStudy){
                         container.appendChild(topic);
-                        fields = Global.data.fieldsOfStudy.join(', ');
+                        let fields = Global.data.fieldsOfStudy.join(', ');
                         topic.innerHTML = "<b>Fields of Study</b>: " + fields;
                     }
                     break;
@@ -263,7 +245,7 @@
                 case "publicationTypes":
                     if(Global.data.publicationTypes){
                         container.appendChild(topic);
-                        types = Global.data.publicationTypes.join(', ');
+                        let types = Global.data.publicationTypes.join(', ');
                         topic.innerHTML = "<b>Publication Types</b>: " + types;
                     }
                     break;
