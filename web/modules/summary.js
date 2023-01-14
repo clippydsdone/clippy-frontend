@@ -36,7 +36,6 @@
         printPaperDetails();
     }
 
-    const BASE64_MARKER = ';base64,';
     let getPdfFullText = async function (){
         let doc = window.PDFViewerApplication.pdfDocument;
 		let pageTexts = Array.from({length: doc.numPages}, async (v,i) => {
