@@ -1,0 +1,37 @@
+.node text {
+    fill: rgb(0, 0, 0);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.link {
+    stroke-width: 2px;
+    stroke: rgb(150, 150, 150);
+    stroke-opacity: 2;
+}
+
+.link.group1 {
+    stroke: #fcd43f;
+}
+
+.link.group2 {
+    stroke: rgb(185, 185, 185);
+}
+
+.node circle {
+    cursor: move;
+    fill: rgb(112, 210, 249);
+    stroke: rgb(88, 172, 233);
+    stroke-width: 0.5px;
+}
+
+.node.group1 circle {
+    fill: rgb(58, 150, 95);
+    stroke: rgb(48, 128, 80)
+}
+
+
+#knowledgegraphViewer {
+    width: 1000px; 
+    height: 800px; 
+    background-color: rgba(230, 230, 230);
+}
