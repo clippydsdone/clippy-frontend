@@ -171,9 +171,6 @@
         // Get constructors for required objects for PDFViewer
         let eventBusConstructor = Global.app.eventBus.constructor
         let linkServiceConstructor = Global.app.pdfLinkService.constructor
-        let findControllerConstructor = Global.app.pdfViewer.findController.constructor
-        let scriptingManagerConstructor = Global.app.pdfViewer._scriptingManager.constructor
-        let scriptingSrc = "../" + Global.app.pdfViewer._scriptingManager._sandboxBundleSrc
         let viewerConstructor = Global.app.pdfViewer.constructor
 
         // Create event bus for reference preview
@@ -318,7 +315,7 @@
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i]; // fig0001
             let tag = key.split(/[0-9]/)[0]; // fig
-            validReference = isValidReference(tag); // Get validReference object
+            let validReference = isValidReference(tag); // Get validReference object
             if (validReference == null) // Check if it is an invalid reference
                 continue;
 

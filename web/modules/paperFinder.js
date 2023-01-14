@@ -21,16 +21,14 @@
     let successMessage = null;   // Label for success message for loading pdf
     let errorMessage = null;     // Label for error message for loading pdf
     let noTitleMessage = null;   // Label for message displayed when there is no title
+    let paperFinderContentType = null;
 
 
     // PDF.js objects
     let textFindBar = null;      // PDFFindBar object used to search text in PDF
 
     PaperFinder.initialize = function () {
-        if (Global.isNull(Global.app)) {
-            setTimeout(PaperFinder.initialize, 100);
-            return;
-        } else if (Global.isNull(Global.app.findBar)) {
+        if (Global.isNull(Global.app) || Global.isNull(Global.app.findBar)) {
             setTimeout(PaperFinder.initialize, 100);
             return;
         }
@@ -220,7 +218,6 @@
                 loading(false, false);
                 return;
             }
-            let base64data = response.data.data;
             try {
                 localStorage.setItem("lastOpenedFile", response.data.data);
                 location.reload();

@@ -3268,7 +3268,6 @@
 					}
 				}
 				if (cmd === 1 || cmd === 8) {
-					console.log(evt.keyCode);
 					switch (evt.keyCode) {
 						case 83:
 							eventBus.dispatch("download", {

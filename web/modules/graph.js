@@ -47,7 +47,7 @@
             .append("g")
             .attr("id", "allZ")
 
-        var tooltip = d3.select("#knowledgegraphViewer")
+        const tooltip = d3.select("#knowledgegraphViewer")
             .append("div")
               .style("width", "250px")
               .style("position", "absolute")
@@ -121,17 +121,8 @@
             .style("text-anchor", "left")
             .style("font-size", "5px")
             .text(function (d) {
-                console.log(d);
                 return d.index;
         });
-
-        /*node.append("text")
-            .attr("dy", "1.3em")
-            .style("text-anchor", "left")
-            .style("font-size", "5px")
-            .text(function (d) {
-                return d.title;
-        });*/
 
         simulation
             .nodes(graph.nodes)
