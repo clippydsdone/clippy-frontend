@@ -218,7 +218,6 @@
                 loading(false, false);
                 return;
             }
-
             try {
                 localStorage.setItem("lastOpenedFile", response.data.data);
                 location.reload();

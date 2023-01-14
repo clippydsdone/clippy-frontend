@@ -335,6 +335,9 @@
             return;
         }
 
+        // TODO: Add annotations that are links
+
+
         // HTML building of list of references
         // We will create a tree structure of depth 2
         referenceListContainer.classList.add("treeWithDeepNesting");
