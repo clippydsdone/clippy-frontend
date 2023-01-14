@@ -59,7 +59,7 @@ When issues are closed temporary branches are **squashed and deleted**.
 
 ## [Hosting](#hosting)
 ### [Heroku](#heroku)
-Clippy respository is setup for hosting to [Heroku](https://dashboard.heroku.com) with heroku/nodejs buildpack. 
+Clippy respository is setup for hosting to [Heroku](https://dashboard.heroku.com) with heroku/php buildpack. 
 ### [Environments](#environments)
 There are two Clippy hosting environments: 
 
