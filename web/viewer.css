@@ -3165,8 +3165,6 @@ dialog :link {
 
 a:link {
     color: var(--treeitem-color);
-    background-color: transparent;
-    text-decoration: none;
   }
   
   a:visited {
