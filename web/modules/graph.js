@@ -121,7 +121,6 @@
             .style("text-anchor", "left")
             .style("font-size", "5px")
             .text(function (d) {
-                console.log(d);
                 return d.index;
         });
 
