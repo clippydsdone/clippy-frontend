@@ -185,7 +185,7 @@
                 messageDiv.classList.add("hidden");
                 successMessage.classList.add("hidden");
                 errorMessage.classList.add("hidden");
-            }, 5000);
+            }, 2000);
         }
     }
 
@@ -264,7 +264,10 @@
                 loading(false, false);
                 return;
             }
+            Clippy.Summary.ClearData();
             Global.data = response.data
+            Clippy.Summary.printPaperDetails();
+            Clippy.Summary.semanticScholarSummaryHTML();
         }).catch((err) => {
             loading(false, false);
             if (Global.isNull(err?.response?.status) || err.response.status != 404) {
