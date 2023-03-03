@@ -36,7 +36,7 @@
         details = document.getElementById('paperDetails');
 
         await getPaperInfo();
-        Summary.printPaperDetails();
+        printPaperDetails();
     }
 
     let getPdfFullText = async function (){
@@ -63,7 +63,7 @@
         let paperTitle = Global.app.documentInfo.Title;
         let result = {};
 
-        semanticScholarContainer = document.createElement("div");
+        let semanticScholarContainer = document.createElement("div");
         summaryText.append(semanticScholarContainer);
 
         let semanticScholarTitle = document.createElement("h3");
